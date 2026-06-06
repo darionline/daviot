@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daviot Guest House — Guest Companion</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%237189ed'/%3E%3Cpath d='M12 5.5a4 4 0 0 0-4 4c0 3 4 8.5 4 8.5s4-5.5 4-8.5a4 4 0 0 0-4-4z' fill='%23fff'/%3E%3Ccircle cx='12' cy='9.5' r='1.6' fill='%237189ed'/%3E%3C/svg%3E">
+<meta name="description" content="Your guide to Scotland — a sample prepared for guests of Daviot Guest House, Ayr.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#1e2a30;--muted:#5a6b76;--azure:#2b7cc4;--loch:#123b4f;--line:#e2e8f1;--card:#fff;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Mulish",system-ui,sans-serif;color:var(--ink);background:#eef2fa;
+    background-image:radial-gradient(900px 500px at 80% -10%, rgba(124,140,239,.18), transparent 60%);
+    min-height:100vh;display:flex;flex-direction:column}
+  .hostbar{background:#7189ed;color:#fff;border-bottom:1px solid rgba(255,255,255,.35);box-shadow:0 3px 12px rgba(40,70,120,.12)}
+  .hb-inner{max-width:1080px;margin:0 auto;padding:.7rem 1.2rem;display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
+  .hb-logo{height:40px;width:auto;display:block;border-radius:6px;background:#fff;padding:2px}
+  .hb-name b{font-family:"Spectral",serif;font-size:1.12rem;display:block;line-height:1.1}
+  .hb-name span{font-size:.76rem;color:rgba(255,255,255,.9)}
+  .hb-addr{margin-left:auto;font-size:.78rem;color:rgba(255,255,255,.9)}
+  main{flex:1;max-width:1080px;width:100%;margin:0 auto;padding:1.6rem 1.2rem 2.4rem}
+  .lede{margin:.4rem 0 1.4rem;color:var(--muted);font-size:1.02rem;max-width:60ch;line-height:1.5}
+  h1{font-family:"Spectral",serif;font-weight:600;font-size:clamp(1.6rem,4vw,2.2rem);margin:.2rem 0 .1rem;color:var(--loch)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+  a.card{display:flex;flex-direction:column;justify-content:flex-end;min-height:170px;text-decoration:none;color:#fff;
+    border-radius:18px;padding:1.1rem 1.2rem;position:relative;overflow:hidden;box-shadow:0 14px 34px rgba(40,70,120,.16);
+    transition:transform .16s, box-shadow .16s}
+  a.card:hover{transform:translateY(-3px);box-shadow:0 20px 42px rgba(43,124,196,.26)}
+  .c1{background:linear-gradient(150deg,#2b7cc4,#123b4f)}
+  .c2{background:linear-gradient(150deg,#5e7fe6,#3b4ea0)}
+  a.card h2{font-family:"Spectral",serif;font-weight:600;margin:0 0 .2rem;font-size:1.3rem}
+  a.card p{margin:0;color:rgba(255,255,255,.92);font-size:.9rem;line-height:1.4}
+  a.card .go{position:absolute;top:1rem;right:1.1rem;font-size:1.5rem;opacity:.85}
+  .extra{margin-top:1.3rem;font-size:.92rem}
+  .extra a{color:var(--azure);font-weight:700;text-decoration:none}
+  .extra a:hover{text-decoration:underline}
+  footer{max-width:1080px;margin:0 auto;padding:0 1.2rem 1.6rem;color:var(--muted);font-size:.78rem;line-height:1.5}
+</style>
+</head>
+<body>
+  <div class="hostbar"><div class="hb-inner">
+    <img class="hb-logo" src="https://www.daviothouse.co.uk/wp-content/uploads/2019/01/daviot-house-logo-4.png" alt="Daviot Guest House" onerror="this.style.display='none'">
+    <div class="hb-name"><b>Daviot Guest House</b><span>Your guide to Scotland · a sample for our guests</span></div>
+    <div class="hb-addr">12 Queen&rsquo;s Terrace, Ayr, KA7 1DU</div>
+  </div></div>
+
+  <main>
+    <h1>Welcome — explore the area</h1>
+    <p class="lede">A little companion for your stay: handpicked places to see near the house, and a tour of Scotland&rsquo;s lighthouses. Tap a card to begin.</p>
+    <div class="grid">
+      <a class="card c1" href="near-ayr.html">
+        <span class="go">&rsaquo;</span>
+        <h2>What to see near us</h2>
+        <p>Beaches, coastal walks, hills, castles and cycle routes within easy reach of the guest house.</p>
+      </a>
+      <a class="card c2" href="lighthouses-of-scotland.html">
+        <span class="go">&rsaquo;</span>
+        <h2>Lighthouses of Scotland</h2>
+        <p>From the Mull of Galloway to Shetland — every coast, mapped, with photography where it exists.</p>
+      </a>
+    </div>
+    <p class="extra">Innkeeper preview: <a href="proposal.html">read the proposal &rarr;</a></p>
+  </main>
+
+  <footer>
+    Maps &amp; data &copy; OpenStreetMap contributors (ODbL) · map tiles &copy; CARTO · photography via Wikimedia Commons · Google Maps opens only as outbound links. Sample prepared for Daviot Guest House.
+  </footer>
+</body>
+</html>

@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lighthouses of Scotland — Interactive Map</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%237189ed'/%3E%3Cpath d='M12 5.5a4 4 0 0 0-4 4c0 3 4 8.5 4 8.5s4-5.5 4-8.5a4 4 0 0 0-4-4z' fill='%23fff'/%3E%3Ccircle cx='12' cy='9.5' r='1.6' fill='%237189ed'/%3E%3C/svg%3E">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://overpass-api.de" crossorigin>
+<link rel="preconnect" href="https://www.wikidata.org" crossorigin>
+<link rel="preconnect" href="https://commons.wikimedia.org" crossorigin>
+<link rel="preconnect" href="https://a.basemaps.cartocdn.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --paper:#eef2fa; --card:#ffffff; --ink:#1e2a30; --muted:#65727b; --azure:#2b7cc4;
+  --loch:#123b4f; --loch-2:#0d2c3c; --heather:#7c5c9e; --amber:#c5872e; --moss:#5e6b3b;
+  --line:#e2e8f1; --line-d:#22414f;
+  --shadow:0 14px 40px rgba(40,70,120,.12);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:radial-gradient(1100px 520px at 88% -8%, rgba(108,133,236,.13), transparent 60%), radial-gradient(900px 480px at -6% 4%, rgba(18,59,79,.06), transparent 55%), var(--paper); color:var(--ink); font-family:"Mulish",system-ui,sans-serif; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column}
+h1,h2,h3{font-family:"Spectral",Georgia,serif; font-weight:500; margin:0; letter-spacing:.005em}
+svg.ico{width:1em;height:1em;display:inline-block;vertical-align:-.12em;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+/* Header */
+header{position:relative; overflow:hidden; background:linear-gradient(165deg,#7d93ef,#6c85ec); color:#fff; border-bottom:3px solid #ffffff}
+header .beam{position:absolute; top:-40%; left:50%; width:160%; height:220%;
+  background:conic-gradient(from 0deg at 50% 0%, transparent 0deg, rgba(255,255,255,0) 16deg, rgba(255,255,255,.16) 25deg, rgba(255,255,255,0) 34deg, transparent 360deg);
+  transform-origin:50% 0%; animation:sweep 11s linear infinite; pointer-events:none}
+@keyframes sweep{to{transform:translateX(-50%) rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){header .beam{animation:none;opacity:.4}}
+header .wrap{position:relative; max-width:1240px; margin:0 auto; padding:1.5rem 1.7rem 1.4rem; display:flex; align-items:center; gap:1.2rem}
+.mark{width:48px;height:48px;flex:0 0 auto;color:#fff}
+header h1{font-size:clamp(1.7rem,3.6vw,2.4rem); line-height:1.05; color:#fff}
+header p{margin:.35rem 0 0; color:rgba(255,255,255,.92); font-size:.95rem; max-width:64ch; font-weight:400}
+header .kicker{font-family:"Mulish";font-weight:700;letter-spacing:.18em;text-transform:uppercase;font-size:.7rem;color:rgba(255,255,255,.85);margin-bottom:.3rem}
+
+/* Toolbar */
+.hostbar{background:#7189ed; border-bottom:1px solid rgba(255,255,255,.35); box-shadow:0 3px 12px rgba(40,70,120,.12)}
+.hb-inner{max-width:1240px; margin:0 auto; padding:.55rem 1.7rem; display:flex; align-items:center; gap:.7rem; flex-wrap:wrap}
+.hb-mark{width:30px; height:30px; flex:0 0 auto; color:var(--loch)}
+.hb-logo{height:42px; width:auto; max-width:190px; flex:0 0 auto; display:block}
+.hb-name{display:flex; flex-direction:column; line-height:1.12}
+.hb-name b{font-family:"Spectral",serif; font-weight:600; color:#fff; font-size:1rem}
+.hb-name span{font-size:.72rem; color:rgba(255,255,255,.85)}
+.hb-tag{margin-left:auto; font-size:.7rem; font-weight:700; letter-spacing:.04em; color:#fff; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.4); padding:.22rem .6rem; border-radius:999px; white-space:nowrap}
+.hb-addr{font-size:.78rem; color:rgba(255,255,255,.9)}
+@media(max-width:880px){ .hb-tag{margin-left:auto} .hb-addr{margin-left:0; flex-basis:100%} }
+
+.toolbar{max-width:1240px; width:100%; margin:0 auto; padding:.65rem 1.7rem; display:flex; gap:.8rem; align-items:center; flex-wrap:wrap; border-bottom:1px solid var(--line)}
+.search{flex:1; min-width:230px; position:relative}
+.search input{width:100%; background:var(--card); border:1px solid var(--line); color:var(--ink); border-radius:12px; padding:.78rem 1rem .78rem 2.7rem; font-family:inherit; font-size:.98rem}
+.search input::placeholder{color:var(--muted)}
+.search input:focus{outline:none; border-color:var(--loch); box-shadow:0 0 0 3px rgba(18,59,79,.1)}
+.search .ic{position:absolute; left:.95rem; top:50%; transform:translateY(-50%); color:var(--muted); font-size:1.05rem}
+.stat{display:flex; align-items:baseline; gap:.5rem; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:.65rem 1rem; white-space:nowrap}
+.stat b{font-family:"Spectral",serif; font-size:1.5rem; color:var(--loch)}
+.stat span{color:var(--muted); font-size:.82rem}
+
+/* Layout */
+.layout{flex:1; min-height:0; max-width:1240px; width:100%; margin:0 auto; display:grid; grid-template-columns:1fr 468px}
+#map{min-height:0; height:100%; background:#e8eef0}
+.leaflet-container{background:#e8eef0; font-family:inherit}
+aside{border-left:1px solid var(--line); background:var(--paper); display:flex; flex-direction:column; min-height:0}
+aside .head{padding:.9rem 1.15rem; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:.5rem}
+aside .head h2{font-size:1.25rem; color:var(--loch)}
+aside .head .sort{margin-left:auto; display:inline-flex; align-items:center; gap:.35rem; background:var(--card); border:1px solid var(--line); color:var(--muted); border-radius:9px; padding:.42rem .7rem; font-size:.8rem; font-family:inherit; cursor:pointer}
+aside .head .sort:hover{border-color:var(--loch); color:var(--loch)}
+.list{overflow:auto; padding:.7rem 1.1rem 1.4rem; flex:1}
+.zonebar{max-width:1240px; width:100%; margin:0 auto; display:flex; gap:.5rem; padding:.5rem 1.7rem .9rem; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch}
+.zonebar::-webkit-scrollbar{display:none}
+.zchip{white-space:nowrap; border:1px solid var(--line); background:var(--card); color:#3f4d54; padding:.5rem .85rem; border-radius:999px; font-size:.84rem; font-weight:700; font-family:inherit; cursor:pointer; display:inline-flex; gap:.5rem; align-items:center; transition:.15s; flex:0 0 auto}
+.zchip:hover{border-color:var(--loch); color:var(--loch)}
+.zchip .c{color:var(--muted); font-weight:700}
+.zchip.on{border-color:var(--loch); background:var(--loch); color:#fff; box-shadow:0 6px 16px rgba(18,59,79,.22)}
+.zchip.on .c{color:#bcd9e4}
+.zone-h{font-family:"Spectral",serif; color:var(--loch); font-size:1rem; font-weight:600; padding:.7rem .55rem .35rem; display:flex; align-items:center; letter-spacing:.01em; position:sticky; top:0; background:var(--paper); z-index:2}
+.zone-h span{margin-left:auto; font-family:"Mulish"; font-size:.72rem; color:var(--muted); font-weight:700; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.05rem .5rem}
+/* place card — horizontal compact, consistent with the "near us" page */
+.card{display:flex; gap:1rem; align-items:flex-start; background:var(--card); border:1px solid var(--line);
+  border-radius:16px; padding:.95rem; margin:.55rem 0; box-shadow:0 4px 16px rgba(18,59,79,.06); cursor:pointer;
+  transition:transform .16s, box-shadow .16s; opacity:0; transform:translateY(8px); animation:rise .45s ease forwards}
+@keyframes rise{to{opacity:1; transform:none}}
+.card:hover{box-shadow:0 16px 34px rgba(43,124,196,.18); transform:translateY(-2px); border-color:var(--azure)}
+.card:hover .locbadge{background:var(--azure); color:#fff; border-color:var(--azure)}
+.card:active{transform:scale(.994)}
+.media{position:relative; width:104px; height:104px; flex:0 0 auto; border-radius:13px; overflow:hidden;
+  background:#eef2fa; display:grid; place-items:center; color:var(--azure)}
+.media img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block}
+.media.noimg{background:color-mix(in srgb, var(--azure) 14%, #eef2fa)}
+.media svg{width:40px;height:40px; fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.locbadge{position:absolute; bottom:5px; left:5px; z-index:3; width:31px; height:31px; border-radius:50%;
+  background:rgba(255,255,255,.94); color:var(--azure); display:grid; place-items:center;
+  box-shadow:0 2px 7px rgba(8,28,38,.28); border:1px solid transparent; transition:background .14s, color .14s, border-color .14s; pointer-events:none}
+.locbadge svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.maphint{display:flex; align-items:center; gap:.4rem; font-size:.8rem; color:var(--azure);
+  background:rgba(43,124,196,.08); border:1px solid rgba(43,124,196,.18); border-radius:10px;
+  padding:.5rem .65rem; margin:.7rem 1.1rem 0; font-weight:600}
+.maphint svg{width:16px; height:16px; flex:0 0 auto; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.zchip.skel{width:92px;height:35px;padding:0;border-color:transparent;pointer-events:none;
+  background:linear-gradient(90deg,#eef2fa 25%,#e1e8f4 37%,#eef2fa 63%);background-size:400% 100%;animation:shim 1.25s ease infinite}
+@keyframes shim{0%{background-position:100% 0}100%{background-position:0 0}}
+.cbody{flex:1; min-width:0; display:flex; flex-direction:column}
+.ttl{display:flex; align-items:flex-start; gap:.6rem}
+.ttl h3{flex:1; min-width:0; font-family:"Spectral",serif; font-weight:500; font-size:1.16rem; color:var(--loch); line-height:1.18; margin:0}
+.pill{flex:0 0 auto; margin-top:.12rem; background:#eef4f6; color:var(--loch); border:1px solid var(--line); border-radius:999px;
+  padding:.18rem .55rem; font-size:.7rem; font-weight:700; white-space:nowrap}
+.sub2{color:var(--muted); font-size:.8rem; margin-top:.25rem}
+.acts{display:flex; gap:.5rem; margin-top:.65rem; flex-wrap:wrap}
+.acts a{display:inline-flex; align-items:center; justify-content:center; gap:.4rem; text-decoration:none;
+  font-weight:700; font-size:.82rem; border-radius:11px; padding:.55rem .85rem; min-height:42px; transition:.14s;
+  background:var(--loch); color:#fff}
+.acts a:hover{background:var(--loch-2)}
+.acts a:active{transform:scale(.97)}
+.acts svg{width:1.02em;height:1.02em;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+/* view toggle (mobile only) */
+.viewseg{display:none}
+.viewseg svg{width:1.05em;height:1.05em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* States */
+.state{padding:2.6rem 1.4rem; text-align:center; color:var(--muted)}
+.state .spin{width:38px;height:38px;border-radius:50%;margin:0 auto 1rem;border:3px solid var(--line); border-top-color:var(--azure); animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.state .btn{margin-top:1rem;background:var(--loch);color:#fff;border:none;border-radius:10px;padding:.6rem 1.1rem;font-family:inherit;font-weight:600;cursor:pointer}
+
+/* Cluster colours */
+.marker-cluster div{font-family:"Mulish";font-weight:700;color:#fff}
+.marker-cluster-small{background:rgba(124,92,158,.30)} .marker-cluster-small div{background:rgba(124,92,158,.92)}
+.marker-cluster-medium{background:rgba(197,135,46,.30)} .marker-cluster-medium div{background:rgba(197,135,46,.95)}
+.marker-cluster-large{background:rgba(18,59,79,.30)} .marker-cluster-large div{background:rgba(18,59,79,.95)}
+
+/* Popup */
+.leaflet-popup-content-wrapper{background:var(--card); color:var(--ink); border-radius:14px; border:1px solid var(--line); box-shadow:var(--shadow)}
+.leaflet-popup-content{margin:.8rem .95rem}
+.leaflet-popup-tip{background:var(--card)}
+.pop b{font-family:"Spectral",serif;font-size:1.18rem;color:var(--loch)}
+.pop img{width:100%;max-width:280px;border-radius:10px;margin:.55rem 0;display:block}
+.pop .meta{color:var(--muted); font-size:.82rem; margin:.15rem 0}
+.pop .links{margin-top:.55rem;display:flex;gap:.45rem;flex-wrap:wrap}
+.pop .links a{display:inline-flex;align-items:center;gap:.3rem;color:var(--loch); text-decoration:none; font-size:.8rem; font-weight:600; border:1px solid var(--line); padding:.3rem .55rem; border-radius:8px}
+.pop .links a:hover{background:#f0f5f6}
+.pop .links a.primary{background:var(--loch);color:#fff;border-color:var(--loch)}
+.pop .links a.primary:hover{background:var(--loch-2)}
+.pop .credit{color:var(--muted); font-size:.66rem; margin-top:.35rem}
+.pop .nophoto{font-style:italic; opacity:.85; margin:.5rem 0}
+.pop .nearnote{color:var(--azure); font-weight:700; font-style:normal; margin:.25rem 0}
+.maphint{background:rgba(255,255,255,.94); border:1px solid var(--line); border-radius:10px; padding:.4rem .6rem; font-size:.74rem; color:var(--loch); box-shadow:var(--shadow); max-width:190px; line-height:1.25; font-weight:600}
+.zone-label{background:rgba(255,255,255,.92)!important; border:1px solid var(--line)!important; border-radius:999px!important; color:var(--loch)!important; font-family:"Mulish",sans-serif!important; font-weight:700!important; font-size:.72rem!important; padding:.12rem .55rem!important; box-shadow:0 2px 8px rgba(18,59,79,.18)!important; white-space:nowrap; pointer-events:none!important}
+.zone-label:before{display:none!important}
+.zone-label.sel{background:var(--loch)!important; color:#fff!important; border-color:var(--loch)!important}
+.leaflet-interactive{transition:fill-opacity .18s ease}
+path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
+.locate{display:inline-flex; align-items:center; gap:.45rem; background:var(--loch); color:#fff; border:1px solid var(--loch); border-radius:12px; padding:.78rem 1rem; font-family:inherit; font-weight:600; font-size:.92rem; cursor:pointer; white-space:nowrap}
+.locate:hover{background:var(--loch-2)}
+.locate svg{width:1.05em; height:1.05em}
+.locate.loading{opacity:.65; cursor:default}
+.youdot{width:16px; height:16px; border-radius:50%; background:#2f7dd1; border:3px solid #fff; box-shadow:0 0 0 4px rgba(47,125,209,.3)}
+.lh-toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); background:var(--loch); color:#fff; padding:.6rem 1rem; border-radius:12px; box-shadow:var(--shadow); font-size:.88rem; opacity:0; pointer-events:none; transition:.3s; z-index:1000}
+.lh-toast.show{opacity:1; transform:translateX(-50%) translateY(-4px)}
+
+.attr{padding:.55rem 1.7rem; text-align:center; color:var(--muted); font-size:.72rem; border-top:1px solid var(--line)}
+.attr a{color:var(--muted)}
+
+@media(max-width:880px){
+  html,body{height:auto}
+  body{display:block}
+  header .wrap{padding:1.05rem 1.2rem 1rem}
+  .toolbar .stat{display:none}
+  .zonebar{padding:.4rem 1.2rem .7rem}
+  .viewseg{display:flex; gap:.5rem; position:sticky; top:0; z-index:40; background:var(--paper); padding:.6rem 1.2rem .7rem}
+  .viewseg button{flex:1; border:1px solid var(--line); background:var(--card); color:#54636a; border-radius:12px;
+    padding:.72rem; font-family:inherit; font-weight:800; font-size:.94rem; display:inline-flex; align-items:center; justify-content:center; gap:.45rem; cursor:pointer; transition:.14s}
+  .viewseg button.on{background:var(--loch); color:#fff; border-color:var(--loch); box-shadow:0 8px 20px rgba(18,59,79,.22)}
+  .layout{display:block; max-width:none; margin:0}
+  aside{border-left:none; border-top:1px solid var(--line)}
+  .list{overflow:visible; flex:none; padding:.4rem 1rem 1.2rem}
+  .media{width:104px;height:104px}
+  .zone-h{position:static}
+  #map{height:calc(100vh - 64px)}
+  body[data-view="list"] #map{display:none}
+  body[data-view="map"] aside{display:none}
+  body[data-view="map"] .attr{display:none}
+}
+</style>
+</head>
+<body data-view="list">
+
+<div class="hostbar" id="hostbar"></div>
+
+<div class="toolbar">
+  <div class="search">
+    <span class="ic"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+    <input id="q" placeholder="Search by name or place&hellip;" autocomplete="off">
+  </div>
+  <button class="locate" id="locateBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/></svg>Near me</button>
+</div>
+
+<div class="viewseg" id="viewseg">
+  <button data-v="list" class="on"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.5" cy="6" r="1.4"/><circle cx="3.5" cy="12" r="1.4"/><circle cx="3.5" cy="18" r="1.4"/></svg>List</button>
+  <button data-v="map"><svg viewBox="0 0 24 24"><polygon points="9 4 3 7 3 20 9 17 15 20 21 17 21 4 15 7 9 4"/><line x1="9" y1="4" x2="9" y2="17"/><line x1="15" y1="7" x2="15" y2="20"/></svg>Map</button>
+</div>
+
+<div class="zonebar" id="zonebar"><span class="zchip skel"></span><span class="zchip skel"></span><span class="zchip skel"></span><span class="zchip skel"></span><span class="zchip skel"></span></div>
+
+<div class="layout">
+  <div id="map"></div>
+  <aside>
+    <div class="head">
+      <h2>Directory</h2>
+      <button class="sort" id="sortBtn"><svg class="ico" viewBox="0 0 24 24"><path d="M3 6h13M3 12h9M3 18h5"/><path d="M18 9l3-3 3 3M21 6v12"/></svg><span>A&ndash;Z</span></button>
+    </div>
+    <div class="maphint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Tap any lighthouse to see exactly where it is on the map.</div>
+    <div class="list" id="list">
+      <div class="state"><div class="spin"></div>Querying OpenStreetMap&hellip;</div>
+    </div>
+  </aside>
+</div>
+
+<div class="attr">Sample prepared for Daviot Guest House &middot; Data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> (ODbL) &middot; Photography via <a href="https://commons.wikimedia.org" target="_blank" rel="noopener">Wikimedia Commons</a> (see each file for its licence) &middot; Map tiles &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a> &middot; Google links are external references only</div>
+
+<script>
+const $ = s => document.querySelector(s);
+
+/* ---- Reusable property branding. To rebrand for another place, edit only this. ---- */
+const HOST = {
+  name: "Daviot Guest House",
+  tagline: "Your guide to Scotland \u00b7 a sample prepared for our guests",
+  address: "12 Queen's Terrace, Ayr, KA7 1DU",
+  web: "https://www.daviothouse.co.uk/",
+  lat: 55.4657, lng: -4.6386   // approximate location \u2014 fine-tune if needed
+};
+function renderHostBar(){
+  if(!HOST.name) return;
+  const ico='<img class="hb-logo" src="https://www.daviothouse.co.uk/wp-content/uploads/2019/01/daviot-house-logo-4.png" alt="'+esc(HOST.name)+'" onerror="this.style.display=\'none\'">';
+  document.getElementById('hostbar').innerHTML='<div class="hb-inner">'+ico
+    +'<div class="hb-name"><b>'+esc(HOST.name)+'</b><span>'+esc(HOST.tagline)+'</span></div>'
+    +'<span class="hb-tag">Lighthouses</span>'
+    +'<div class="hb-addr">'+esc(HOST.address)+'</div></div>';
+}
+function addHostMarker(){
+  if(HOST.lat==null) return;
+  const pin='<svg width="34" height="42" viewBox="0 0 34 42" xmlns="http://www.w3.org/2000/svg"><path d="M17 1C9 1 2.5 7.2 2.5 15 2.5 24.5 17 41 17 41S31.5 24.5 31.5 15C31.5 7.2 25 1 17 1z" fill="#7c5c9e" stroke="#fff" stroke-width="1.6"/><g stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(17,15.5) scale(0.62) translate(-12,-12)"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></g></svg>';
+  const icon=L.divIcon({className:'',html:pin,iconSize:[34,42],iconAnchor:[17,40],popupAnchor:[0,-36]});
+  const gm='https://www.google.com/maps/search/?api=1&query='+HOST.lat+','+HOST.lng;
+  const m=L.marker([HOST.lat,HOST.lng],{icon:icon,zIndexOffset:1000}).addTo(map);
+  m.bindPopup('<div class="pop"><b>'+esc(HOST.name)+'</b><div class="meta">'+esc(HOST.address)+'</div>'
+    +'<div class="links"><a class="primary" href="'+gm+'" target="_blank" rel="noopener">'+I.pin+'Open in Google Maps</a>'
+    +(HOST.web?'<a href="'+esc(HOST.web)+'" target="_blank" rel="noopener">'+I.ext+'Website</a>':'')+'</div></div>');
+  m.bindTooltip(HOST.name,{direction:'top'});
+}
+
+/* SVG icon strings */
+const I = {
+  pin:'<svg class="ico" viewBox="0 0 24 24"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  nav:'<svg class="ico" viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>',
+  ext:'<svg class="ico" viewBox="0 0 24 24"><path d="M14 3h7v7"/><path d="M21 3l-9 9"/><path d="M19 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/></svg>',
+  lh:'<svg class="ph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 21h5"/><path d="M10.2 21 11 10h2l.8 11"/><path d="M10.6 6.4h2.8l-1-2.4h-.8z"/><path d="M10.4 6.4h3.2V10h-3.2z"/><path d="M11 13.5h2"/><path d="M14.4 7.2 18 6M14.4 8.8 18 10"/><path d="M9.6 7.2 6 6M9.6 8.8 6 10"/></svg>'
+};
+
+const map = L.map('map', {zoomControl:true}).setView([57.5,-4.6], 6);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  maxZoom:19, subdomains:'abcd',
+  attribution:'&copy; OpenStreetMap contributors &copy; CARTO'
+}).addTo(map);
+const cluster = L.markerClusterGroup({maxClusterRadius:48, showCoverageOnHover:false});
+map.addLayer(cluster);
+
+const pinSVG = '<svg width="32" height="40" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg">'
+  +'<path d="M16 1C8.3 1 2 7 2 14.3 2 23.5 16 39 16 39s14-15.5 14-24.7C30 7 23.7 1 16 1z" fill="#c5872e" stroke="#fff" stroke-width="1.6"/>'
+  +'<g stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(16,14.5) scale(0.62) translate(-12,-12)">'
+  +'<path d="M9.5 21h5"/><path d="M10.2 21 11 10h2l.8 11"/><path d="M10.6 6.4h2.8l-1-2.4h-.8z"/><path d="M10.4 6.4h3.2V10h-3.2z"/><path d="M11 13.5h2"/><path d="M14.4 7.2 18 6M14.4 8.8 18 10"/><path d="M9.6 7.2 6 6M9.6 8.8 6 10"/></g></svg>';
+const lhIcon = L.divIcon({className:'', html:pinSVG, iconSize:[32,40], iconAnchor:[16,38], popupAnchor:[0,-34]});
+
+let lighthouses = [], markers = {}, sortAZ = true;
+
+const OVERPASS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+  'https://maps.mail.ru/osm/tools/overpass/api/interpreter'
+];
+const BBOX='54.6,-8.9,61.0,-0.6';   // S,W,N,E — riquadro Scozia (molto più veloce dell'area amministrativa)
+const QUERY = `[out:json][timeout:25];
+(
+  node["man_made"="lighthouse"](${BBOX});
+  way["man_made"="lighthouse"](${BBOX});
+);
+out center tags;`;
+
+const CACHE_KEY='lh_osm_v1', IMG_KEY='lh_img_v1', CACHE_TTL=7*864e5, CACHE_STALE=864e5;  // 7 giorni; refresh silenzioso dopo 1 giorno
+const KEEP=['name','name:en','seamark:name','addr:city','addr:place','island','wikimedia_commons','image','wikidata','height','seamark:light:character'];
+function pickTags(t){ const o={}; KEEP.forEach(k=>{ if(t[k]!=null) o[k]=t[k]; }); return o; }
+function slim(els){ return els.map(el=>({type:el.type,id:el.id,lat:el.lat,lon:el.lon,center:el.center,tags:pickTags(el.tags||{})})); }
+function readCache(){ try{ const c=JSON.parse(localStorage.getItem(CACHE_KEY)||'null'); if(c&&Array.isArray(c.elements)&&(Date.now()-c.t)<CACHE_TTL) return c; }catch(e){} return null; }
+function writeCache(els){ try{ localStorage.setItem(CACHE_KEY,JSON.stringify({t:Date.now(),elements:slim(els)})); }catch(e){} }
+function imgCacheGet(){ try{ return JSON.parse(localStorage.getItem(IMG_KEY)||'{}'); }catch(e){ return {}; } }
+function imgCacheSet(m){ try{ localStorage.setItem(IMG_KEY,JSON.stringify(m)); }catch(e){} }
+
+/* Frozen set of notable lighthouses across every zone — instant first paint, no Overpass needed. OSM (below) then quietly enriches with more points + photos. */
+const LH_CURATED=[
+  ["Turnberry Lighthouse",55.3258,-4.8446,"Turnberry, Ayrshire"],
+  ["Ailsa Craig Lighthouse",55.2519,-5.1085,"Ailsa Craig"],
+  ["Mull of Galloway Lighthouse",54.6350,-4.8574,"Rhins of Galloway"],
+  ["Corsewall Lighthouse",55.0068,-5.1589,"Kirkcolm, Galloway"],
+  ["Cloch Lighthouse",55.9423,-4.8786,"Gourock, Firth of Clyde"],
+  ["Pladda Lighthouse",55.4252,-5.1185,"Pladda, off Arran"],
+  ["Rubha nan Gall Lighthouse",56.6380,-6.0674,"Tobermory, Mull"],
+  ["Eilean Musdile Lighthouse, Lismore",56.4557,-5.6073,"Lismore, Firth of Lorn"],
+  ["Skerryvore Lighthouse",56.3251,-7.1106,"off Tiree"],
+  ["Davaar Lighthouse",55.4279,-5.5405,"Campbeltown Loch"],
+  ["Butt of Lewis Lighthouse",58.5154,-6.2611,"Isle of Lewis"],
+  ["Tiumpan Head Lighthouse",58.2583,-6.1386,"Isle of Lewis"],
+  ["Barra Head Lighthouse",56.7854,-7.6535,"Berneray, Barra"],
+  ["Eilean Glas Lighthouse",57.8567,-6.6419,"Scalpay, Harris"],
+  ["Cape Wrath Lighthouse",58.6254,-4.9991,"Sutherland"],
+  ["Stoer Head Lighthouse",58.2399,-5.4030,"Assynt, Sutherland"],
+  ["Strathy Point Lighthouse",58.5986,-4.0178,"Sutherland"],
+  ["Duncansby Head Lighthouse",58.6440,-3.0249,"near John o\u2019 Groats"],
+  ["Kinnaird Head Lighthouse",57.6979,-2.0045,"Fraserburgh"],
+  ["Buchan Ness Lighthouse",57.4704,-1.7743,"Boddam, Peterhead"],
+  ["Girdle Ness Lighthouse",57.1390,-2.0485,"Aberdeen"],
+  ["Covesea Skerries Lighthouse",57.7240,-3.3387,"Lossiemouth, Moray"],
+  ["Tarbat Ness Lighthouse",57.8649,-3.7765,"Easter Ross"],
+  ["Bell Rock Lighthouse",56.4340,-2.3880,"off Arbroath"],
+  ["Bass Rock Lighthouse",56.0761,-2.6407,"Firth of Forth"],
+  ["Fidra Lighthouse",56.0732,-2.7852,"Firth of Forth"],
+  ["Isle of May Lighthouse",56.1833,-2.5667,"Firth of Forth"],
+  ["Start Point Lighthouse",59.2774,-2.3761,"Sanday, Orkney"],
+  ["North Ronaldsay Lighthouse",59.3897,-2.3819,"North Ronaldsay, Orkney"],
+  ["Cantick Head Lighthouse",58.7873,-3.1313,"Hoy, Orkney"],
+  ["Noup Head Lighthouse",59.3310,-3.0701,"Westray, Orkney"],
+  ["Sumburgh Head Lighthouse",59.8541,-1.2750,"Shetland"],
+  ["Muckle Flugga Lighthouse",60.8553,-0.8853,"Unst, Shetland"],
+  ["Eshaness Lighthouse",60.4892,-1.6277,"Northmavine, Shetland"],
+  ["Bressay Lighthouse",60.1200,-1.1215,"Bressay, Shetland"]
+];
+function curatedLighthouses(){
+  return LH_CURATED.map(c=>({
+    id:'lhc_'+c[0].toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,''),
+    name:c[0], lat:c[1], lng:c[2], place:c[3]||'',
+    zone:zoneOf(c[1],c[2]), tags:{}, img:null, qid:null, checked:true, curated:true
+  }));
+}
+
+function fetchOne(url,signal){
+  return fetch(url,{method:'POST',body:'data='+encodeURIComponent(QUERY),signal:signal})
+    .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); });
+}
+async function fetchData(){
+  const ctrl=new AbortController();
+  const timer=setTimeout(()=>ctrl.abort(), 15000);
+  try{
+    const d = await Promise.any(OVERPASS.map(u=>fetchOne(u, ctrl.signal)));
+    clearTimeout(timer); ctrl.abort();
+    writeCache(d.elements||[]); process(d.elements||[]);
+  }catch(e){
+    clearTimeout(timer); console.warn('all overpass mirrors failed', e);
+    if(!lighthouses.length){ lighthouses=curatedLighthouses(); computeZoneShapes(); draw(); renderZoneChips(); fitToActive(); }
+  }
+}
+function commonsThumb(file,w){ file=String(file).replace(/^File:/i,'').trim(); return 'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(file)+'?width='+(w||400); }
+
+// Il riquadro prende anche un lembo d'Inghilterra: tengo solo i punti a nord del confine.
+function inScotland(lat,lng){
+  if(lat<54.6 || lat>61.0 || lng<-8.9 || lng>-0.6) return false;
+  if(lng<=-3.05) return true;                 // versante ovest: tutto Scozia entro il riquadro
+  if(lng>=-2.0)  return lat>=55.8;            // nord-est (Mare del Nord): solo a nord di Berwick
+  const bl = 54.98 + (55.8-54.98)*((lng-(-3.05))/(-2.0-(-3.05)));  // diagonale del confine
+  return lat>=bl;
+}
+
+function process(elements){
+  const seen=new Set();
+  let osm = elements.map(el=>{
+    const lat = el.lat!=null?el.lat:(el.center&&el.center.lat), lng = el.lon!=null?el.lon:(el.center&&el.center.lon);
+    if(lat==null||lng==null) return null;
+    const t=el.tags||{};
+    const name = t.name || t['name:en'] || t['seamark:name'] || 'Unnamed lighthouse';
+    const place = t['addr:city'] || t['addr:place'] || t.island || '';
+    let img=null;
+    if(t.wikimedia_commons && /^File:/i.test(t.wikimedia_commons)) img=commonsThumb(t.wikimedia_commons,400);
+    else if(t.image && /^https?:\/\//.test(t.image)) img=t.image;
+    const qid=t.wikidata||null;
+    return {id:el.type[0]+el.id, name, lat, lng, place, zone:zoneOf(lat,lng), tags:t, img, qid, checked:(!!img || !qid)};
+  }).filter(Boolean).filter(l=>inScotland(l.lat,l.lng)).filter(l=>{ const k=l.lat.toFixed(4)+','+l.lng.toFixed(4); if(seen.has(k))return false; seen.add(k); return true; });
+  // Merge with the frozen set: drop an OSM duplicate sitting next to a curated lighthouse,
+  // but hand its photo (commons/wikidata) to the curated entry.
+  const cur=curatedLighthouses();
+  const near=(a,b)=>Math.abs(a.lat-b.lat)<0.006 && Math.abs(a.lng-b.lng)<0.012;
+  osm = osm.filter(p=>{
+    const c=cur.find(cc=>near(p,cc));
+    if(c){ if(!c.img && !c.qid){ c.img=p.img; c.qid=p.qid; c.checked=(!!p.img||!p.qid); } if(p.place && !c.place) c.place=p.place; return false; }
+    return true;
+  });
+  lighthouses = osm.concat(cur);
+  computeZoneShapes(); draw(); renderZoneChips(); fitToActive();
+  if(!autoLocated && navigator.geolocation && navigator.permissions){ navigator.permissions.query({name:'geolocation'}).then(p=>{ if(p.state==='granted'){ autoLocated=true; locateMe(); } }).catch(function(){}); }
+  enrichImages();
+}
+
+async function enrichImages(){
+  const cache=imgCacheGet();
+  // 1) istantaneo: riempi dalle foto già in cache
+  lighthouses.forEach(l=>{ if(!l.img&&l.qid&&cache[l.qid]){ l.img=cache[l.qid]; updateThumb(l.id,l.img); } });
+  // 2) scarica solo i qid mancanti
+  const ids = [...new Set(lighthouses.filter(l=>!l.img && l.qid).map(l=>l.qid))];
+  let changed=false;
+  for(let i=0;i<ids.length;i+=45){
+    const batch=ids.slice(i,i+45);
+    try{
+      const r=await fetch('https://www.wikidata.org/w/api.php?action=wbgetentities&props=claims&format=json&origin=*&ids='+batch.join('|'));
+      const d=await r.json();
+      for(const qid of batch){
+        const ent=d.entities&&d.entities[qid];
+        const p18=ent&&ent.claims&&ent.claims.P18&&ent.claims.P18[0];
+        const file=p18&&p18.mainsnak&&p18.mainsnak.datavalue&&p18.mainsnak.datavalue.value;
+        if(file){ const thumb=commonsThumb(file,400); cache[qid]=thumb; changed=true; lighthouses.filter(l=>l.qid===qid&&!l.img).forEach(l=>{ l.img=thumb; updateThumb(l.id,thumb); }); }
+      }
+    }catch(e){ console.warn('wikidata batch failed', e); }
+  }
+  if(changed) imgCacheSet(cache);
+  // Every source has now been checked: anything still without an image is genuinely
+  // unphotographed in OUR data (not necessarily in the world).
+  lighthouses.forEach(l=>{ l.checked=true; });
+  refreshPopups();
+}
+function refreshPopups(){ Object.keys(markers).forEach(id=>{ const l=lighthouses.find(x=>x.id===id); if(l&&markers[id]) markers[id].setPopupContent(popupHtml(l)); }); }
+function updateThumb(id,url){
+  const m0=document.querySelector('.media[data-id="'+id+'"]');
+  if(m0){ m0.classList.remove('noimg'); m0.innerHTML='<img loading="lazy" src="'+esc(url)+'" alt="" onerror="phFail(this)"><span class="locbadge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>'; }
+  const m=markers[id]; if(m) m.setPopupContent(popupHtml(lighthouses.find(l=>l.id===id)));
+}
+
+const ZONE_ORDER=['Shetland','Orkney','North Highlands & Coast','Outer Hebrides','West Coast & Inner Hebrides','North-East & Moray Firth','East Coast & Forth','Clyde & South-West'];
+const ZONE_SHORT={'Shetland':'Shetland','Orkney':'Orkney','North Highlands & Coast':'N. Highlands','Outer Hebrides':'Outer Hebrides','West Coast & Inner Hebrides':'West & Hebrides','North-East & Moray Firth':'North-East','East Coast & Forth':'East & Forth','Clyde & South-West':'Clyde & SW'};
+const ZONE_COLORS={'Shetland':'#5b7a8c','Orkney':'#6f8f7a','North Highlands & Coast':'#7c5c9e','Outer Hebrides':'#4f9aa0','West Coast & Inner Hebrides':'#5e6b3b','North-East & Moray Firth':'#c5872e','East Coast & Forth':'#356a8a','Clyde & South-West':'#b5683f'};
+let activeZone='All';
+const zoneLayer=L.layerGroup().addTo(map);
+const ZONE_SHAPES={};
+
+/* Assign a Scottish coastal region from coordinates (approximate but sensible). */
+function zoneOf(lat,lng){
+  if(lat>=59.4) return 'Shetland';
+  if(lat>=58.65 && lng>=-3.6 && lng<=-2.2) return 'Orkney';
+  if(lng<=-6.1 && lat>=56.6 && lat<=58.6) return 'Outer Hebrides';
+  if(lat>=58.0) return 'North Highlands & Coast';
+  if(lng<=-5.2) return 'West Coast & Inner Hebrides';
+  if(lat>=56.9) return 'North-East & Moray Firth';
+  if(lng<=-4.0) return 'Clyde & South-West';
+  return 'East Coast & Forth';
+}
+
+/* Convex hull (monotone chain) → soft region outlines that hug the real points */
+function convexHull(pts){
+  pts=pts.slice().sort((a,b)=>a.x-b.x||a.y-b.y);
+  if(pts.length<3) return pts;
+  const cr=(o,a,b)=>(a.x-o.x)*(b.y-o.y)-(a.y-o.y)*(b.x-o.x);
+  const lo=[]; for(const p of pts){ while(lo.length>=2 && cr(lo[lo.length-2],lo[lo.length-1],p)<=0) lo.pop(); lo.push(p); }
+  const up=[]; for(let i=pts.length-1;i>=0;i--){ const p=pts[i]; while(up.length>=2 && cr(up[up.length-2],up[up.length-1],p)<=0) up.pop(); up.push(p); }
+  lo.pop(); up.pop(); return lo.concat(up);
+}
+function computeZoneShapes(){
+  for(const k in ZONE_SHAPES) delete ZONE_SHAPES[k];
+  ZONE_ORDER.forEach(z=>{
+    const pts=lighthouses.filter(l=>l.zone===z);
+    if(!pts.length) return;
+    const cx=pts.reduce((s,p)=>s+p.lng,0)/pts.length, cy=pts.reduce((s,p)=>s+p.lat,0)/pts.length;
+    const hull=pts.length>=3?convexHull(pts.map(p=>({x:p.lng,y:p.lat}))):[];
+    if(hull.length<3){ ZONE_SHAPES[z]={type:'circle',center:[cy,cx],count:pts.length}; return; }
+    const scale=1.08;
+    const ll=hull.map(p=>[cy+(p.y-cy)*scale, cx+(p.x-cx)*scale]);
+    ZONE_SHAPES[z]={type:'poly',latlngs:ll,center:[cy,cx],count:pts.length};
+  });
+}
+function shapeFor(z,opts){
+  const sh=ZONE_SHAPES[z]; if(!sh) return null;
+  return sh.type==='poly' ? L.polygon(sh.latlngs,opts) : L.circle(sh.center,Object.assign({radius:14000},opts));
+}
+function renderZoneRegions(){
+  ZONE_ORDER.forEach(z=>{
+    const sh=ZONE_SHAPES[z]; if(!sh) return;
+    const col=ZONE_COLORS[z]||'#7c5c9e';
+    const sel=(z===activeZone);
+    const dim=(activeZone!=='All' && !sel);
+    const style = sel  ? {color:col,weight:2,opacity:.85,fillColor:col,fillOpacity:.16,smoothFactor:1.2}
+                : dim  ? {color:col,weight:1,opacity:.4,fillColor:col,fillOpacity:.045,smoothFactor:1.2}
+                :        {color:col,weight:1.3,opacity:.65,fillColor:col,fillOpacity:.09,smoothFactor:1.2};
+    const shape=shapeFor(z,style);
+    shape.on('click',function(ev){ L.DomEvent.stop(ev); if(z===activeZone) return; activeZone=z; renderZoneChips(); draw(); fitToActive(); });
+    shape.bindTooltip(esc(ZONE_SHORT[z]||z)+' \u00b7 '+sh.count,{permanent:true,direction:'center',className:'zone-label'+(sel?' sel':'')});
+    zoneLayer.addLayer(shape);
+  });
+}
+
+function itemHtml(l){
+  const gm='https://www.google.com/maps/search/?api=1&query='+l.lat+','+l.lng;
+  const media='<div class="media'+(l.img?'':' noimg')+'" data-id="'+l.id+'">'+(l.img?'<img loading="lazy" src="'+esc(l.img)+'" alt="" onerror="phFail(this)">':I.lh)+'<span class="locbadge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span></div>';
+  const pill = showZonePill ? '<span class="pill">'+esc(ZONE_SHORT[l.zone]||l.zone)+'</span>' : '';
+  return '<article class="card" data-id="'+l.id+'">'
+    + media
+    + '<div class="cbody"><div class="ttl"><h3>'+esc(l.name)+'</h3>'+pill+'</div>'
+    + (l.place?'<div class="sub2">'+esc(l.place)+'</div>':'')
+    + '<div class="acts"><a href="'+gm+'" target="_blank" rel="noopener">'+I.pin+'Open in Maps</a></div>'
+    + '</div></article>';
+}
+function phFail(img){ const m=img.closest('.media'); if(!m) return; m.classList.add('noimg'); img.remove(); m.insertAdjacentHTML('afterbegin', I.lh); }
+
+function renderZoneChips(){
+  const counts={}; lighthouses.forEach(l=>{ counts[l.zone]=(counts[l.zone]||0)+1; });
+  const zones=ZONE_ORDER.filter(z=>counts[z]);
+  let html='<button class="zchip '+(activeZone==='All'?'on':'')+'" data-z="All">All <span class="c">'+lighthouses.length+'</span></button>';
+  html+=zones.map(z=>'<button class="zchip '+(activeZone===z?'on':'')+'" data-z="'+esc(z)+'">'+esc(ZONE_SHORT[z]||z)+' <span class="c">'+counts[z]+'</span></button>').join('');
+  const bar=$('#zonebar'); bar.innerHTML=html;
+  bar.querySelectorAll('.zchip').forEach(b=>b.addEventListener('click',function(){ activeZone=this.dataset.z; renderZoneChips(); draw(); fitToActive(); }));
+}
+
+function fitToActive(){
+  const pts=lighthouses.filter(l=>activeZone==='All'||l.zone===activeZone).map(l=>[l.lat,l.lng]);
+  if(pts.length){ try{ map.fitBounds(L.latLngBounds(pts).pad(0.15)); }catch(_){} }
+}
+
+function draw(){
+  cluster.clearLayers(); markers={}; zoneLayer.clearLayers();
+  const filter=$('#q').value.trim().toLowerCase();
+  const cmp=(a,b)=> sortAZ ? a.name.localeCompare(b.name,'en') : b.name.localeCompare(a.name,'en');
+  let items=lighthouses.filter(l=>(!filter||(l.name+' '+l.place).toLowerCase().includes(filter)) && (activeZone==='All'||l.zone===activeZone));
+
+  const overview = (activeZone==='All' && !filter);
+  if(filter){
+    items.forEach(l=>{ const m=L.marker([l.lat,l.lng],{icon:lhIcon}).bindPopup(popupHtml(l)); markers[l.id]=m; cluster.addLayer(m); });
+  } else {
+    renderZoneRegions();                 // all regions always clickable; active one emphasised
+    if(activeZone!=='All') items.forEach(l=>{ const m=L.marker([l.lat,l.lng],{icon:lhIcon}).bindPopup(popupHtml(l)); markers[l.id]=m; cluster.addLayer(m); });
+  }
+
+  const list=$('#list');
+  if(!items.length){ list.innerHTML='<div class="state">No lighthouse matches your filters.</div>'; return; }
+  showZonePill = !overview;   // in overview the zone headers already label groups
+  const groups={}; items.forEach(l=>{ (groups[l.zone]=groups[l.zone]||[]).push(l); });
+  let html='';
+  ZONE_ORDER.forEach(z=>{
+    if(!groups[z]) return;
+    const arr=groups[z].sort(cmp);
+    if(activeZone==='All') html+='<div class="zone-h">'+esc(z)+'<span>'+arr.length+'</span></div>';
+    html+=arr.map(itemHtml).join('');
+  });
+  list.innerHTML=html;
+  list.querySelectorAll('.card').forEach(el=>el.addEventListener('click',e=>{
+    if(e.target.closest('a')) return;
+    const l=lighthouses.find(x=>x.id===el.dataset.id); if(!l) return;
+    if(!markers[l.id]){ activeZone=l.zone; renderZoneChips(); draw(); }
+    const open=()=>{ const mk=markers[l.id]; if(mk) cluster.zoomToShowLayer(mk, ()=>mk.openPopup()); else map.flyTo([l.lat,l.lng],12,{duration:.8}); };
+    if(window.matchMedia('(max-width:880px)').matches){ setView('map'); setTimeout(open,150); }
+    else open();
+  }));
+}
+
+let showZonePill=false;
+function setView(v){
+  document.body.dataset.view=v;
+  document.querySelectorAll('#viewseg button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
+  if(v==='map'){ setTimeout(()=>{ map.invalidateSize(); fitToActive(); },70);
+    window.scrollTo({top:document.querySelector('.viewseg').offsetTop, behavior:'smooth'}); }
+}
+
+function popupHtml(l){
+  const gm='https://www.google.com/maps/search/?api=1&query='+l.lat+','+l.lng;
+  let photo='';
+  if(l.img){
+    photo='<div class="photo"><img loading="lazy" src="'+esc(l.img)+'" alt="'+esc(l.name)+'" onerror="var p=this.parentNode;p.className=\'meta nophoto\';p.textContent=\'Photo unavailable\'"><div class="credit">Photo: Wikimedia Commons</div></div>';
+  } else if(l.checked){
+    photo='<div class="meta nophoto">No photo on file &mdash; view imagery &amp; Street View on Google Maps below.</div>';
+  }
+  const h=l.tags.height?'<div class="meta">Height: '+esc(l.tags.height)+' m</div>':'';
+  const ch=l.tags['seamark:light:character']?'<div class="meta">Light character: '+esc(l.tags['seamark:light:character'])+'</div>':'';
+  return '<div class="pop"><b>'+esc(l.name)+'</b>'+photo+h+ch
+    +'<div class="links"><a class="primary" href="'+gm+'" target="_blank" rel="noopener">'+I.pin+'Open in Google Maps</a></div></div>';
+}
+
+function showError(){ $('#list').innerHTML='<div class="state">Couldn&rsquo;t reach OpenStreetMap right now (the Overpass servers can be busy).<br><button class="btn" onclick="retry()">Retry</button></div>'; const zb=document.getElementById('zonebar'); if(zb) zb.innerHTML=''; }
+function retry(){ $('#list').innerHTML='<div class="state"><div class="spin"></div>Querying OpenStreetMap&hellip;</div>'; fetchData(); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+
+$('#q').addEventListener('input',function(){ if(lighthouses.length) draw(); });
+$('#sortBtn').addEventListener('click',function(){ sortAZ=!sortAZ; this.querySelector('span').textContent=sortAZ?'A\u2013Z':'Z\u2013A'; if(lighthouses.length) draw(); });
+
+/* ---- "Near me" (GPS) → jump to your region and open the nearest lighthouse ---- */
+let clickLine=null, lastNearId=null, youMarker=null, autoLocated=false, _tt=null;
+function toast(m){ const t=$('#toast'); if(!t) return; t.textContent=m; t.classList.add('show'); clearTimeout(_tt); _tt=setTimeout(()=>t.classList.remove('show'),2600); }
+function haversineKm(a,b){ const R=6371,r=d=>d*Math.PI/180; const dla=r(b.lat-a.lat),dln=r(b.lng-a.lng); const s=Math.sin(dla/2)**2+Math.cos(r(a.lat))*Math.cos(r(b.lat))*Math.sin(dln/2)**2; return 2*R*Math.asin(Math.sqrt(s)); }
+function fmtKm(km){ const mi=km*0.621371; return mi<1?Math.round(mi*1760)+' yd':mi.toFixed(mi<10?1:0)+' mi'; }
+
+const hint=L.control({position:'topright'});
+hint.onAdd=function(){ const d=L.DomUtil.create('div','maphint'); d.textContent='Tap a region to see its lighthouses \u2014 or “Near me”'; return d; };
+hint.addTo(map);
+function killHint(){ const el=document.querySelector('.maphint'); if(el) el.remove(); }
+
+function revealNearest(latlng, fromLabel){
+  const ids=Object.keys(markers); if(!ids.length){ return; }
+  let best=null, bd=Infinity;
+  ids.forEach(id=>{ const l=lighthouses.find(x=>x.id===id); if(!l) return; const d=haversineKm(latlng,l); if(d<bd){ bd=d; best=l; } });
+  if(!best) return;
+  if(clickLine) map.removeLayer(clickLine);
+  clickLine=L.polyline([latlng,[best.lat,best.lng]],{color:'#c5872e',weight:2,dashArray:'2 7',opacity:.9}).addTo(map);
+  if(lastNearId && lastNearId!==best.id && markers[lastNearId]){ const pl=lighthouses.find(x=>x.id===lastNearId); if(pl) markers[lastNearId].setPopupContent(popupHtml(pl)); }
+  lastNearId=best.id;
+  const dist=fmtKm(bd);
+  const open=()=>{ const mk=markers[best.id]; if(mk){ mk.setPopupContent(popupHtml(best).replace('</b>','</b><div class="meta nearnote">\u2248 '+dist+' '+fromLabel+'</div>')); mk.openPopup(); } };
+  cluster.zoomToShowLayer(markers[best.id], open);
+}
+
+const youIcon=L.divIcon({className:'', html:'<div class="youdot"></div>', iconSize:[16,16], iconAnchor:[8,8]});
+function locateMe(){
+  if(!navigator.geolocation){ toast('Location not supported on this device'); return; }
+  const btn=$('#locateBtn'); if(btn){ btn.disabled=true; btn.classList.add('loading'); }
+  navigator.geolocation.getCurrentPosition(pos=>{
+    if(btn){ btn.disabled=false; btn.classList.remove('loading'); }
+    killHint();
+    const ll=L.latLng(pos.coords.latitude,pos.coords.longitude);
+    if(youMarker) youMarker.setLatLng(ll); else youMarker=L.marker(ll,{icon:youIcon,zIndexOffset:1100}).addTo(map).bindTooltip('You are here',{direction:'top'});
+    let best=null,bd=Infinity; lighthouses.forEach(l=>{ const d=haversineKm(ll,l); if(d<bd){ bd=d; best=l; } });
+    if(best && best.zone!==activeZone){ activeZone=best.zone; renderZoneChips(); draw(); }
+    fitToActive();
+    revealNearest(ll,'from your location');
+  }, err=>{
+    if(btn){ btn.disabled=false; btn.classList.remove('loading'); }
+    toast(err.code===1?'Location permission denied':'Location unavailable');
+  }, {enableHighAccuracy:true, timeout:10000, maximumAge:60000});
+}
+
+$('#locateBtn').addEventListener('click', locateMe);
+document.querySelectorAll('#viewseg button').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.v)));
+
+renderHostBar();
+addHostMarker();
+(function start(){
+  const c=readCache();
+  if(c){ process(c.elements); if(Date.now()-c.t>CACHE_STALE) fetchData(); }  // instant from cache; quiet refresh if stale
+  else {                                                                      // first visit: show the frozen lighthouses instantly, then enrich live
+    lighthouses=curatedLighthouses(); computeZoneShapes(); draw(); renderZoneChips(); fitToActive();
+    fetchData();
+  }
+})();
+</script>
+<div class="lh-toast" id="toast"></div>
+
+</body>
+</html>

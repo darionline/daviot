@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Highland Compass — Proposal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f5f1e8; --card:#ffffff; --ink:#1e2a30; --muted:#69757c;
+  --loch:#123b4f; --loch-2:#0d2c3c; --heather:#7c5c9e; --amber:#c5872e; --moss:#5e6b3b;
+  --line:#e3dbcb; --shadow:0 14px 40px rgba(18,59,79,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Mulish",system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.6}
+h1,h2,h3{font-family:"Spectral",Georgia,serif;font-weight:500;margin:0;letter-spacing:.005em}
+svg.ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.page{max-width:840px;margin:0 auto;padding:0 1.5rem 4rem}
+.muted{color:var(--muted)}
+a{color:var(--loch)}
+
+/* Cover */
+.cover{background:linear-gradient(160deg,var(--loch),var(--loch-2));color:#f3ede0;border-bottom:3px solid var(--amber);position:relative;overflow:hidden}
+.cover .beam{position:absolute;top:-50%;left:60%;width:120%;height:240%;background:conic-gradient(from 0deg at 50% 0%,transparent 0deg,rgba(247,224,165,0) 16deg,rgba(247,224,165,.12) 25deg,rgba(247,224,165,0) 34deg,transparent 360deg);transform-origin:50% 0%;animation:sweep 13s linear infinite;pointer-events:none}
+@keyframes sweep{to{transform:translateX(-50%) rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.cover .beam{animation:none;opacity:.4}}
+.cover .inner{max-width:840px;margin:0 auto;padding:2.6rem 1.5rem 2.4rem;position:relative}
+.brandrow{display:flex;align-items:center;gap:.7rem;margin-bottom:1.8rem}
+.brandrow .m{width:34px;height:34px;color:var(--amber)}
+.brandrow b{font-family:"Spectral",serif;font-weight:600;font-size:1.15rem;letter-spacing:.02em}
+.kicker{font-weight:700;letter-spacing:.2em;text-transform:uppercase;font-size:.7rem;color:var(--amber)}
+.cover h1{font-size:clamp(2.1rem,5vw,3.2rem);line-height:1.05;margin:.5rem 0 .4rem;color:#fbf6ec}
+.cover .lede{color:#bcd0d8;max-width:54ch;font-size:1.05rem}
+.meta{margin-top:1.8rem;display:flex;gap:2.2rem;flex-wrap:wrap;font-size:.86rem}
+.meta div span{display:block;color:#8fb0bb;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.15rem}
+
+/* Sections */
+section{margin-top:2.6rem}
+section > .eyebrow{color:var(--amber);font-weight:700;letter-spacing:.16em;text-transform:uppercase;font-size:.72rem;margin-bottom:.5rem}
+section h2{font-size:1.7rem;color:var(--loch);margin-bottom:.7rem}
+section p{margin:.5rem 0}
+.lead{font-size:1.08rem}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}
+.feature{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.1rem 1.15rem;box-shadow:0 3px 12px rgba(18,59,79,.05)}
+.feature .ic{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;margin-bottom:.6rem;background:#f0ece1;color:var(--loch)}
+.feature.h .ic{color:var(--heather)} .feature.a .ic{color:var(--amber)} .feature.g .ic{color:var(--moss)}
+.feature h3{font-size:1.12rem;margin-bottom:.25rem}
+.feature p{font-size:.92rem;color:var(--muted);margin:0}
+
+.benefits{list-style:none;padding:0;margin:1rem 0 0}
+.benefits li{display:flex;gap:.7rem;padding:.55rem 0;border-bottom:1px dashed var(--line)}
+.benefits li:last-child{border-bottom:none}
+.benefits .ic{color:var(--moss);flex:0 0 auto;margin-top:.15rem}
+.benefits b{font-weight:700}
+
+.demo{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:12px;padding:1.2rem 1.3rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+.demo .t{flex:1;min-width:220px}
+.demo a.btn{background:var(--loch);color:#fff;text-decoration:none;padding:.7rem 1.2rem;border-radius:10px;font-weight:700;font-size:.92rem;white-space:nowrap}
+
+.steps{counter-reset:s;margin-top:1rem}
+.step{display:flex;gap:1rem;padding:.85rem 0;border-bottom:1px solid var(--line)}
+.step:last-child{border-bottom:none}
+.step .n{counter-increment:s;flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:var(--loch);color:#fff;display:grid;place-items:center;font-family:"Spectral",serif;font-weight:600}
+.step .n::before{content:counter(s)}
+.step h3{font-size:1.05rem}
+.step p{font-size:.92rem;color:var(--muted);margin:.15rem 0 0}
+
+.invest{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:1rem}
+.invest .r{display:flex;justify-content:space-between;gap:1rem;padding:.9rem 1.2rem;border-bottom:1px solid var(--line)}
+.invest .r:last-child{border-bottom:none}
+.invest .r b{font-weight:700}
+.invest .r .p{font-family:"Spectral",serif;color:var(--loch);font-size:1.1rem;white-space:nowrap}
+.invest .note{padding:.8rem 1.2rem;background:#faf7f0;color:var(--muted);font-size:.8rem}
+
+.close{margin-top:2.6rem;background:linear-gradient(160deg,var(--loch),var(--loch-2));color:#f3ede0;border-radius:16px;padding:1.8rem;border-top:3px solid var(--amber)}
+.close h2{color:#fbf6ec}
+.close p{color:#bcd0d8}
+.sign{margin-top:1.2rem;display:flex;gap:2rem;flex-wrap:wrap;font-size:.9rem}
+.sign span{display:block;color:#8fb0bb;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase}
+
+footer{text-align:center;color:var(--muted);font-size:.74rem;margin-top:2rem}
+
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+@media print{
+  body{background:#fff}
+  .cover,.close{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .cover .beam{display:none}
+  section{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="beam"></div>
+  <div class="inner">
+    <div class="brandrow">
+      <svg class="m" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9.5 21h5"/><path d="M10.2 21 11 10h2l.8 11"/><path d="M10.6 6.4h2.8l-1-2.4h-.8z"/><path d="M10.4 6.4h3.2V10h-3.2z"/><path d="M11 13.5h2"/><path d="M14.4 7.2 18 6M14.4 8.8 18 10"/><path d="M9.6 7.2 6 6M9.6 8.8 6 10"/>
+      </svg>
+      <b>Highland Compass</b>
+    </div>
+    <div class="kicker">A Proposal</div>
+    <h1>A private digital guide<br>for your guests</h1>
+    <p class="lede">A beautifully simple companion that helps your visitors explore the area with confidence &mdash; and find their way back to you.</p>
+    <div class="meta">
+      <div><span>Prepared for</span>Daviot Guest House, Ayr</div>
+      <div><span>Prepared by</span>[Your Name]</div>
+      <div><span>Date</span>[Month Year]</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+  <section>
+    <div class="eyebrow">The idea</div>
+    <h2>Your hospitality, in their pocket</h2>
+    <p class="lead">When guests arrive in a new place, the first questions are always the same: <em>where do we go, what&rsquo;s worth our time, and how do we get back?</em> Highland Compass answers all three with a small web app, branded as yours, that opens instantly on any phone &mdash; no app store, no account, no fuss.</p>
+    <p>It carries your personal recommendations, maps the best of the surrounding area, and keeps a gentle compass pointing home to the property. Everything works offline once loaded, which matters in the glens where signal disappears.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">The guest experience</div>
+    <h2>What it offers</h2>
+    <div class="grid">
+      <div class="feature">
+        <div class="ic"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polygon points="16 8 11 11 8 16 13 13"/></svg></div>
+        <h3>Find your way home</h3>
+        <p>A live compass and distance back to the property &mdash; reassurance on every walk, drive or hike.</p>
+      </div>
+      <div class="feature h">
+        <div class="ic"><svg class="ico" viewBox="0 0 24 24"><path d="M12 17.3l-5.6 3 1.1-6.3L3 9.5l6.3-.9L12 3l2.7 5.6 6.3.9-4.5 4.4 1.1 6.3z"/></svg></div>
+        <h3>Your recommendations</h3>
+        <p>The restaurants, viewpoints and walks you&rsquo;d send a friend to &mdash; curated by you, not an algorithm.</p>
+      </div>
+      <div class="feature a">
+        <div class="ic"><svg class="ico" viewBox="0 0 24 24"><path d="M9 20l-5.5 2 1.5-7L1 9l7-.5L11 2l3 6.5 7 .5-4 6 1.5 7z" opacity="0"/><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <h3>The area, mapped</h3>
+        <p>Castles, distilleries, beaches and landmarks on a clean map, with directions and Street View links.</p>
+      </div>
+      <div class="feature g">
+        <div class="ic"><svg class="ico" viewBox="0 0 24 24"><path d="M5 13a7 7 0 0 1 14 0"/><path d="M2 17h20"/><path d="M1 9c6-5 16-5 22 0"/></svg></div>
+        <h3>Offline &amp; private</h3>
+        <p>Works without signal once opened. No tracking, no data collected &mdash; everything stays on the guest&rsquo;s phone.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Why it works for you</div>
+    <h2>The value to Daviot Guest House</h2>
+    <ul class="benefits">
+      <li><span class="ic"><svg class="ico" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><div><b>A warmer welcome.</b> Guests feel looked after from the moment they scan a small card in the room.</div></li>
+      <li><span class="ic"><svg class="ico" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><div><b>Fewer repeat questions.</b> The directions, opening times and &ldquo;what&rsquo;s nearby&rdquo; answers live in one place.</div></li>
+      <li><span class="ic"><svg class="ico" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><div><b>A point of difference.</b> A thoughtful digital touch that few small properties offer &mdash; memorable, and easy to mention in reviews.</div></li>
+      <li><span class="ic"><svg class="ico" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><div><b>Effortless and compliant.</b> No app to install, nothing to maintain on your side, and privacy-friendly by design.</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="eyebrow">Proof of concept</div>
+    <h2>See it working</h2>
+    <p>To show the quality and the approach, here is a live sample built entirely on open, properly-licensed data &mdash; an interactive map of every lighthouse in Scotland, with free photography and directions.</p>
+    <div class="demo">
+      <div class="t"><b>Lighthouses of Scotland &mdash; live demo</b><div class="muted">The same map and design language your guests would use.</div></div>
+      <a class="btn" href="./lighthouses-of-scotland.html">Open the demo &rarr;</a>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Getting started</div>
+    <h2>How we&rsquo;d begin</h2>
+    <div class="steps">
+      <div class="step"><div class="n"></div><div><h3>A short conversation</h3><p>We talk through your favourite places and what your guests most often ask &mdash; 30 minutes is plenty.</p></div></div>
+      <div class="step"><div class="n"></div><div><h3>Your branded guide</h3><p>I build a first version with your name, colours and recommendations, plus the area&rsquo;s key sights pre-loaded.</p></div></div>
+      <div class="step"><div class="n"></div><div><h3>Into the rooms</h3><p>A discreet QR card per room and a link on your website &mdash; guests open it in one tap.</p></div></div>
+      <div class="step"><div class="n"></div><div><h3>Refine over a season</h3><p>We adjust based on what guests actually use, and add anything you&rsquo;d like &mdash; events, seasonal tips, walks.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">A simple way to start</div>
+    <h2>Investment</h2>
+    <div class="invest">
+      <div class="r"><div><b>Pilot setup</b><div class="muted" style="font-size:.85rem">Branded guide, your recommendations, area sights, QR cards</div></div><div class="p">from &pound;[___]</div></div>
+      <div class="r"><div><b>Hosting &amp; updates</b><div class="muted" style="font-size:.85rem">Reliable hosting, small content changes, kept current</div></div><div class="p">&pound;[___] / year</div></div>
+      <div class="note">Figures above are illustrative placeholders &mdash; we&rsquo;ll agree something that fits the size of your property. A short pilot for one season is a low-risk way to see how guests respond before committing further.</div>
+    </div>
+  </section>
+
+  <div class="close">
+    <h2>I&rsquo;d love to build this for you</h2>
+    <p>I stayed with you and it stayed with me &mdash; this is my way of helping more of your guests fall for the area the way I did. If you&rsquo;re open to it, let&rsquo;s find 30 minutes to talk.</p>
+    <div class="sign">
+      <div><span>Name</span>[Your Name]</div>
+      <div><span>Email</span>[your@email]</div>
+      <div><span>Phone</span>[your number]</div>
+    </div>
+  </div>
+
+  <footer>Highland Compass &middot; Built on open data (OpenStreetMap, Wikimedia Commons) &middot; Privacy-first by design</footer>
+</div>
+
+</body>
+</html>
