@@ -47,9 +47,12 @@ h1,h2,h3{font-family:"Spectral",Georgia,serif; font-weight:500; margin:0; letter
 .hb-name{display:flex; flex-direction:column; line-height:1.12}
 .hb-name b{font-family:"Spectral",serif; font-weight:600; color:#fff; font-size:1rem}
 .hb-name span{font-size:.72rem; color:rgba(255,255,255,.85)}
-.hb-tag{margin-left:auto; font-size:.7rem; font-weight:700; letter-spacing:.04em; color:#fff; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.4); padding:.22rem .6rem; border-radius:999px; white-space:nowrap}
+.hb-tag{font-size:.7rem; font-weight:700; letter-spacing:.04em; color:#fff; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.4); padding:.22rem .6rem; border-radius:999px; white-space:nowrap}
+.hb-wx{display:none; margin-left:auto; align-items:center; gap:.3rem; color:#fff; white-space:nowrap}
+.hb-wx svg{width:1.15em; height:1.15em; fill:none; stroke:#fff; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; flex:0 0 auto}
+.hb-wx .wt{font-family:"Spectral",serif; font-size:1.08rem; font-weight:600; line-height:1}
 .hb-addr{font-size:.78rem; color:rgba(255,255,255,.9)}
-@media(max-width:880px){ .hb-tag{margin-left:auto} .hb-addr{margin-left:0; flex-basis:100%} }
+@media(max-width:880px){ .hb-wx{margin-left:auto} .hb-addr{margin-left:0; flex-basis:100%} }
 
 header{position:relative; overflow:hidden; background:linear-gradient(165deg,#7d93ef,#6c85ec); color:#fff; border-bottom:3px solid #ffffff}
 header .wrap{position:relative; max-width:1240px; margin:0 auto; padding:1.25rem 1.7rem 1.15rem}
@@ -249,7 +252,6 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
     <input id="q" placeholder="Search beaches, walks, castles&hellip;" autocomplete="off">
   </div>
   <button class="nearbtn" id="nearBtn">loading</button>
-  <div class="wx" id="wx"></div>
 </div>
 
 <div class="catbar" id="catbar"></div>
@@ -424,7 +426,7 @@ function toggleNear(){
     map.flyTo([userLoc.lat,userLoc.lng],11,{duration:.8});
   }, err=>{ if(b) b.classList.remove('loading'); toast(err.code===1?'Location permission denied':'Location unavailable'); }, {enableHighAccuracy:true,timeout:10000,maximumAge:60000});
 }
-function renderWx(d){ const w=wmo(d.code); const wx=$('#wx'); if(!wx) return; wx.innerHTML=w.icon+'<span class="wt">'+d.t+'\u00b0C</span><span class="wc">'+w.label+'<br>H '+d.hi+'\u00b0 \u00b7 L '+d.lo+'\u00b0</span>'; wx.style.display='inline-flex'; }
+function renderWx(d){ const w=wmo(d.code); const wx=$('#wx'); if(!wx) return; wx.innerHTML=w.icon+'<span class="wt">'+d.t+'\u00b0</span>'; wx.title=w.label+' \u00b7 H '+d.hi+'\u00b0 L '+d.lo+'\u00b0'; wx.style.display='inline-flex'; }
 async function loadWeather(){
   const KEY='nearAyr_wx_v1';
   try{ const c=JSON.parse(localStorage.getItem(KEY)||'null'); if(c&&Date.now()-c.t<18e5){ renderWx(c.d); } }catch(e){}
@@ -447,7 +449,7 @@ function catPin(cat){ const c=CATS[cat]||CATS.beach; return L.divIcon({className
 /* Host branding + house pin */
 function renderHostBar(){
   const ico='<img class="hb-logo" src="https://www.daviothouse.co.uk/wp-content/uploads/2019/01/daviot-house-logo-4.png" alt="'+esc(HOST.name)+'" onerror="this.style.display=\'none\'">';
-  document.getElementById('hostbar').innerHTML='<div class="hb-inner">'+ico+'<div class="hb-name"><b>'+esc(HOST.name)+'</b><span>'+esc(HOST.tagline)+'</span></div><span class="hb-tag">Nearby places</span><div class="hb-addr">'+esc(HOST.address)+'</div></div>';
+  document.getElementById('hostbar').innerHTML='<div class="hb-inner">'+ico+'<div class="hb-name"><b>'+esc(HOST.name)+'</b><span>'+esc(HOST.tagline)+'</span></div><span class="hb-wx" id="wx"></span><span class="hb-tag">Nearby places</span><div class="hb-addr">'+esc(HOST.address)+'</div></div>';
 }
 function addHostMarker(){
   const pin='<svg width="34" height="42" viewBox="0 0 34 42" xmlns="http://www.w3.org/2000/svg"><path d="M17 1C9 1 2.5 7.2 2.5 15 2.5 24.5 17 41 17 41S31.5 24.5 31.5 15C31.5 7.2 25 1 17 1z" fill="#123b4f" stroke="#fff" stroke-width="1.6"/><g stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(17,15.5) scale(0.62) translate(-12,-12)"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></g></svg>';
