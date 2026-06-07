@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://commons.wikimedia.org" crossorigin>
 <link rel="preconnect" href="https://a.basemaps.cartocdn.com" crossorigin>
 <link rel="preconnect" href="https://api.open-meteo.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -35,23 +35,23 @@ body{
     radial-gradient(1100px 520px at 88% -8%, rgba(108,133,236,.13), transparent 60%),
     radial-gradient(900px 480px at -6% 4%, rgba(18,59,79,.07), transparent 55%),
     var(--paper);
-  color:var(--ink); font-family:"Mulish",system-ui,sans-serif; -webkit-font-smoothing:antialiased;
+  color:var(--ink); font-family:"Jost",system-ui,sans-serif; -webkit-font-smoothing:antialiased;
   display:flex; flex-direction:column;
 }
-h1,h2,h3{font-family:"Spectral",Georgia,serif; font-weight:500; margin:0}
+h1,h2,h3{font-family:"Jost",system-ui,sans-serif; font-weight:600; margin:0}
 
 .hostbar{background:#7189ed; border-bottom:1px solid rgba(255,255,255,.35); box-shadow:0 3px 12px rgba(40,70,120,.12); position:sticky; top:0; z-index:30}
 .hb-inner{max-width:1240px; margin:0 auto; padding:.55rem 1.7rem; display:flex; align-items:center; gap:.7rem; flex-wrap:wrap}
 .hb-mark{width:30px; height:30px; flex:0 0 auto; color:var(--loch)}
 .hb-logo{height:42px; width:auto; max-width:190px; flex:0 0 auto; display:block}
 .hb-name{display:flex; flex-direction:column; line-height:1.12}
-.hb-name b{font-family:"Spectral",serif; font-weight:600; color:#fff; font-size:1rem}
+.hb-name b{font-family:"Jost",system-ui,sans-serif; font-weight:600; color:#fff; font-size:1rem}
 .hb-name span{font-size:.72rem; color:rgba(255,255,255,.85)}
 .hb-tag{font-size:.7rem; font-weight:700; color:#fff; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.4); padding:.22rem .6rem; border-radius:999px; white-space:nowrap}
 .hb-wx{display:none; margin-left:auto; align-items:center; gap:.5rem; color:#fff; white-space:nowrap}
 .hb-wx svg{width:1.55em; height:1.55em; fill:none; stroke:#fff; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round; flex:0 0 auto; opacity:.95}
 .hb-wx .wx-txt{display:flex; flex-direction:column; line-height:1}
-.hb-wx .wt{font-family:"Spectral",serif; font-size:1.18rem; font-weight:600}
+.hb-wx .wt{font-family:"Jost",system-ui,sans-serif; font-size:1.18rem; font-weight:600}
 .hb-wx .wc{font-size:.62rem; font-weight:700; text-transform:uppercase; color:rgba(255,255,255,.82); margin-top:.18rem}
 .hb-addr{font-size:.78rem; color:rgba(255,255,255,.9)}
 @media(max-width:880px){ .hb-wx{margin-left:auto} .hb-addr{margin-left:0; flex-basis:100%} }
@@ -70,7 +70,7 @@ header p{margin:.35rem 0 0; color:rgba(255,255,255,.92); font-size:.94rem; max-w
 .search .ic{position:absolute; left:.95rem; top:50%; transform:translateY(-50%); color:var(--muted)}
 .search .ic svg{width:1.05em;height:1.05em;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
 .stat{display:flex; align-items:baseline; gap:.45rem; background:var(--card); border:1px solid var(--line); border-radius:13px; padding:.6rem 1rem; white-space:nowrap}
-.stat b{font-family:"Spectral",serif; font-size:1.5rem; color:var(--loch)}
+.stat b{font-family:"Jost",system-ui,sans-serif; font-size:1.5rem; color:var(--loch)}
 .stat span{color:var(--muted); font-size:.82rem}
 .nearbtn{display:inline-flex; align-items:center; gap:.45rem; background:var(--card); border:1px solid var(--line); color:var(--loch); border-radius:13px; padding:.72rem 1rem; font-family:inherit; font-weight:700; font-size:.92rem; cursor:pointer; white-space:nowrap; transition:.14s}
 .nearbtn:hover{border-color:var(--loch)}
@@ -79,7 +79,7 @@ header p{margin:.35rem 0 0; color:rgba(255,255,255,.92); font-size:.94rem; max-w
 .nearbtn svg{width:1.05em; height:1.05em; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
 .wx{display:none; align-items:center; gap:.55rem; background:var(--card); border:1px solid var(--line); border-radius:13px; padding:.5rem .85rem}
 .wx svg{width:1.5em; height:1.5em; fill:none; stroke:var(--azure); stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; flex:0 0 auto}
-.wx .wt{font-family:"Spectral",serif; font-size:1.3rem; color:var(--loch); font-weight:600; line-height:1}
+.wx .wt{font-family:"Jost",system-ui,sans-serif; font-size:1.3rem; color:var(--loch); font-weight:600; line-height:1}
 .wx .wc{color:var(--muted); font-size:.74rem; line-height:1.15}
 .youdot{width:16px; height:16px; border-radius:50%; background:#2f7dd1; border:3px solid #fff; box-shadow:0 0 0 4px rgba(47,125,209,.3)}
 .toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); background:var(--loch); color:#fff; padding:.6rem 1rem; border-radius:12px; box-shadow:var(--shadow); font-size:.88rem; opacity:0; pointer-events:none; transition:.3s; z-index:1000}
@@ -116,6 +116,11 @@ header p{margin:.35rem 0 0; color:rgba(255,255,255,.92); font-size:.94rem; max-w
 .leaflet-control-zoom a:hover{background:#fff!important; color:#123b4f!important}
 .leaflet-control-zoom a:first-child{border-bottom:1px solid #e7edf5!important}
 .scrollcue{display:none}
+.totop{position:fixed; right:14px; bottom:16px; z-index:1500; width:44px; height:44px; border-radius:50%; border:none; background:var(--loch); color:#fff; display:none; align-items:center; justify-content:center; box-shadow:0 8px 22px rgba(8,28,38,.3); cursor:pointer; transition:transform .15s}
+.totop.show{display:inline-flex}
+.totop:hover{background:var(--loch-2)}
+.totop:active{transform:scale(.92)}
+.totop svg{width:20px; height:20px; fill:none; stroke:#fff; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round}
 @media(max-width:880px){
   .scrollcue{display:inline-flex; position:fixed; left:50%; bottom:16px; z-index:2000; transform:translateX(-50%);
     align-items:center; gap:.4rem; background:rgba(18,59,79,.94); color:#fff; padding:.5rem .85rem; border-radius:999px;
@@ -187,7 +192,7 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
 @keyframes spin{to{transform:rotate(360deg)}}
 .state .btn{margin-top:1rem;background:var(--loch);color:#fff;border:none;border-radius:10px;padding:.6rem 1.1rem;font-family:inherit;font-weight:600;cursor:pointer}
 
-.marker-cluster div{font-family:"Mulish";font-weight:700;color:#fff}
+.marker-cluster div{font-family:"Jost";font-weight:700;color:#fff}
 .marker-cluster-small{background:rgba(18,59,79,.25)} .marker-cluster-small div{background:rgba(18,59,79,.9)}
 .marker-cluster-medium{background:rgba(18,59,79,.25)} .marker-cluster-medium div{background:rgba(18,59,79,.9)}
 .marker-cluster-large{background:rgba(18,59,79,.25)} .marker-cluster-large div{background:rgba(18,59,79,.9)}
@@ -195,7 +200,7 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
 .leaflet-popup-content-wrapper{background:rgba(255,255,255,.82); -webkit-backdrop-filter:blur(7px); backdrop-filter:blur(7px); color:var(--ink); border-radius:16px; border:1px solid rgba(255,255,255,.6); box-shadow:var(--shadow)}
 .leaflet-popup-content{margin:.85rem 1rem}
 .leaflet-popup-tip{background:rgba(255,255,255,.82); -webkit-backdrop-filter:blur(7px); backdrop-filter:blur(7px)}
-.pop b{font-family:"Spectral",serif;font-size:1.2rem;color:var(--loch);line-height:1.15;display:block}
+.pop b{font-family:"Jost",system-ui,sans-serif;font-size:1.2rem;color:var(--loch);line-height:1.15;display:block}
 .pop .photo img{width:100%;max-width:280px;border-radius:11px;margin:.55rem 0 .15rem;display:block}
 .pop .photo .credit{color:var(--muted);font-size:.66rem;margin-bottom:.2rem}
 .pop .meta{color:var(--muted);font-size:.82rem;margin:.2rem 0}
@@ -240,7 +245,7 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
 .trmodal-card{position:relative; z-index:1; background:#fff; border-radius:18px; width:100%; max-width:440px; max-height:90vh; overflow:auto; padding:1.3rem 1.3rem 1.1rem; box-shadow:0 24px 70px rgba(8,28,38,.4)}
 .trclose{position:absolute; top:.6rem; right:.7rem; width:34px; height:34px; border:none; background:transparent; font-size:1.7rem; line-height:1; color:var(--muted); cursor:pointer; border-radius:9px}
 .trclose:hover{background:var(--paper-2); color:var(--ink)}
-.trm-h{display:flex; align-items:center; gap:.5rem; font-family:"Spectral",serif; color:var(--loch); font-weight:600; font-size:1.2rem; margin:0 0 1rem}
+.trm-h{display:flex; align-items:center; gap:.5rem; font-family:"Jost",system-ui,sans-serif; color:var(--loch); font-weight:600; font-size:1.2rem; margin:0 0 1rem}
 .trm-h svg{width:22px; height:22px; stroke:var(--azure); flex:0 0 auto}
 .trm-fields{display:flex; flex-direction:column; gap:.8rem}
 .tac{position:relative; display:flex; flex-direction:column; gap:.3rem}
@@ -295,6 +300,7 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
 </div>
 
 <div class="scrollcue" id="scrollcue" aria-hidden="true"><span>More places below</span><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div>
+<button class="totop" id="toTop" aria-label="Back to top"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></button>
 
 <div class="trmodal" id="trModal" hidden>
   <div class="trmodal-bg" id="trBg"></div>
@@ -682,8 +688,9 @@ function onListClick(e){
   if(e.target.closest('a')) return;
   const p=places.find(x=>x.id===card.dataset.id); if(!p) return;
   _pendingFit=false;
+  try{ map.invalidateSize(); }catch(e){}
   const mk=markers[p.id];
-  if(mk) cluster.zoomToShowLayer(mk,()=>mk.openPopup()); else map.flyTo([p.lat,p.lng],12,{duration:.7});
+  if(mk) cluster.zoomToShowLayer(mk,()=>mk.openPopup()); else map.flyTo([p.lat,p.lng],13,{duration:.7});
 }
 
 function phFail(img){ const m=img.closest('.media'); if(!m) return; m.classList.add('noimg'); img.insertAdjacentHTML('afterend', diIcon(m.dataset.cat)); img.remove(); }
@@ -712,14 +719,22 @@ $('#list').addEventListener('click', onListClick);
   function onScroll(){ if(window.scrollY>40) hide(); }
   window.addEventListener('scroll',onScroll,{passive:true}); setTimeout(hide,7000);
 })();
+(function(){ const btn=document.getElementById('toTop'); if(!btn) return; const list=document.getElementById('list');
+  const upd=()=>{ const sc=(window.scrollY||0)>300 || (list && list.scrollTop>300); btn.classList.toggle('show', !!sc); };
+  window.addEventListener('scroll',upd,{passive:true});
+  if(list) list.addEventListener('scroll',upd,{passive:true});
+  btn.addEventListener('click',()=>{ window.scrollTo({top:0,behavior:'smooth'}); if(list) list.scrollTo({top:0,behavior:'smooth'}); });
+})();
 window.addEventListener('resize', ()=>{ if(window.map||map) try{ map.invalidateSize(); }catch(e){} });
 setTimeout(()=>{ try{ map.invalidateSize(); }catch(e){} }, 250);
 function setMapTop(){ const hb=document.getElementById('hostbar'), m=document.getElementById('map');
   if(!hb||!m) return;
   if(window.matchMedia('(max-width:880px)').matches){ m.style.top=hb.offsetHeight+'px'; }
-  else { m.style.top=''; } }
+  else { m.style.top=''; }
+  try{ map.invalidateSize(); }catch(e){} }
 window.addEventListener('resize', setMapTop);
 setMapTop(); setTimeout(setMapTop, 400);
+window.addEventListener('load', ()=>{ setTimeout(()=>{ try{ setMapTop(); map.invalidateSize(); }catch(e){} }, 60); });
 setNearLabel();
 loadWeather();
 
