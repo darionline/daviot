@@ -212,14 +212,12 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
   .ttl h3{font-size:1.18rem}
   .acts a:first-child{flex:1}
 }
-.trbar{max-width:1240px; margin:0 auto; padding:.4rem 1.2rem 1.1rem}
-.trtrigger{width:100%; display:flex; align-items:center; gap:.8rem; text-align:left; background:#fff; border:1px solid var(--line); border-radius:var(--r); padding:.85rem 1rem; cursor:pointer; font-family:inherit; box-shadow:var(--shadow); transition:.14s}
-.trtrigger:hover{border-color:var(--azure)}
-.trtrigger>svg{width:24px; height:24px; stroke:var(--azure); flex:0 0 auto}
-.trt-txt{display:flex; flex-direction:column; line-height:1.2}
-.trt-txt b{font-family:"Spectral",serif; color:var(--loch); font-weight:600; font-size:1.02rem}
-.trt-txt small{color:var(--muted); font-size:.78rem}
-.trt-go{margin-left:auto; color:var(--azure); font-size:1.6rem; line-height:1; font-weight:700}
+.trbar{max-width:1240px; margin:0 auto; padding:.5rem 1.2rem .9rem}
+.trtrigger{display:inline-flex; align-items:center; gap:.5rem; background:rgba(43,124,196,.07); border:1px solid rgba(43,124,196,.28); border-radius:999px; padding:.5rem .95rem; cursor:pointer; font-family:inherit; color:var(--loch); transition:.14s}
+.trtrigger:hover{background:rgba(43,124,196,.13); border-color:var(--azure)}
+.trtrigger>svg{width:18px; height:18px; stroke:var(--azure); flex:0 0 auto}
+.trt-txt b{font-weight:700; font-size:.9rem; color:var(--loch)}
+.trt-go{color:var(--azure); font-size:1.1rem; line-height:1; font-weight:700; margin-left:.05rem}
 .trmodal[hidden]{display:none}
 .trmodal{position:fixed; inset:0; z-index:3000; display:flex; align-items:center; justify-content:center; padding:1rem}
 .trmodal-bg{position:absolute; inset:0; background:rgba(12,35,52,.5)}
@@ -270,7 +268,7 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
 <div class="trbar">
   <button type="button" class="trtrigger" id="trOpen">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3z"/><path d="M5 11h14"/><path d="M9 16l-2.5 3.5"/><path d="M15 16l2.5 3.5"/></svg>
-    <span class="trt-txt"><b>Getting around by train</b><small>Live departures from Ayr &amp; beyond</small></span>
+    <span class="trt-txt"><b>Getting around by train</b></span>
     <span class="trt-go" aria-hidden="true">&rsaquo;</span>
   </button>
 </div>
