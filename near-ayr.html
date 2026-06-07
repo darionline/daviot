@@ -215,11 +215,7 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
   aside{border-left:none}
   aside .head{display:none}
   #map{height:40vh; border-radius:0; box-shadow:0 8px 16px rgba(18,59,79,.14)}
-  .trbar{display:flex; align-items:center; gap:.6rem}
   .leaflet-control-zoom{display:none!important}
-  .mzoom{display:inline-flex; margin-left:auto; gap:.35rem}
-  .mzoom button{width:34px; height:34px; border-radius:10px; border:1px solid rgba(43,124,196,.28); background:rgba(43,124,196,.07); color:var(--azure); font-size:1.25rem; font-weight:600; line-height:1; cursor:pointer; display:grid; place-items:center}
-  .mzoom button:active{background:rgba(43,124,196,.18)}
   .maphint{margin:.75rem 1rem 0}
   .list{overflow:visible;flex:none;padding:.85rem 1rem 1.4rem;gap:.85rem}
   .media{width:104px;height:104px}
@@ -232,7 +228,6 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
 .trtrigger>svg{width:18px; height:18px; stroke:var(--azure); flex:0 0 auto}
 .trt-txt b{font-weight:700; font-size:.9rem; color:var(--loch)}
 .trt-go{color:var(--azure); font-size:1.1rem; line-height:1; font-weight:700; margin-left:.05rem}
-.mzoom{display:none}
 .trmodal[hidden]{display:none}
 .trmodal{position:fixed; inset:0; z-index:3000; display:flex; align-items:center; justify-content:center; padding:1rem}
 .trmodal-bg{position:absolute; inset:0; background:rgba(12,35,52,.5)}
@@ -286,10 +281,6 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
     <span class="trt-txt"><b>Getting around by train</b></span>
     <span class="trt-go" aria-hidden="true">&rsaquo;</span>
   </button>
-  <div class="mzoom" id="mzoom">
-    <button type="button" id="mzIn" aria-label="Zoom in">+</button>
-    <button type="button" id="mzOut" aria-label="Zoom out">&minus;</button>
-  </div>
 </div>
 
 <div class="layout">
@@ -706,9 +697,6 @@ function showError(){ $('#list').innerHTML='<div class="state">Couldn\u2019t loa
 $('#q').addEventListener('input',function(){ if(places.length) draw(); });
 document.querySelectorAll('#viewseg button').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.v)));
 $('#nearBtn').addEventListener('click', toggleNear);
-{ const zi=document.getElementById('mzIn'), zo=document.getElementById('mzOut');
-  if(zi) zi.addEventListener('click',()=>map.zoomIn());
-  if(zo) zo.addEventListener('click',()=>map.zoomOut()); }
 $('#list').addEventListener('click', onListClick);
 (function(){ const cue=document.getElementById('scrollcue'); if(!cue) return;
   const hide=()=>{ cue.classList.add('hide'); window.removeEventListener('scroll',onScroll); };
