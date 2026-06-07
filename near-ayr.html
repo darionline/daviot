@@ -12,6 +12,8 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling@1.2.2/dist/leaflet-gesture-handling.min.css">
+<script src="https://unpkg.com/leaflet-gesture-handling@1.2.2/dist/leaflet-gesture-handling.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://overpass-api.de" crossorigin>
@@ -48,9 +50,11 @@ h1,h2,h3{font-family:"Spectral",Georgia,serif; font-weight:500; margin:0; letter
 .hb-name b{font-family:"Spectral",serif; font-weight:600; color:#fff; font-size:1rem}
 .hb-name span{font-size:.72rem; color:rgba(255,255,255,.85)}
 .hb-tag{font-size:.7rem; font-weight:700; letter-spacing:.04em; color:#fff; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.4); padding:.22rem .6rem; border-radius:999px; white-space:nowrap}
-.hb-wx{display:none; margin-left:auto; align-items:center; gap:.3rem; color:#fff; white-space:nowrap}
-.hb-wx svg{width:1.15em; height:1.15em; fill:none; stroke:#fff; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; flex:0 0 auto}
-.hb-wx .wt{font-family:"Spectral",serif; font-size:1.08rem; font-weight:600; line-height:1}
+.hb-wx{display:none; margin-left:auto; align-items:center; gap:.5rem; color:#fff; white-space:nowrap}
+.hb-wx svg{width:1.55em; height:1.55em; fill:none; stroke:#fff; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round; flex:0 0 auto; opacity:.95}
+.hb-wx .wx-txt{display:flex; flex-direction:column; line-height:1}
+.hb-wx .wt{font-family:"Spectral",serif; font-size:1.18rem; font-weight:600; letter-spacing:.01em}
+.hb-wx .wc{font-size:.58rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:rgba(255,255,255,.82); margin-top:.18rem}
 .hb-addr{font-size:.78rem; color:rgba(255,255,255,.9)}
 @media(max-width:880px){ .hb-wx{margin-left:auto} .hb-addr{margin-left:0; flex-basis:100%} }
 
@@ -400,7 +404,8 @@ const CURATED = [
   {cat:'waterfall', name:'Ness Glen', lat:55.2833, lng:-4.4000, note:'A magical Victorian gorge walk on the River Doon below Loch Doon, with little bridges and rushing water.', link:''}
 ];
 
-const map = L.map('map',{zoomControl:true}).setView([HOST.lat,HOST.lng], 9);
+const map = L.map('map',{zoomControl:false, gestureHandling:true}).setView([HOST.lat,HOST.lng], 9);
+L.control.zoom({position:'topright'}).addTo(map);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd',attribution:'&copy; OpenStreetMap contributors &copy; CARTO'}).addTo(map);
 const cluster = L.markerClusterGroup({maxClusterRadius:46, showCoverageOnHover:false});
 map.addLayer(cluster);
@@ -426,7 +431,7 @@ function toggleNear(){
     map.flyTo([userLoc.lat,userLoc.lng],11,{duration:.8});
   }, err=>{ if(b) b.classList.remove('loading'); toast(err.code===1?'Location permission denied':'Location unavailable'); }, {enableHighAccuracy:true,timeout:10000,maximumAge:60000});
 }
-function renderWx(d){ const w=wmo(d.code); const wx=$('#wx'); if(!wx) return; wx.innerHTML=w.icon+'<span class="wt">'+d.t+'\u00b0</span>'; wx.title=w.label+' \u00b7 H '+d.hi+'\u00b0 L '+d.lo+'\u00b0'; wx.style.display='inline-flex'; }
+function renderWx(d){ const w=wmo(d.code); const wx=$('#wx'); if(!wx) return; wx.innerHTML=w.icon+'<span class="wx-txt"><span class="wt">'+d.t+'\u00b0</span><span class="wc">'+esc(w.label)+'</span></span>'; wx.title='H '+d.hi+'\u00b0 \u00b7 L '+d.lo+'\u00b0'; wx.style.display='inline-flex'; }
 async function loadWeather(){
   const KEY='nearAyr_wx_v1';
   try{ const c=JSON.parse(localStorage.getItem(KEY)||'null'); if(c&&Date.now()-c.t<18e5){ renderWx(c.d); } }catch(e){}
