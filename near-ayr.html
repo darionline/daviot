@@ -191,25 +191,17 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
   .catbar{padding:.45rem 1.2rem .8rem}
   .stat{display:none}
 
-  .viewseg{display:flex; gap:.5rem; position:sticky; top:0; z-index:40;
-    background:linear-gradient(var(--paper),var(--paper) 70%, transparent);
-    padding:.6rem 1.2rem .7rem}
-  .viewseg button{flex:1; border:1px solid var(--line); background:var(--card); color:#54636a; border-radius:12px;
-    padding:.72rem; font-family:inherit; font-weight:800; font-size:.94rem; display:inline-flex; align-items:center; justify-content:center; gap:.45rem; cursor:pointer; transition:.14s}
-  .viewseg button.on{background:var(--loch); color:#fff; border-color:var(--loch); box-shadow:0 8px 20px rgba(18,59,79,.22)}
+  .viewseg{display:none}
 
   .layout{display:block;max-width:none;margin:0}
   aside{border-left:none}
   aside .head{display:none}
-  .list{overflow:visible;flex:none;padding:.85rem 1rem 1.2rem;gap:.8rem}
+  #map{position:sticky; top:0; z-index:1; height:44vh; border-radius:0; box-shadow:0 8px 16px rgba(18,59,79,.14)}
+  .maphint{margin:.75rem 1rem 0}
+  .list{overflow:visible;flex:none;padding:.85rem 1rem 1.4rem;gap:.85rem}
   .media{width:104px;height:104px}
   .ttl h3{font-size:1.18rem}
   .acts a:first-child{flex:1}
-  #map{height:calc(100vh - 64px); border-radius:0}
-
-  body[data-view="list"] #map{display:none}
-  body[data-view="map"] aside{display:none}
-  body[data-view="map"] .attr{display:none}
 }
 .trbar{max-width:1240px; margin:0 auto; padding:.4rem 1.2rem 1.1rem}
 .trtrigger{width:100%; display:flex; align-items:center; gap:.8rem; text-align:left; background:#fff; border:1px solid var(--line); border-radius:var(--r); padding:.85rem 1rem; cursor:pointer; font-family:inherit; box-shadow:var(--shadow); transition:.14s}
@@ -668,9 +660,8 @@ function onListClick(e){
   if(e.target.closest('a')) return;
   const p=places.find(x=>x.id===card.dataset.id); if(!p) return;
   _pendingFit=false;
-  const open=()=>{ const mk=markers[p.id]; if(mk) cluster.zoomToShowLayer(mk,()=>mk.openPopup()); else map.flyTo([p.lat,p.lng],12,{duration:.7}); };
-  if(window.matchMedia('(max-width:880px)').matches){ setView('map'); setTimeout(open,140); }
-  else open();
+  const mk=markers[p.id];
+  if(mk) cluster.zoomToShowLayer(mk,()=>mk.openPopup()); else map.flyTo([p.lat,p.lng],12,{duration:.7});
 }
 
 function phFail(img){ const m=img.closest('.media'); if(!m) return; m.classList.add('noimg'); img.insertAdjacentHTML('afterend', diIcon(m.dataset.cat)); img.remove(); }
@@ -688,6 +679,8 @@ $('#q').addEventListener('input',function(){ if(places.length) draw(); });
 document.querySelectorAll('#viewseg button').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.v)));
 $('#nearBtn').addEventListener('click', toggleNear);
 $('#list').addEventListener('click', onListClick);
+window.addEventListener('resize', ()=>{ if(window.map||map) try{ map.invalidateSize(); }catch(e){} });
+setTimeout(()=>{ try{ map.invalidateSize(); }catch(e){} }, 250);
 setNearLabel();
 loadWeather();
 
