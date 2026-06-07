@@ -466,7 +466,7 @@ function catPin(cat){ const c=CATS[cat]||CATS.beach; return L.divIcon({className
 /* Host branding + house pin */
 function renderHostBar(){
   const ico='<img class="hb-logo" src="https://www.daviothouse.co.uk/wp-content/uploads/2019/01/daviot-house-logo-4.png" alt="'+esc(HOST.name)+'" onerror="this.style.display=\'none\'">';
-  document.getElementById('hostbar').innerHTML='<div class="hb-inner">'+ico+'<div class="hb-name"><b>'+esc(HOST.name)+'</b><span>'+esc(HOST.tagline)+'</span></div><span class="hb-wx" id="wx"></span><span class="hb-tag">Nearby places</span><div class="hb-addr">'+esc(HOST.address)+'</div></div>';
+  document.getElementById('hostbar').innerHTML='<div class="hb-inner">'+ico+'<div class="hb-name"><b>'+esc(HOST.name)+'</b><span>'+esc(HOST.tagline)+'</span></div><span class="hb-wx" id="wx"></span><span class="hb-tag">Nearby places</span></div>';
 }
 function addHostMarker(){
   const pin='<svg width="34" height="42" viewBox="0 0 34 42" xmlns="http://www.w3.org/2000/svg"><path d="M17 1C9 1 2.5 7.2 2.5 15 2.5 24.5 17 41 17 41S31.5 24.5 31.5 15C31.5 7.2 25 1 17 1z" fill="#123b4f" stroke="#fff" stroke-width="1.6"/><g stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(17,15.5) scale(0.62) translate(-12,-12)"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></g></svg>';
