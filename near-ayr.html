@@ -109,6 +109,15 @@ header p{margin:.35rem 0 0; color:rgba(255,255,255,.92); font-size:.94rem; max-w
 .leaflet-control-zoom a{width:30px!important; height:30px!important; line-height:30px!important; font-size:17px!important; font-weight:400!important; color:#2b7cc4!important; background:rgba(255,255,255,.9)!important; backdrop-filter:blur(2px); border:none!important}
 .leaflet-control-zoom a:hover{background:#fff!important; color:#123b4f!important}
 .leaflet-control-zoom a:first-child{border-bottom:1px solid #e7edf5!important}
+.scrollcue{display:none}
+@media(max-width:880px){
+  .scrollcue{display:inline-flex; position:fixed; left:50%; bottom:16px; z-index:60; transform:translateX(-50%);
+    align-items:center; gap:.4rem; background:rgba(18,59,79,.94); color:#fff; padding:.5rem .85rem; border-radius:999px;
+    font-size:.8rem; font-weight:700; box-shadow:0 10px 24px rgba(8,28,38,.32); animation:cuebob 1.6s ease-in-out infinite; transition:opacity .3s}
+  .scrollcue svg{width:16px; height:16px; fill:none; stroke:#fff; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+  .scrollcue.hide{opacity:0; pointer-events:none; animation:none}
+}
+@keyframes cuebob{0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-4px)}}
 .leaflet-container{background:#e8eef0; font-family:inherit}
 aside{border-left:1px solid var(--line); background:transparent; display:flex; flex-direction:column; min-height:0}
 aside .head{padding:.9rem 1.35rem .35rem; display:flex; align-items:center; gap:.5rem}
@@ -281,6 +290,8 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
     <div class="list" id="list"><div class="state"><div class="spin"></div>Finding places around you&hellip;</div></div>
   </aside>
 </div>
+
+<div class="scrollcue" id="scrollcue" aria-hidden="true"><span>More places below</span><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div>
 
 <div class="trmodal" id="trModal" hidden>
   <div class="trmodal-bg" id="trBg"></div>
@@ -686,6 +697,11 @@ $('#q').addEventListener('input',function(){ if(places.length) draw(); });
 document.querySelectorAll('#viewseg button').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.v)));
 $('#nearBtn').addEventListener('click', toggleNear);
 $('#list').addEventListener('click', onListClick);
+(function(){ const cue=document.getElementById('scrollcue'); if(!cue) return;
+  const hide=()=>{ cue.classList.add('hide'); window.removeEventListener('scroll',onScroll); };
+  function onScroll(){ if(window.scrollY>40) hide(); }
+  window.addEventListener('scroll',onScroll,{passive:true}); setTimeout(hide,7000);
+})();
 window.addEventListener('resize', ()=>{ if(window.map||map) try{ map.invalidateSize(); }catch(e){} });
 setTimeout(()=>{ try{ map.invalidateSize(); }catch(e){} }, 250);
 setNearLabel();
