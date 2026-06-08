@@ -221,11 +221,12 @@ path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
   .pop .meta{font-size:.78rem}
 }
 .guidenav{display:flex; justify-content:center; padding:.6rem .7rem; background:var(--paper); border-bottom:1px solid var(--line)}
-.gnwrap{display:inline-flex; gap:.2rem; max-width:100%; overflow-x:auto; scrollbar-width:none; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.24rem; box-shadow:0 4px 14px rgba(40,70,120,.10)}
+.gnwrap{display:inline-flex; gap:.2rem; max-width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; scroll-behavior:smooth;/*gnwrap-momentum*/ scrollbar-width:none; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.24rem; box-shadow:0 4px 14px rgba(40,70,120,.10)}
 .gnwrap::-webkit-scrollbar{display:none}
 .gnwrap .gn{flex:0 0 auto; font-size:.82rem; font-weight:600; text-decoration:none; color:var(--loch); background:transparent; border:none; border-radius:999px; padding:.4rem .85rem; white-space:nowrap; cursor:pointer; transition:.16s}
 .gnwrap .gn:hover{color:var(--azure); background:rgba(43,124,196,.08)}
 .gnwrap .gn.active{background:var(--loch); color:#fff; cursor:default; box-shadow:0 3px 10px rgba(18,59,79,.22)}
+@media(max-width:560px){.gnwrap .gn{font-size:.78rem;padding:.38rem .62rem}.gnwrap{gap:.12rem}}
 </style>
 </head>
 <body data-view="list">
@@ -742,5 +743,6 @@ addHostMarker();
 </script>
 <div class="lh-toast" id="toast"></div>
 
+<script>/*gnwrap-center*/(function(){var w=document.querySelector(".gnwrap");if(!w)return;function c(){var a=w.querySelector(".gn.active");if(a){w.scrollLeft=Math.max(0,a.offsetLeft-(w.clientWidth-a.offsetWidth)/2);}}c();window.addEventListener("resize",c);})();</script>
 </body>
 </html>
