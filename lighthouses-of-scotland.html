@@ -444,7 +444,7 @@ function updateThumb(id,url){
 
 const ZONE_ORDER=['Shetland','Orkney','North Highlands & Coast','Outer Hebrides','West Coast & Inner Hebrides','North-East & Moray Firth','East Coast & Forth','Clyde & South-West'];
 const ZONE_SHORT={'Shetland':'Shetland','Orkney':'Orkney','North Highlands & Coast':'N. Highlands','Outer Hebrides':'Outer Hebrides','West Coast & Inner Hebrides':'West & Hebrides','North-East & Moray Firth':'North-East','East Coast & Forth':'East & Forth','Clyde & South-West':'Clyde & SW'};
-const ZONE_COLORS={'Shetland':'#5b7a8c','Orkney':'#6f8f7a','North Highlands & Coast':'#7c5c9e','Outer Hebrides':'#4f9aa0','West Coast & Inner Hebrides':'#5e6b3b','North-East & Moray Firth':'#c5872e','East Coast & Forth':'#356a8a','Clyde & South-West':'#b5683f'};
+const ZONE_COLORS={'Shetland':'#6a8392','Orkney':'#6f8e84','North Highlands & Coast':'#5f7f96','Outer Hebrides':'#5b94a0','West Coast & Inner Hebrides':'#7c9079','North-East & Moray Firth':'#8a8fa6','East Coast & Forth':'#4f7793','Clyde & South-West':'#5a86b0'};
 let activeZone='All';
 const zoneLayer=L.layerGroup().addTo(map);
 const ZONE_SHAPES={};
@@ -493,9 +493,9 @@ function renderZoneRegions(){
     const col=ZONE_COLORS[z]||'#7c5c9e';
     const sel=(z===activeZone);
     const dim=(activeZone!=='All' && !sel);
-    const style = sel  ? {color:col,weight:2,opacity:.85,fillColor:col,fillOpacity:.16,smoothFactor:1.2}
-                : dim  ? {color:col,weight:1,opacity:.4,fillColor:col,fillOpacity:.045,smoothFactor:1.2}
-                :        {color:col,weight:1.3,opacity:.65,fillColor:col,fillOpacity:.09,smoothFactor:1.2};
+    const style = sel  ? {color:col,weight:1.6,opacity:.7,fillColor:col,fillOpacity:.14,smoothFactor:1.4}
+                : dim  ? {color:col,weight:1,opacity:.32,fillColor:col,fillOpacity:.035,smoothFactor:1.4}
+                :        {color:col,weight:1.1,opacity:.5,fillColor:col,fillOpacity:.075,smoothFactor:1.4};
     const shape=shapeFor(z,style);
     shape.on('click',function(ev){ L.DomEvent.stop(ev); if(z===activeZone) return; activeZone=z; renderZoneChips(); draw(); fitToActive(); });
     shape.bindTooltip(esc(ZONE_SHORT[z]||z)+' \u00b7 '+sh.count,{permanent:true,direction:'center',className:'zone-label'+(sel?' sel':'')});
