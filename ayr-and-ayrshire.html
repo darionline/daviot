@@ -549,7 +549,7 @@ function renderZoneChips(){
   const sel=document.getElementById('zoneSel'); if(!sel) return;
   const counts={}; lighthouses.forEach(l=>{ counts[l.zone]=(counts[l.zone]||0)+1; });
   const zones=ZONE_ORDER.filter(z=>counts[z]);
-  let html='<option value="All">All regions ('+lighthouses.length+')</option>';
+  let html='<option value="All">All themes ('+lighthouses.length+')</option>';
   html+=zones.map(z=>'<option value="'+esc(z)+'">'+esc(ZONE_SHORT[z]||z)+' ('+counts[z]+')</option>').join('');
   sel.innerHTML=html;
   sel.value=activeZone;
