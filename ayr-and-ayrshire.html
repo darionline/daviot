@@ -220,11 +220,17 @@ path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
   .pop img{max-height:96px; object-fit:cover; margin:.4rem 0}
   .pop .meta{font-size:.78rem}
 }
+.guidenav{display:flex; gap:.4rem; padding:.5rem .7rem; overflow-x:auto; scrollbar-width:none; background:var(--paper); border-bottom:1px solid var(--line)}
+.guidenav::-webkit-scrollbar{display:none}
+.guidenav .gn{flex:0 0 auto; font-size:.8rem; font-weight:600; text-decoration:none; color:var(--loch); background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.34rem .72rem; white-space:nowrap; cursor:pointer; transition:.14s}
+.guidenav .gn:hover{border-color:var(--azure); color:var(--azure)}
+.guidenav .gn.active{background:var(--loch); color:#fff; border-color:var(--loch); cursor:default}
 </style>
 </head>
 <body data-view="list">
 
 <div class="hostbar" id="hostbar"></div>
+<nav class="guidenav"><a class="gn" href="near-ayr.html">Nearby</a><a class="gn active" aria-current="page">Ayr &amp; Ayrshire</a><a class="gn" href="lighthouses-of-scotland.html">Lighthouses</a></nav>
 
 <div class="toolbar">
   <div class="search">
