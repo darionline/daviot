@@ -78,8 +78,10 @@ svg.ico{width:1em;height:1em;display:inline-block;vertical-align:-.14em;fill:non
 .dir .lbl{font-size:.72rem; font-weight:700; text-transform:uppercase; color:var(--azure); margin-bottom:.45rem; display:flex; align-items:center; gap:.4rem}
 .dir .lbl .t{margin-left:auto; color:var(--muted); font-weight:600; text-transform:none; font-size:.74rem}
 .pills{display:flex; flex-wrap:wrap; gap:.4rem}
-.pill{font-size:.82rem; font-weight:600; color:#33454e; background:#f3f7fc; border:1px solid var(--line); border-radius:999px; padding:.34rem .7rem; white-space:nowrap}
+.pill{font-size:.82rem; font-weight:600; color:#33454e; background:#f3f7fc; border:1px solid var(--line); border-radius:999px; padding:.34rem .7rem; white-space:nowrap; text-decoration:none; cursor:pointer; transition:.15s; display:inline-flex; align-items:center}
+.pill:hover{border-color:var(--azure); color:var(--azure); background:#eaf3fb}
 .pill.end{background:#eaf3fb; border-color:rgba(43,124,196,.3); color:var(--azure)}
+.pill.end:hover{background:#dcecf9}
 .arrowrow{display:flex; align-items:center; gap:.35rem; flex-wrap:wrap}
 .arrowrow .ar{color:var(--muted); font-size:.8rem}
 
@@ -127,43 +129,43 @@ footer a:hover{text-decoration:underline}
     </div>
     <div class="sub">Live departure board &middot; real-time times, platforms &amp; any delays.</div>
     <div class="btns">
-      <a class="btn primary" href="https://ojp.nationalrail.co.uk/service/ldbboard/dep/AYR" target="_blank" rel="noopener">
+      <a class="btn primary" href="https://www.nationalrail.co.uk/live-trains/departures/ayr/" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/><path d="M16 14l4 3-4 3"/></svg>
         View live departures
       </a>
-      <a class="btn ghost" href="https://ojp.nationalrail.co.uk/service/ldbboard/arr/AYR" target="_blank" rel="noopener">
+      <a class="btn ghost" href="https://www.nationalrail.co.uk/live-trains/arrivals/ayr/" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg>
         Arrivals
       </a>
     </div>
-    <p class="tinynote">Opens the official National Rail board for Ayr in a new tab.</p>
+    <p class="tinynote">Opens the official National Rail board for Ayr &mdash; already set up, no typing needed.</p>
   </section>
 
   <section class="sec">
     <h3><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="3"/><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/></svg>Where the trains go</h3>
-    <p class="m">The Ayrshire Coast Line runs north to Glasgow and south towards the coast and Galloway.</p>
+    <p class="m">The Ayrshire Coast Line runs north to Glasgow and south towards the coast and Galloway. Tap any stop to see live departures from Ayr to there.</p>
 
     <div class="dir">
       <div class="lbl"><svg class="ico" viewBox="0 0 24 24"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg> Northbound <span class="t">to Glasgow &middot; ~50 min</span></div>
       <div class="arrowrow">
-        <span class="pill">Newton-on-Ayr</span><span class="ar">&rsaquo;</span>
-        <span class="pill">Prestwick Town</span><span class="ar">&rsaquo;</span>
-        <span class="pill">Prestwick Int&rsquo;l Airport</span><span class="ar">&rsaquo;</span>
-        <span class="pill">Troon</span><span class="ar">&rsaquo;</span>
-        <span class="pill">Irvine</span><span class="ar">&rsaquo;</span>
-        <span class="pill">Kilwinning</span><span class="ar">&rsaquo;</span>
-        <span class="pill">Paisley</span><span class="ar">&rsaquo;</span>
-        <span class="pill end">Glasgow Central</span>
+        <a class="pill" href="https://www.nationalrail.co.uk/live-trains/departures/ayr/newton-on-ayr/" target="_blank" rel="noopener">Newton-on-Ayr</a><span class="ar">&rsaquo;</span>
+        <a class="pill" href="https://www.nationalrail.co.uk/live-trains/departures/ayr/prestwick-town/" target="_blank" rel="noopener">Prestwick Town</a><span class="ar">&rsaquo;</span>
+        <a class="pill" href="https://www.nationalrail.co.uk/live-trains/departures/ayr/prestwick-international-airport/" target="_blank" rel="noopener">Prestwick Int&rsquo;l Airport</a><span class="ar">&rsaquo;</span>
+        <a class="pill" href="https://www.nationalrail.co.uk/live-trains/departures/ayr/troon/" target="_blank" rel="noopener">Troon</a><span class="ar">&rsaquo;</span>
+        <a class="pill" href="https://www.nationalrail.co.uk/live-trains/departures/ayr/irvine/" target="_blank" rel="noopener">Irvine</a><span class="ar">&rsaquo;</span>
+        <a class="pill" href="https://www.nationalrail.co.uk/live-trains/departures/ayr/kilwinning/" target="_blank" rel="noopener">Kilwinning</a><span class="ar">&rsaquo;</span>
+        <a class="pill" href="https://www.nationalrail.co.uk/live-trains/departures/ayr/paisley-gilmour-street/" target="_blank" rel="noopener">Paisley Gilmour St</a><span class="ar">&rsaquo;</span>
+        <a class="pill end" href="https://www.nationalrail.co.uk/live-trains/departures/ayr/glasgow-central/" target="_blank" rel="noopener">Glasgow Central</a>
       </div>
     </div>
 
     <div class="dir">
       <div class="lbl"><svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg> Southbound <span class="t">towards the coast &amp; Galloway</span></div>
       <div class="arrowrow">
-        <span class="pill">Maybole</span><span class="ar">&rsaquo;</span>
-        <span class="pill">Girvan</span><span class="ar">&rsaquo;</span>
-        <span class="pill">Barrhill</span><span class="ar">&rsaquo;</span>
-        <span class="pill end">Stranraer</span>
+        <a class="pill" href="https://www.nationalrail.co.uk/live-trains/departures/ayr/maybole/" target="_blank" rel="noopener">Maybole</a><span class="ar">&rsaquo;</span>
+        <a class="pill" href="https://www.nationalrail.co.uk/live-trains/departures/ayr/girvan/" target="_blank" rel="noopener">Girvan</a><span class="ar">&rsaquo;</span>
+        <a class="pill" href="https://www.nationalrail.co.uk/live-trains/departures/ayr/barrhill/" target="_blank" rel="noopener">Barrhill</a><span class="ar">&rsaquo;</span>
+        <a class="pill end" href="https://www.nationalrail.co.uk/live-trains/departures/ayr/stranraer/" target="_blank" rel="noopener">Stranraer</a>
       </div>
     </div>
   </section>
