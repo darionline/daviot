@@ -9,12 +9,14 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://huxley2.azurewebsites.net" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
   --paper:#eef2fa; --card:#ffffff; --ink:#1e2a30; --muted:#65727b; --azure:#2b7cc4;
   --loch:#123b4f; --loch-2:#0d2c3c; --line:#e2e8f1;
+  --ontime:#2e7d52; --late:#b06a16; --cx:#c0392b;
   --shadow:0 14px 40px rgba(40,70,120,.12);
 }
 *{box-sizing:border-box}
@@ -48,27 +50,61 @@ svg.ico{width:1em;height:1em;display:inline-block;vertical-align:-.14em;fill:non
 .intro h1{font-size:clamp(1.7rem,5vw,2.3rem); color:var(--loch); line-height:1.08}
 .intro p{margin:.6rem auto 0; max-width:52ch; color:var(--muted); font-size:1rem; font-weight:400; line-height:1.5}
 
-/* Live board card */
-.board{background:linear-gradient(165deg,#143f55,#0d2c3c); color:#fff; border-radius:22px; padding:1.4rem 1.3rem 1.5rem; box-shadow:var(--shadow); position:relative; overflow:hidden}
+/* Board header (dark) */
+.board{background:linear-gradient(165deg,#143f55,#0d2c3c); color:#fff; border-radius:22px 22px 0 0; padding:1.25rem 1.3rem 1.15rem; box-shadow:var(--shadow); position:relative; overflow:hidden}
 .board::after{content:""; position:absolute; inset:0; background:radial-gradient(420px 200px at 85% -20%, rgba(124,160,210,.28), transparent 60%); pointer-events:none}
-.board .stn{display:flex; align-items:flex-end; gap:.7rem; flex-wrap:wrap}
+.board .stn{display:flex; align-items:flex-end; gap:.7rem; flex-wrap:wrap; position:relative; z-index:1}
 .board .stn h2{font-size:1.5rem; font-weight:600}
-.board .crs{font-size:.74rem; font-weight:700; letter-spacing:0; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.32); border-radius:8px; padding:.18rem .5rem; align-self:center}
+.board .crs{font-size:.74rem; font-weight:700; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.32); border-radius:8px; padding:.18rem .5rem; align-self:center}
 .board .now{margin-left:auto; text-align:right; line-height:1.15}
 .board .now .clock{font-size:1.45rem; font-weight:600; font-variant-numeric:tabular-nums}
 .board .now .date{font-size:.72rem; color:rgba(255,255,255,.72)}
-.board .sub{margin:.5rem 0 1.1rem; font-size:.9rem; color:rgba(255,255,255,.82); font-weight:400}
-.btns{display:flex; gap:.7rem; flex-wrap:wrap}
-.btn{flex:1 1 auto; min-width:180px; display:inline-flex; align-items:center; justify-content:center; gap:.55rem; text-decoration:none; font-weight:600; font-size:1rem; border-radius:13px; padding:.95rem 1.1rem; transition:transform .15s, box-shadow .15s, background .15s}
-.btn.primary{background:#fff; color:var(--loch); box-shadow:0 10px 26px rgba(0,0,0,.22)}
-.btn.primary:hover{transform:translateY(-2px); box-shadow:0 14px 32px rgba(0,0,0,.28)}
-.btn.ghost{background:rgba(255,255,255,.1); color:#fff; border:1px solid rgba(255,255,255,.4)}
-.btn.ghost:hover{background:rgba(255,255,255,.18)}
-.btn svg{width:1.15em; height:1.15em; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
-.tinynote{margin:.85rem 0 0; font-size:.74rem; color:rgba(255,255,255,.62); text-align:center; font-weight:400}
+.board .sub{margin:.55rem 0 0; font-size:.82rem; color:rgba(255,255,255,.82); font-weight:400; display:flex; align-items:center; gap:.5rem; position:relative; z-index:1}
+.dot{width:8px; height:8px; border-radius:50%; background:#5fd08a; box-shadow:0 0 0 0 rgba(95,208,138,.6); animation:pulse 2.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(95,208,138,.5)}70%{box-shadow:0 0 0 7px rgba(95,208,138,0)}100%{box-shadow:0 0 0 0 rgba(95,208,138,0)}}
+@media(prefers-reduced-motion:reduce){.dot{animation:none}}
+.board .sub .upd{margin-left:auto; color:rgba(255,255,255,.6)}
+
+/* Live panel (white) */
+.livepanel{background:var(--card); border:1px solid var(--line); border-top:none; border-radius:0 0 22px 22px; box-shadow:var(--shadow); padding:.55rem .6rem .7rem; margin-bottom:1.5rem}
+.fbar{display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; padding:.45rem .55rem .55rem}
+.fbar .lab{font-size:.74rem; font-weight:700; text-transform:uppercase; color:var(--muted)}
+.fbar .cur{font-size:.82rem; font-weight:600; color:var(--loch); display:inline-flex; align-items:center; gap:.4rem}
+.fbar .clear{border:none; background:#eef3f8; color:var(--azure); font-family:inherit; font-weight:600; font-size:.74rem; border-radius:999px; padding:.18rem .55rem; cursor:pointer}
+.fbar .clear:hover{background:#e2ecf6}
+.fbar .full{margin-left:auto; font-size:.78rem; font-weight:600; color:var(--azure); text-decoration:none; display:inline-flex; align-items:center; gap:.3rem}
+.fbar .full:hover{text-decoration:underline}
+
+.alert{margin:0 .55rem .5rem; background:#fff7ec; border:1px solid #f0d9b0; color:#8a5a12; border-radius:10px; padding:.5rem .65rem; font-size:.8rem; font-weight:400; line-height:1.4}
+
+.deprow{display:flex; align-items:center; gap:.8rem; padding:.7rem .65rem; border-top:1px solid var(--line)}
+.deprow:first-child{border-top:none}
+.dtime{flex:0 0 auto; width:58px; line-height:1.1}
+.dtime b{font-size:1.12rem; color:var(--loch); font-variant-numeric:tabular-nums; font-weight:600}
+.ddest{flex:1; min-width:0; line-height:1.18}
+.ddest b{font-size:.98rem; font-weight:600; color:var(--ink); display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.ddest span{font-size:.76rem; color:var(--muted)}
+.dstat{flex:0 0 auto; text-align:right; line-height:1.1}
+.dstat em{font-style:normal; font-size:.82rem; font-weight:600; white-space:nowrap}
+.dstat em.ontime{color:var(--ontime)}
+.dstat em.late{color:var(--late)}
+.dstat em.cx{color:var(--cx)}
+.dplat{flex:0 0 auto; width:46px; text-align:center}
+.dplat .p{display:inline-block; min-width:30px; font-size:.82rem; font-weight:700; color:var(--loch); background:#eef3f8; border:1px solid var(--line); border-radius:8px; padding:.18rem .3rem}
+.dplat .pl{display:block; font-size:.6rem; text-transform:uppercase; color:var(--muted); font-weight:600; margin-top:.12rem}
+
+/* skeleton */
+.sk{height:14px; border-radius:6px; background:linear-gradient(90deg,#eef2f7,#e3eaf3,#eef2f7); background-size:200% 100%; animation:sh 1.2s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+
+.note{text-align:center; padding:1.4rem .8rem; color:var(--muted)}
+.note b{display:block; color:var(--ink); font-weight:600; margin-bottom:.3rem; font-size:1rem}
+.note .obtn{display:inline-flex; align-items:center; gap:.45rem; margin-top:.9rem; text-decoration:none; font-weight:600; background:var(--loch); color:#fff; border-radius:12px; padding:.7rem 1.1rem; font-size:.95rem}
+.note .obtn:hover{background:var(--loch-2)}
+.note .obtn svg{width:1.05em;height:1.05em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
 /* Sections */
-.sec{margin-top:1.7rem; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:1.15rem 1.2rem; box-shadow:0 4px 16px rgba(18,59,79,.06)}
+.sec{margin-top:1.5rem; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:1.15rem 1.2rem; box-shadow:0 4px 16px rgba(18,59,79,.06)}
 .sec h3{color:var(--loch); font-size:1.12rem; display:flex; align-items:center; gap:.5rem}
 .sec h3 svg{width:1.05em; height:1.05em; fill:none; stroke:var(--azure); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
 .sec p{margin:.55rem 0 0; color:var(--ink); font-size:.93rem; font-weight:400; line-height:1.5}
@@ -78,12 +114,13 @@ svg.ico{width:1em;height:1em;display:inline-block;vertical-align:-.14em;fill:non
 .dir .lbl{font-size:.72rem; font-weight:700; text-transform:uppercase; color:var(--azure); margin-bottom:.45rem; display:flex; align-items:center; gap:.4rem}
 .dir .lbl .t{margin-left:auto; color:var(--muted); font-weight:600; text-transform:none; font-size:.74rem}
 .pills{display:flex; flex-wrap:wrap; gap:.4rem}
-.pill{font-size:.82rem; font-weight:600; color:#33454e; background:#f3f7fc; border:1px solid var(--line); border-radius:999px; padding:.34rem .7rem; white-space:nowrap; text-decoration:none; cursor:pointer; transition:.15s; display:inline-flex; align-items:center}
-.pill:hover{border-color:var(--azure); color:var(--azure); background:#eaf3fb}
-.pill.end{background:#eaf3fb; border-color:rgba(43,124,196,.3); color:var(--azure)}
-.pill.end:hover{background:#dcecf9}
 .arrowrow{display:flex; align-items:center; gap:.35rem; flex-wrap:wrap}
 .arrowrow .ar{color:var(--muted); font-size:.8rem}
+.pill{font-size:.82rem; font-weight:600; color:#33454e; background:#f3f7fc; border:1px solid var(--line); border-radius:999px; padding:.34rem .7rem; white-space:nowrap; cursor:pointer; transition:.15s; font-family:inherit; display:inline-flex; align-items:center}
+.pill:hover{border-color:var(--azure); color:var(--azure); background:#eaf3fb}
+.pill.on{background:var(--loch); color:#fff; border-color:var(--loch)}
+.pill.end{background:#eaf3fb; border-color:rgba(43,124,196,.3); color:var(--azure)}
+.pill.end.on{background:var(--loch); color:#fff; border-color:var(--loch)}
 
 .walk{display:flex; align-items:center; gap:.8rem; margin-top:.85rem; text-decoration:none; background:#f3f7fc; border:1px solid var(--line); border-radius:13px; padding:.8rem .9rem; transition:.15s}
 .walk:hover{border-color:var(--azure); background:#eaf3fb}
@@ -97,7 +134,11 @@ svg.ico{width:1em;height:1em;display:inline-block;vertical-align:-.14em;fill:non
 footer{max-width:760px; width:100%; margin:0 auto; padding:0 1.2rem 2rem; text-align:center; color:var(--muted); font-size:.76rem; line-height:1.5; font-weight:400}
 footer a{color:var(--azure); text-decoration:none; font-weight:600}
 footer a:hover{text-decoration:underline}
-@media(max-width:520px){ .board .now{margin-left:0; text-align:left; width:100%; display:flex; gap:.6rem; align-items:baseline; margin-top:.3rem} .board .now .clock{font-size:1.2rem} }
+@media(max-width:520px){
+  .board .now{margin-left:0; text-align:left; width:100%; display:flex; gap:.6rem; align-items:baseline; margin-top:.3rem}
+  .board .now .clock{font-size:1.2rem}
+  .ddest b{white-space:normal}
+}
 </style>
 </head>
 <body>
@@ -115,10 +156,10 @@ footer a:hover{text-decoration:underline}
   <div class="intro">
     <div class="kick">Getting around by rail</div>
     <h1>Trains from Ayr</h1>
-    <p>Ayr is on the scenic Ayrshire Coast Line. See today&rsquo;s live departures &mdash; real-time platforms, times and any delays.</p>
+    <p>Live departures from Ayr station, updated in real time. Ayr sits on the scenic Ayrshire Coast Line.</p>
   </div>
 
-  <section class="board" aria-label="Ayr live departures">
+  <section class="board" aria-label="Ayr station">
     <div class="stn">
       <h2>Ayr station</h2>
       <span class="crs">AYR</span>
@@ -127,45 +168,44 @@ footer a:hover{text-decoration:underline}
         <div class="date" id="date">Today</div>
       </div>
     </div>
-    <div class="sub">Live departure board &middot; real-time times, platforms &amp; any delays.</div>
-    <div class="btns">
-      <a class="btn primary" href="https://traintimes.org.uk/live/AYR" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/><path d="M16 14l4 3-4 3"/></svg>
-        See live departures
-      </a>
-      <a class="btn ghost" href="https://www.nationalrail.co.uk/journey-planner/" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6v0M4 12v0M4 18v0"/></svg>
-        Plan a journey
-      </a>
+    <div class="sub"><span class="dot" id="livedot"></span> Live departures <span class="upd" id="upd"></span></div>
+  </section>
+
+  <section class="livepanel">
+    <div class="fbar">
+      <span class="cur" id="curfilter">All destinations</span>
+      <button class="clear" id="clearf" hidden>Show all</button>
+      <a class="full" href="https://traintimes.org.uk/live/AYR" target="_blank" rel="noopener" id="fulllink">Full board &rsaquo;</a>
     </div>
-    <p class="tinynote">Live board opens with Ayr already loaded &middot; real-time data from National Rail (Darwin).</p>
+    <div class="alert" id="alert" hidden></div>
+    <div id="depboard"></div>
   </section>
 
   <section class="sec">
     <h3><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="3"/><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/></svg>Where the trains go</h3>
-    <p class="m">The Ayrshire Coast Line runs north to Glasgow and south towards the coast and Galloway. Tap any stop to see live departures from Ayr to there.</p>
+    <p class="m">The Ayrshire Coast Line runs north to Glasgow and south towards the coast and Galloway. Tap a stop to show only trains from Ayr going there.</p>
 
     <div class="dir">
       <div class="lbl"><svg class="ico" viewBox="0 0 24 24"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg> Northbound <span class="t">to Glasgow &middot; ~50 min</span></div>
       <div class="arrowrow">
-        <a class="pill" href="https://traintimes.org.uk/live/AYR/NOA" target="_blank" rel="noopener">Newton-on-Ayr</a><span class="ar">&rsaquo;</span>
-        <a class="pill" href="https://traintimes.org.uk/live/AYR/PTW" target="_blank" rel="noopener">Prestwick Town</a><span class="ar">&rsaquo;</span>
-        <a class="pill" href="https://traintimes.org.uk/live/AYR/PRA" target="_blank" rel="noopener">Prestwick Int&rsquo;l Airport</a><span class="ar">&rsaquo;</span>
-        <a class="pill" href="https://traintimes.org.uk/live/AYR/TRN" target="_blank" rel="noopener">Troon</a><span class="ar">&rsaquo;</span>
-        <a class="pill" href="https://traintimes.org.uk/live/AYR/IRV" target="_blank" rel="noopener">Irvine</a><span class="ar">&rsaquo;</span>
-        <a class="pill" href="https://traintimes.org.uk/live/AYR/KWN" target="_blank" rel="noopener">Kilwinning</a><span class="ar">&rsaquo;</span>
-        <a class="pill" href="https://traintimes.org.uk/live/AYR/PYG" target="_blank" rel="noopener">Paisley Gilmour St</a><span class="ar">&rsaquo;</span>
-        <a class="pill end" href="https://traintimes.org.uk/live/AYR/GLC" target="_blank" rel="noopener">Glasgow Central</a>
+        <button class="pill" data-crs="NOA" data-name="Newton-on-Ayr">Newton-on-Ayr</button><span class="ar">&rsaquo;</span>
+        <button class="pill" data-crs="PTW" data-name="Prestwick Town">Prestwick Town</button><span class="ar">&rsaquo;</span>
+        <button class="pill" data-crs="PRA" data-name="Prestwick Int&rsquo;l Airport">Prestwick Int&rsquo;l Airport</button><span class="ar">&rsaquo;</span>
+        <button class="pill" data-crs="TRN" data-name="Troon">Troon</button><span class="ar">&rsaquo;</span>
+        <button class="pill" data-crs="IRV" data-name="Irvine">Irvine</button><span class="ar">&rsaquo;</span>
+        <button class="pill" data-crs="KWN" data-name="Kilwinning">Kilwinning</button><span class="ar">&rsaquo;</span>
+        <button class="pill" data-crs="PYG" data-name="Paisley Gilmour St">Paisley Gilmour St</button><span class="ar">&rsaquo;</span>
+        <button class="pill end" data-crs="GLC" data-name="Glasgow Central">Glasgow Central</button>
       </div>
     </div>
 
     <div class="dir">
       <div class="lbl"><svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg> Southbound <span class="t">towards the coast &amp; Galloway</span></div>
       <div class="arrowrow">
-        <a class="pill" href="https://traintimes.org.uk/live/AYR/MAY" target="_blank" rel="noopener">Maybole</a><span class="ar">&rsaquo;</span>
-        <a class="pill" href="https://traintimes.org.uk/live/AYR/GIR" target="_blank" rel="noopener">Girvan</a><span class="ar">&rsaquo;</span>
-        <a class="pill" href="https://traintimes.org.uk/live/AYR/BRL" target="_blank" rel="noopener">Barrhill</a><span class="ar">&rsaquo;</span>
-        <a class="pill end" href="https://traintimes.org.uk/live/AYR/STR" target="_blank" rel="noopener">Stranraer</a>
+        <button class="pill" data-crs="MAY" data-name="Maybole">Maybole</button><span class="ar">&rsaquo;</span>
+        <button class="pill" data-crs="GIR" data-name="Girvan">Girvan</button><span class="ar">&rsaquo;</span>
+        <button class="pill" data-crs="BRL" data-name="Barrhill">Barrhill</button><span class="ar">&rsaquo;</span>
+        <button class="pill end" data-crs="STR" data-name="Stranraer">Stranraer</button>
       </div>
     </div>
   </section>
@@ -174,7 +214,7 @@ footer a:hover{text-decoration:underline}
     <h3><svg viewBox="0 0 24 24"><path d="M13 5l7 7-7 7"/><path d="M20 12H4"/></svg>From Daviot to the station</h3>
     <p>Ayr station is an easy walk from Queen&rsquo;s Terrace &mdash; about 12&ndash;15 minutes along the front and through the town centre.</p>
     <a class="walk" href="https://www.google.com/maps/dir/?api=1&amp;destination=Ayr+railway+station+KA7+2EP" target="_blank" rel="noopener">
-      <span class="wic"><svg viewBox="0 0 24 24"><path d="M13 4a1.6 1.6 0 1 0 0-.01"/><path d="M9 20l2-5 2 1 1 4"/><path d="M11 15l-1-4 3-1 2 2 2 .5"/></svg></span>
+      <span class="wic"><svg viewBox="0 0 24 24"><circle cx="13" cy="4" r="1.6"/><path d="M9 20l2-5 2 1 1 4"/><path d="M11 15l-1-4 3-1 2 2 2 .5"/></svg></span>
       <span class="wtx"><b>Walking directions</b><span>Open in Google Maps</span></span>
       <span class="wgo"><svg class="ico" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
     </a>
@@ -183,23 +223,26 @@ footer a:hover{text-decoration:underline}
 </div>
 
 <footer>
-  Live boards by <a href="https://traintimes.org.uk/" target="_blank" rel="noopener">traintimes.org.uk</a>, using National Rail real-time data.
-  This page links out only &mdash; no tracking, no accounts.
+  Live train times via the National Rail (Darwin) feed, through the open-source
+  <a href="https://github.com/jpsingleton/Huxley2" target="_blank" rel="noopener">Huxley</a> proxy.
+  No tracking, no accounts.
   <br>A guest companion prepared for visitors of Daviot Guest House.
 </footer>
 
 <script>
-/* ---- Host bar (shared with the other guides) ---- */
-function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function stripTags(s){return String(s==null?'':s).replace(/<[^>]*>/g,'').replace(/&nbsp;/g,' ').trim();}
+
+/* ---- Host bar ---- */
 var HOST = { name:"Daviot Guest House", tagline:"Trains from Ayr \u00b7 a sample prepared for our guests" };
-(function renderHostBar(){
+(function(){
   var ico='<img class="hb-logo" src="https://www.daviothouse.co.uk/wp-content/uploads/2019/01/daviot-house-logo-4.png" alt="'+esc(HOST.name)+'" onerror="this.style.display=\'none\'">';
   document.getElementById('hostbar').innerHTML='<div class="hb-inner">'+ico
     +'<div class="hb-name"><b>'+esc(HOST.name)+'</b><span>'+esc(HOST.tagline)+'</span></div>'
     +'<span class="hb-tag">Trains</span></div>';
 })();
 
-/* ---- Live clock in UK time (reinforces "today") ---- */
+/* ---- Live clock (UK time) ---- */
 function tick(){
   try{
     var now=new Date();
@@ -208,6 +251,125 @@ function tick(){
   }catch(e){}
 }
 tick(); setInterval(tick,15000);
+
+/* ---- Live departures board ----
+   Data source: change RAIL_API to your own free proxy (e.g. a Cloudflare Worker
+   holding a free Rail Data Marketplace key) for a production-grade, always-on board.
+   Default uses the public Huxley demo (zero setup, but no uptime guarantee). */
+var RAIL_API = "https://huxley2.azurewebsites.net";
+var ORIGIN = "AYR";
+var ROWS = 12;
+var filter = null;   // {crs, name} or null
+var refreshTimer = null;
+var firstLoad = true;
+
+function skeleton(){
+  var h='';
+  for(var i=0;i<6;i++){
+    h+='<div class="deprow">'
+      +'<div class="dtime"><span class="sk" style="display:block;width:42px;height:16px"></span></div>'
+      +'<div class="ddest"><span class="sk" style="display:block;width:60%;height:14px"></span><span class="sk" style="display:block;width:35%;height:10px;margin-top:6px"></span></div>'
+      +'<div class="dstat"><span class="sk" style="display:block;width:46px;height:13px"></span></div>'
+      +'<div class="dplat"><span class="sk" style="display:block;width:30px;height:20px;margin:0 auto"></span></div>'
+      +'</div>';
+  }
+  document.getElementById('depboard').innerHTML=h;
+}
+
+function showError(){
+  var dest = filter ? (' to '+filter.name) : '';
+  var url = "https://traintimes.org.uk/live/"+ORIGIN + (filter ? "/"+filter.crs : "");
+  document.getElementById('depboard').innerHTML=
+    '<div class="note"><b>Live times are taking a moment</b>'
+    +'We couldn\u2019t load the live board right now. You can open the full live departures'+esc(dest)+' instead:'
+    +'<div><a class="obtn" href="'+url+'" target="_blank" rel="noopener">'
+    +'<svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/><path d="M16 14l4 3-4 3"/></svg>Open live departures</a></div></div>';
+}
+
+function rowHtml(s){
+  var dest = (s.destination && s.destination[0] && s.destination[0].locationName) ? s.destination[0].locationName : 'Destination';
+  var via  = (s.destination && s.destination[0] && s.destination[0].via) ? s.destination[0].via : '';
+  var op   = s.operator || '';
+  var etd  = s.etd || '';
+  var cancelled = s.isCancelled || /cancel/i.test(etd);
+  var statTxt, statCls;
+  if(cancelled){ statTxt='Cancelled'; statCls='cx'; }
+  else if(etd && etd.toLowerCase()!=='on time'){ statTxt=etd; statCls='late'; }
+  else { statTxt='On time'; statCls='ontime'; }
+  var plat = (s.platform!=null && s.platform!=='') ? esc(s.platform) : '&ndash;';
+  var meta = [];
+  if(via) meta.push(esc(via));
+  if(op) meta.push(esc(op));
+  return '<div class="deprow">'
+    +'<div class="dtime"><b>'+esc(s.std||'')+'</b></div>'
+    +'<div class="ddest"><b>'+esc(dest)+'</b><span>'+meta.join(' \u00b7 ')+'</span></div>'
+    +'<div class="dstat"><em class="'+statCls+'">'+esc(statTxt)+'</em></div>'
+    +'<div class="dplat"><span class="p">'+plat+'</span><span class="pl">Plat</span></div>'
+    +'</div>';
+}
+
+function render(d){
+  // alert banner from service messages
+  var al=document.getElementById('alert');
+  var msgs = d && d.nrccMessages;
+  if(msgs && msgs.length){
+    var t = stripTags(typeof msgs[0]==='string' ? msgs[0] : (msgs[0].value||msgs[0].xhtmlMessage||''));
+    if(t){ al.textContent=t; al.hidden=false; } else { al.hidden=true; }
+  } else { al.hidden=true; }
+
+  var svcs = (d && d.trainServices) || [];
+  if(!svcs.length){
+    document.getElementById('depboard').innerHTML='<div class="note"><b>No departures listed right now</b>There are no trains in the next couple of hours'+(filter?(' to '+esc(filter.name)):'')+'.</div>';
+  } else {
+    document.getElementById('depboard').innerHTML=svcs.map(rowHtml).join('');
+  }
+  // updated time
+  try{
+    var u=new Date();
+    document.getElementById('upd').textContent='Updated '+u.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/London'});
+  }catch(e){}
+}
+
+function load(){
+  if(firstLoad) skeleton();
+  var url = RAIL_API+'/departures/'+ORIGIN+(filter?('/to/'+filter.crs):'')+'/'+ROWS;
+  var ctrl = new AbortController();
+  var to = setTimeout(function(){ ctrl.abort(); }, 9000);
+  fetch(url,{signal:ctrl.signal})
+    .then(function(r){ clearTimeout(to); if(!r.ok) throw new Error('http'); return r.json(); })
+    .then(function(d){ firstLoad=false; render(d); })
+    .catch(function(){ firstLoad=false; showError(); });
+}
+
+function setFilter(crs,name){
+  filter = crs ? {crs:crs,name:name} : null;
+  // chip active state
+  var pills=document.querySelectorAll('.pill[data-crs]');
+  for(var i=0;i<pills.length;i++){ pills[i].classList.toggle('on', !!crs && pills[i].getAttribute('data-crs')===crs); }
+  // filter bar
+  document.getElementById('curfilter').textContent = filter ? ('To '+filter.name) : 'All destinations';
+  document.getElementById('clearf').hidden = !filter;
+  document.getElementById('fulllink').href = "https://traintimes.org.uk/live/"+ORIGIN+(filter?("/"+filter.crs):"");
+  firstLoad = true;
+  load();
+}
+
+document.addEventListener('click',function(e){
+  var b=e.target.closest ? e.target.closest('.pill[data-crs]') : null;
+  if(b){
+    var crs=b.getAttribute('data-crs');
+    var name=stripTags(b.getAttribute('data-name'));
+    if(filter && filter.crs===crs){ setFilter(null); }   // tap again to clear
+    else { setFilter(crs,name);
+      document.querySelector('.livepanel').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  }
+});
+document.getElementById('clearf').addEventListener('click',function(){ setFilter(null); });
+
+load();
+refreshTimer=setInterval(load,60000);
+document.addEventListener('visibilitychange',function(){ if(!document.hidden) load(); });
 </script>
 </body>
 </html>
