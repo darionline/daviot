@@ -1,72 +1,952 @@
 <!doctype html>
-<html lang="en">
+<html lang="it">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Daviot Guest House — Guest Companion</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%237189ed'/%3E%3Cpath d='M12 5.5a4 4 0 0 0-4 4c0 3 4 8.5 4 8.5s4-5.5 4-8.5a4 4 0 0 0-4-4z' fill='%23fff'/%3E%3Ccircle cx='12' cy='9.5' r='1.6' fill='%237189ed'/%3E%3C/svg%3E">
-<meta name="description" content="Your guide to Scotland — a sample prepared for guests of Daviot Guest House, Ayr.">
+<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#11161d" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Highland" />
+<title>Highland Compass — la tua bussola di viaggio in Scozia</title>
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<link rel="icon" href="icon.svg" type="image/svg+xml" />
+
+<!-- Leaflet (mappa basata su OpenStreetMap, licenza open ODbL) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-  :root{--ink:#1e2a30;--muted:#5a6b76;--azure:#2b7cc4;--loch:#123b4f;--line:#e2e8f1;--card:#fff;}
-  *{box-sizing:border-box}
-  body{margin:0;font-family:"Mulish",system-ui,sans-serif;color:var(--ink);background:#eef2fa;
-    background-image:radial-gradient(900px 500px at 80% -10%, rgba(124,140,239,.18), transparent 60%);
-    min-height:100vh;display:flex;flex-direction:column}
-  .hostbar{background:#7189ed;color:#fff;border-bottom:1px solid rgba(255,255,255,.35);box-shadow:0 3px 12px rgba(40,70,120,.12)}
-  .hb-inner{max-width:1080px;margin:0 auto;padding:.7rem 1.2rem;display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
-  .hb-logo{height:40px;width:auto;display:block;border-radius:6px;background:#fff;padding:2px}
-  .hb-name b{font-family:"Spectral",serif;font-size:1.12rem;display:block;line-height:1.1}
-  .hb-name span{font-size:.76rem;color:rgba(255,255,255,.9)}
-  .hb-addr{margin-left:auto;font-size:.78rem;color:rgba(255,255,255,.9)}
-  main{flex:1;max-width:1080px;width:100%;margin:0 auto;padding:1.6rem 1.2rem 2.4rem}
-  .lede{margin:.4rem 0 1.4rem;color:var(--muted);font-size:1.02rem;max-width:60ch;line-height:1.5}
-  h1{font-family:"Spectral",serif;font-weight:600;font-size:clamp(1.6rem,4vw,2.2rem);margin:.2rem 0 .1rem;color:var(--loch)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
-  a.card{display:flex;flex-direction:column;justify-content:flex-end;min-height:170px;text-decoration:none;color:#fff;
-    border-radius:18px;padding:1.1rem 1.2rem;position:relative;overflow:hidden;box-shadow:0 14px 34px rgba(40,70,120,.16);
-    transition:transform .16s, box-shadow .16s}
-  a.card:hover{transform:translateY(-3px);box-shadow:0 20px 42px rgba(43,124,196,.26)}
-  .c1{background:linear-gradient(150deg,#2b7cc4,#123b4f)}
-  .c2{background:linear-gradient(150deg,#5e7fe6,#3b4ea0)}
-  a.card h2{font-family:"Spectral",serif;font-weight:600;margin:0 0 .2rem;font-size:1.3rem}
-  a.card p{margin:0;color:rgba(255,255,255,.92);font-size:.9rem;line-height:1.4}
-  a.card .go{position:absolute;top:1rem;right:1.1rem;font-size:1.5rem;opacity:.85}
-  .extra{margin-top:1.3rem;font-size:.92rem}
-  .extra a{color:var(--azure);font-weight:700;text-decoration:none}
-  .extra a:hover{text-decoration:underline}
-  footer{max-width:1080px;margin:0 auto;padding:0 1.2rem 1.6rem;color:var(--muted);font-size:.78rem;line-height:1.5}
+:root{
+  --bg:#11161d; --bg2:#171e27; --panel:#1d2630; --panel2:#243140;
+  --ink:#eef2f0; --muted:#9bb0ad; --line:#2d3a47;
+  --heather:#a884d8;       /* erica scozzese */
+  --heather-2:#7d5bb0;
+  --amber:#e7a651;         /* whisky / luce delle Highlands */
+  --moss:#79a06b;
+  --danger:#d9685e;
+  --shadow:0 10px 40px rgba(0,0,0,.45);
+  --radius:18px;
+  font-synthesis:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(168,132,216,.16), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(231,166,81,.10), transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font-family:"Outfit", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing:antialiased;
+  display:flex; flex-direction:column;
+  overscroll-behavior:none;
+}
+h1,h2,h3{font-family:"Fraunces", Georgia, serif; font-weight:600; letter-spacing:-.01em; margin:0}
+button{font-family:inherit}
+.app{flex:1; display:flex; flex-direction:column; max-width:760px; width:100%; margin:0 auto; min-height:0}
+
+/* Header */
+header{
+  display:flex; align-items:center; gap:.7rem; padding:.85rem 1.1rem;
+  padding-top:max(.85rem, env(safe-area-inset-top));
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(29,38,48,.9), rgba(17,22,29,.6));
+  backdrop-filter:blur(8px); position:sticky; top:0; z-index:50;
+}
+.logo{width:38px;height:38px;flex:0 0 auto}
+header .title{display:flex;flex-direction:column;line-height:1.05}
+header .title b{font-family:"Fraunces",serif;font-weight:800;font-size:1.18rem}
+header .title span{font-size:.72rem;color:var(--muted);letter-spacing:.02em}
+header .spacer{flex:1}
+.icon-btn{
+  background:var(--panel2); border:1px solid var(--line); color:var(--ink);
+  width:40px;height:40px;border-radius:12px;display:grid;place-items:center;cursor:pointer;
+  transition:.15s; font-size:1.1rem;
+}
+.icon-btn:hover{border-color:var(--heather);transform:translateY(-1px)}
+
+/* Content */
+main{flex:1; min-height:0; position:relative; overflow:hidden; z-index:0; isolation:isolate}
+.view{position:absolute; inset:0; overflow:auto; padding:1.1rem; display:none; animation:fade .25s ease}
+.view.active{display:block}
+.view#view-map{padding:0}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* Map */
+#map{position:absolute;inset:0}
+.leaflet-container{background:#0d1218;font-family:inherit}
+.map-overlay{
+  position:absolute; left:12px; right:12px; bottom:max(12px, env(safe-area-inset-bottom));
+  z-index:500; display:flex; gap:.6rem; flex-wrap:wrap; pointer-events:none;
+}
+.map-overlay > *{pointer-events:auto}
+.compass{
+  background:rgba(23,30,39,.92); border:1px solid var(--line); border-radius:16px;
+  padding:.7rem .9rem; display:flex; align-items:center; gap:.7rem; box-shadow:var(--shadow);
+  min-width:0;
+}
+.needle{
+  width:52px;height:52px;flex:0 0 auto;border-radius:50%;
+  background:radial-gradient(circle at 50% 50%, var(--panel2), var(--panel));
+  border:1px solid var(--line); display:grid; place-items:center; position:relative;
+}
+.needle svg{transition:transform .25s cubic-bezier(.2,.7,.2,1)}
+.compass .meta{min-width:0}
+.compass .meta b{font-family:"Fraunces",serif;font-size:1.05rem;display:block}
+.compass .meta small{color:var(--muted);font-size:.74rem}
+.map-fab{display:flex;flex-direction:column;gap:.5rem;margin-left:auto}
+.fab{
+  background:var(--heather); color:#160e22; border:none; border-radius:14px;
+  padding:.7rem .9rem; font-weight:600; cursor:pointer; box-shadow:var(--shadow);
+  display:flex;align-items:center;gap:.4rem;font-size:.86rem; white-space:nowrap;
+}
+.fab.ghost{background:rgba(23,30,39,.92);color:var(--ink);border:1px solid var(--line)}
+.fab:active{transform:scale(.97)}
+
+/* Cards & generic */
+.section-title{display:flex;align-items:center;gap:.5rem;margin:.2rem 0 1rem}
+.section-title h2{font-size:1.45rem}
+.section-title .count{margin-left:auto;color:var(--muted);font-size:.85rem}
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.05rem;
+  margin-bottom:.8rem; box-shadow:0 2px 10px rgba(0,0,0,.2);
+}
+.muted{color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:2.4rem 1rem}
+.empty .big{font-size:2.4rem;display:block;margin-bottom:.4rem;opacity:.8}
+
+/* Place items */
+.place{display:flex;gap:.8rem;align-items:flex-start}
+.place .pin{
+  width:42px;height:42px;border-radius:12px;flex:0 0 auto;display:grid;place-items:center;
+  font-size:1.2rem;background:var(--panel2);border:1px solid var(--line)
+}
+.place .body{flex:1;min-width:0}
+.place .body b{font-family:"Fraunces",serif;font-size:1.05rem}
+.place .body .tag{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.place .body p{margin:.35rem 0 0;font-size:.9rem;color:#cdd9d6}
+.place .acts{display:flex;flex-direction:column;gap:.4rem}
+.mini{
+  background:var(--panel2);border:1px solid var(--line);color:var(--ink);
+  border-radius:10px;width:34px;height:34px;display:grid;place-items:center;cursor:pointer;font-size:.9rem
+}
+.mini:hover{border-color:var(--heather)}
+.mini.del:hover{border-color:var(--danger);color:var(--danger)}
+.dist{font-size:.78rem;color:var(--amber);font-weight:600;margin-top:.3rem}
+
+/* Buttons */
+.btn{
+  background:var(--heather);color:#160e22;border:none;border-radius:12px;
+  padding:.8rem 1.1rem;font-weight:600;cursor:pointer;font-size:.95rem;width:100%;
+  display:flex;align-items:center;justify-content:center;gap:.5rem;transition:.15s
+}
+.btn:hover{filter:brightness(1.07)}
+.btn:active{transform:scale(.98)}
+.btn.sec{background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
+.btn.warn{background:transparent;border:1px solid var(--danger);color:var(--danger)}
+.row{display:flex;gap:.6rem}
+.row .btn{flex:1}
+
+/* Forms */
+label{display:block;font-size:.8rem;color:var(--muted);margin:.7rem 0 .3rem}
+input,textarea,select{
+  width:100%;background:var(--bg);border:1px solid var(--line);color:var(--ink);
+  border-radius:12px;padding:.7rem .8rem;font-family:inherit;font-size:.95rem
+}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--heather)}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.4rem}
+.chip{
+  border:1px solid var(--line);background:var(--bg);color:var(--muted);
+  padding:.45rem .7rem;border-radius:999px;font-size:.82rem;cursor:pointer;display:flex;gap:.3rem;align-items:center
+}
+.chip.on{border-color:var(--heather);color:var(--ink);background:rgba(168,132,216,.14)}
+
+/* Packing / checklist */
+.check{display:flex;align-items:center;gap:.7rem;padding:.6rem .2rem;border-bottom:1px solid var(--line)}
+.check:last-child{border-bottom:none}
+.check input{width:22px;height:22px;flex:0 0 auto;accent-color:var(--heather)}
+.check span{flex:1}
+.check.done span{text-decoration:line-through;color:var(--muted)}
+
+/* Itinerary */
+.day-head{display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem}
+.day-head b{font-family:"Fraunces",serif;font-size:1.1rem}
+
+/* AI */
+.chat{display:flex;flex-direction:column;gap:.7rem;margin-bottom:1rem}
+.bubble{padding:.7rem .9rem;border-radius:14px;max-width:88%;font-size:.92rem;line-height:1.45;white-space:pre-wrap}
+.bubble.me{align-self:flex-end;background:var(--heather-2);color:#fff;border-bottom-right-radius:4px}
+.bubble.ai{align-self:flex-start;background:var(--panel2);border:1px solid var(--line);border-bottom-left-radius:4px}
+.bubble.sys{align-self:center;background:transparent;color:var(--muted);font-size:.82rem;text-align:center;max-width:100%}
+
+/* Tabbar */
+nav.tabs{
+  display:flex;border-top:1px solid var(--line);background:var(--bg2);
+  padding-bottom:env(safe-area-inset-bottom); position:sticky; bottom:0; z-index:40;
+}
+nav.tabs button{
+  flex:1;background:none;border:none;color:var(--muted);padding:.6rem .2rem .65rem;
+  display:flex;flex-direction:column;align-items:center;gap:.18rem;cursor:pointer;font-size:.68rem;transition:.15s
+}
+nav.tabs button .ic{font-size:1.25rem}
+nav.tabs button.active{color:var(--heather)}
+nav.tabs button.active .ic{transform:translateY(-1px)}
+
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(8,11,15,.6);backdrop-filter:blur(3px);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.modal.open{display:flex}
+.sheet{
+  background:var(--panel);border:1px solid var(--line);border-bottom:none;
+  border-radius:22px 22px 0 0;width:100%;max-width:760px;padding:1.2rem 1.1rem 1.6rem;
+  box-shadow:var(--shadow);animation:up .25s cubic-bezier(.2,.8,.2,1);max-height:88vh;overflow:auto
+}
+@keyframes up{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
+.sheet .grab{width:40px;height:4px;border-radius:99px;background:var(--line);margin:0 auto .9rem}
+.sheet h3{font-size:1.3rem;margin-bottom:.3rem}
+
+/* Toast */
+.toast{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:84px;z-index:300;
+  background:var(--panel2);border:1px solid var(--heather);color:var(--ink);
+  padding:.7rem 1rem;border-radius:12px;box-shadow:var(--shadow);font-size:.9rem;
+  opacity:0;pointer-events:none;transition:.3s
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+
+.notice{font-size:.78rem;color:var(--muted);line-height:1.5}
+.attr{font-size:.68rem;color:var(--muted);padding:.4rem 1.1rem;text-align:center}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1rem}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:.8rem;text-align:center}
+.kpi b{font-family:"Fraunces",serif;font-size:1.5rem;display:block}
+.kpi small{color:var(--muted);font-size:.72rem}
+
+/* Aurora di sfondo */
+.aurora{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;opacity:.55}
+.aurora span{position:absolute;border-radius:50%;filter:blur(60px);mix-blend-mode:screen;animation:drift 22s ease-in-out infinite}
+.aurora .a1{width:50vw;height:50vw;left:-10vw;top:-15vh;background:radial-gradient(circle,rgba(121,160,107,.5),transparent 70%);animation-delay:0s}
+.aurora .a2{width:46vw;height:46vw;right:-12vw;top:-8vh;background:radial-gradient(circle,rgba(168,132,216,.5),transparent 70%);animation-delay:-7s}
+.aurora .a3{width:40vw;height:40vw;left:20vw;top:-20vh;background:radial-gradient(circle,rgba(90,150,200,.4),transparent 70%);animation-delay:-13s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(6vw,4vh) scale(1.12)}66%{transform:translate(-5vw,2vh) scale(.95)}}
+@media (prefers-reduced-motion:reduce){.aurora span{animation:none}}
+
+/* Reveal a cascata delle card */
+.view.active .card{animation:reveal .45s both}
+.view.active .card:nth-child(1){animation-delay:.02s}
+.view.active .card:nth-child(2){animation-delay:.07s}
+.view.active .card:nth-child(3){animation-delay:.12s}
+.view.active .card:nth-child(4){animation-delay:.17s}
+.view.active .card:nth-child(n+5){animation-delay:.2s}
+@keyframes reveal{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* Onboarding */
+.onboard{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;padding:1.2rem;
+  background:radial-gradient(1000px 600px at 70% 0%,rgba(168,132,216,.22),transparent 60%),rgba(10,13,18,.96);backdrop-filter:blur(6px)}
+.onboard.open{display:flex;animation:fade .4s}
+.onboard .box{max-width:420px;text-align:center;animation:up .5s cubic-bezier(.2,.8,.2,1)}
+.onboard .logo-big{width:96px;height:96px;margin:0 auto 1rem;animation:spinIn 1s cubic-bezier(.2,.8,.2,1)}
+@keyframes spinIn{from{transform:rotate(-40deg) scale(.7);opacity:0}to{transform:none;opacity:1}}
+.onboard h1{font-size:2rem;margin-bottom:.4rem}
+.onboard .feats{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:1.4rem 0}
+.onboard .feat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:.8rem .6rem;font-size:.82rem}
+.onboard .feat .e{font-size:1.5rem;display:block;margin-bottom:.25rem}
+
+/* Esplora */
+.explore-grid{display:grid;gap:.6rem}
+.poi{display:flex;gap:.7rem;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:.65rem .75rem}
+.poi .e{font-size:1.4rem;flex:0 0 auto}
+.poi .b{flex:1;min-width:0}
+.poi .b b{font-family:"Fraunces",serif;font-size:.98rem;display:block;line-height:1.1}
+.poi .b small{color:var(--muted);font-size:.76rem}
+.poi .add{background:var(--heather);color:#160e22;border:none;border-radius:10px;width:38px;height:38px;font-size:1.2rem;cursor:pointer;flex:0 0 auto}
+.poi .add.added{background:var(--panel2);color:var(--moss);border:1px solid var(--moss)}
+.filterbar{display:flex;gap:.4rem;overflow-x:auto;padding-bottom:.5rem;margin-bottom:.3rem;-webkit-overflow-scrolling:touch}
+.filterbar::-webkit-scrollbar{display:none}
+.fb{white-space:nowrap;border:1px solid var(--line);background:var(--bg);color:var(--muted);padding:.4rem .75rem;border-radius:999px;font-size:.8rem;cursor:pointer}
+.fb.on{border-color:var(--heather);color:var(--ink);background:rgba(168,132,216,.14)}
+
+/* Chip suggerimenti AI */
+.ai-chips{display:flex;gap:.45rem;overflow-x:auto;padding-bottom:.5rem;margin-bottom:.2rem}
+.ai-chips::-webkit-scrollbar{display:none}
+.ai-chips .ac{white-space:nowrap;border:1px solid var(--line);background:var(--panel2);color:var(--ink);padding:.5rem .8rem;border-radius:999px;font-size:.82rem;cursor:pointer;transition:.15s}
+.ai-chips .ac:hover{border-color:var(--heather)}
+.typing{display:inline-flex;gap:4px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:blink 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+
+@media(min-width:720px){.app{box-shadow:var(--shadow);border-radius:0}}
 </style>
 </head>
 <body>
-  <div class="hostbar"><div class="hb-inner">
-    <img class="hb-logo" src="https://www.daviothouse.co.uk/wp-content/uploads/2019/01/daviot-house-logo-4.png" alt="Daviot Guest House" onerror="this.style.display='none'">
-    <div class="hb-name"><b>Daviot Guest House</b><span>Your guide to Scotland · a sample for our guests</span></div>
-    <div class="hb-addr">12 Queen&rsquo;s Terrace, Ayr, KA7 1DU</div>
-  </div></div>
+<div class="aurora"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
+
+<!-- Onboarding (mostrato solo al primo avvio) -->
+<div class="onboard" id="onboard">
+  <div class="box">
+    <svg class="logo-big" viewBox="0 0 64 64" aria-hidden="true">
+      <circle cx="32" cy="32" r="30" fill="#1d2630" stroke="#2d3a47" stroke-width="2"/>
+      <path d="M32 8 L38 30 L32 26 L26 30 Z" fill="#a884d8"/>
+      <path d="M32 56 L26 34 L32 38 L38 34 Z" fill="#e7a651"/>
+      <circle cx="32" cy="32" r="3.4" fill="#eef2f0"/>
+    </svg>
+    <h1>Highland Compass</h1>
+    <p class="muted">La tua bussola di viaggio per la Scozia. Offline, privata, sempre con te.</p>
+    <div class="feats">
+      <div class="feat"><span class="e">🧭</span>Non perderti: bussola verso la base</div>
+      <div class="feat"><span class="e">🏰</span>Luoghi famosi pronti da aggiungere</div>
+      <div class="feat"><span class="e">✨</span>Assistente AI per i tuoi itinerari</div>
+      <div class="feat"><span class="e">🔐</span>Dati solo sul tuo telefono</div>
+    </div>
+    <button class="btn" id="obStart">Inizia il viaggio</button>
+    <p class="notice" style="margin-top:.9rem">Useremo la posizione solo quando lo chiedi tu. Nessun account, nessun tracciamento.</p>
+  </div>
+</div>
+
+<div class="app">
+
+  <header>
+    <svg class="logo" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <circle cx="32" cy="32" r="30" fill="#1d2630" stroke="#2d3a47" stroke-width="2"/>
+      <path d="M32 8 L38 30 L32 26 L26 30 Z" fill="#a884d8"/>
+      <path d="M32 56 L26 34 L32 38 L38 34 Z" fill="#e7a651"/>
+      <circle cx="32" cy="32" r="3.4" fill="#eef2f0"/>
+    </svg>
+    <div class="title"><b>Highland Compass</b><span>la tua bussola di viaggio · Scozia</span></div>
+    <div class="spacer"></div>
+    <button class="icon-btn" id="locBtn" title="La mia posizione">📍</button>
+  </header>
 
   <main>
-    <h1>Welcome — explore the area</h1>
-    <p class="lede">A little companion for your stay: handpicked places to see near the house, and a tour of Scotland&rsquo;s lighthouses. Tap a card to begin.</p>
-    <div class="grid">
-      <a class="card c1" href="near-ayr.html">
-        <span class="go">&rsaquo;</span>
-        <h2>What to see near us</h2>
-        <p>Beaches, coastal walks, hills, castles and cycle routes within easy reach of the guest house.</p>
-      </a>
-      <a class="card c2" href="lighthouses-of-scotland.html">
-        <span class="go">&rsaquo;</span>
-        <h2>Lighthouses of Scotland</h2>
-        <p>From the Mull of Galloway to Shetland — every coast, mapped, with photography where it exists.</p>
-      </a>
-    </div>
-    <p class="extra">Innkeeper preview: <a href="proposal.html">read the proposal &rarr;</a></p>
+    <!-- MAPPA -->
+    <section class="view active" id="view-map">
+      <div id="map"></div>
+      <div class="map-overlay">
+        <div class="compass" id="compass" style="display:none">
+          <div class="needle">
+            <svg id="needle" width="34" height="34" viewBox="0 0 34 34">
+              <path d="M17 3 L23 19 L17 15 L11 19 Z" fill="#e7a651"/>
+              <path d="M17 31 L11 15 L17 19 L23 15 Z" fill="#5b6b78"/>
+            </svg>
+          </div>
+          <div class="meta">
+            <b id="compassDist">—</b>
+            <small id="compassLabel">verso la base</small>
+          </div>
+        </div>
+        <div class="map-fab">
+          <button class="fab" id="setBaseBtn">🏨 Imposta base</button>
+          <button class="fab ghost" id="trailBtn">🍞 Traccia: off</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LUOGHI -->
+    <section class="view" id="view-places">
+      <div class="section-title"><h2>I miei luoghi</h2><span class="count" id="placesCount"></span></div>
+      <div class="row" style="margin-bottom:1rem">
+        <button class="btn" id="addPlaceBtn">＋ Aggiungi</button>
+        <button class="btn sec" id="exploreBtn">🏰 Esplora Scozia</button>
+      </div>
+      <div id="placesList"></div>
+    </section>
+
+    <!-- ITINERARIO -->
+    <section class="view" id="view-trip">
+      <div class="section-title"><h2>Itinerario</h2></div>
+      <div id="itinerary"></div>
+      <button class="btn sec" id="addDayBtn">＋ Aggiungi una giornata</button>
+    </section>
+
+    <!-- VALIGIA -->
+    <section class="view" id="view-pack">
+      <div class="section-title"><h2>Valigia</h2><span class="count" id="packCount"></span></div>
+      <div class="card" id="packCard"></div>
+      <div class="row">
+        <button class="btn sec" id="addPackBtn">＋ Articolo</button>
+        <button class="btn sec" id="resetPackBtn">↻ Preset Scozia</button>
+      </div>
+    </section>
+
+    <!-- AI -->
+    <section class="view" id="view-ai">
+      <div class="section-title"><h2>Assistente</h2></div>
+      <div class="ai-chips" id="aiChips"></div>
+      <div class="chat" id="chat"></div>
+      <div class="row">
+        <input id="aiInput" placeholder="Es. Cosa vedere vicino a me oggi?" />
+        <button class="btn" id="aiSend" style="width:auto;padding:.8rem 1.1rem">➤</button>
+      </div>
+      <p class="notice" style="margin-top:.8rem">L'assistente usa il contesto dei tuoi luoghi salvati. Per attivare Claude collega un endpoint sicuro in <b>Impostazioni → AI</b> (la chiave resta sul server, mai nel telefono).</p>
+    </section>
+
+    <!-- INFO / IMPOSTAZIONI -->
+    <section class="view" id="view-info">
+      <div class="section-title"><h2>Info & Impostazioni</h2></div>
+
+      <div class="kpis">
+        <div class="kpi"><b id="kpiPlaces">0</b><small>luoghi</small></div>
+        <div class="kpi"><b id="kpiDays">0</b><small>giornate</small></div>
+        <div class="kpi"><b id="kpiTrail">0</b><small>briciole</small></div>
+      </div>
+
+      <div class="card">
+        <h3>🆘 Numeri & dritte Scozia</h3>
+        <p class="notice" style="margin-top:.6rem">
+        <b>Emergenze:</b> 999 oppure 112 · <b>Non emergenza polizia:</b> 101 · <b>Sanità non urgente:</b> 111<br>
+        <b>Guida:</b> a sinistra · molte single-track road con piazzole di scambio<br>
+        <b>Valuta:</b> sterlina (GBP) · <b>Meteo:</b> imprevedibile, vesti a strati<br>
+        <b>Midge:</b> moscerini pungenti da fine maggio a settembre, porta repellente</p>
+      </div>
+
+      <div class="card">
+        <h3>🤖 AI (Claude)</h3>
+        <label>Endpoint del tuo backend (facoltativo)</label>
+        <input id="aiEndpoint" placeholder="https://tuo-server.com/api/claude" />
+        <button class="btn sec" id="saveAiBtn" style="margin-top:.7rem">Salva endpoint</button>
+        <p class="notice" style="margin-top:.7rem">Senza endpoint l'assistente funziona in modalità dimostrativa locale. Vedi le istruzioni qui sotto per collegare Claude in modo sicuro.</p>
+      </div>
+
+      <div class="card">
+        <h3>🔐 I tuoi dati</h3>
+        <p class="notice" style="margin-top:.6rem">Tutto è salvato <b>solo su questo dispositivo</b> (localStorage). Niente account, niente server, nessun tracciamento. La posizione si attiva solo quando lo chiedi tu.</p>
+        <div class="row" style="margin-top:.8rem">
+          <button class="btn sec" id="exportBtn">⬇︎ Esporta backup</button>
+          <button class="btn sec" id="importBtn">⬆︎ Importa</button>
+        </div>
+        <button class="btn warn" id="wipeBtn" style="margin-top:.7rem">🗑 Cancella tutti i dati</button>
+        <input type="file" id="importFile" accept="application/json" hidden />
+      </div>
+
+      <p class="attr">Mappe © OpenStreetMap contributors · App offline-first · v1.1</p>
+    </section>
   </main>
 
-  <footer>
-    Maps &amp; data &copy; OpenStreetMap contributors (ODbL) · map tiles &copy; CARTO · photography via Wikimedia Commons · Google Maps opens only as outbound links. Sample prepared for Daviot Guest House.
-  </footer>
+  <nav class="tabs">
+    <button class="active" data-view="map"><span class="ic">🧭</span>Mappa</button>
+    <button data-view="places"><span class="ic">📌</span>Luoghi</button>
+    <button data-view="trip"><span class="ic">🗓</span>Itinerario</button>
+    <button data-view="pack"><span class="ic">🧳</span>Valigia</button>
+    <button data-view="ai"><span class="ic">✨</span>AI</button>
+    <button data-view="info"><span class="ic">⚙︎</span>Info</button>
+  </nav>
+</div>
+
+<!-- Modal generico -->
+<div class="modal" id="modal"><div class="sheet" id="sheet"><div class="grab"></div><div id="sheetBody"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   Highland Compass — logica applicazione
+   Tutti i dati restano in localStorage. Mappa: OpenStreetMap.
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const KEY = 'highland_v1';
+
+const CATS = {
+  hotel:      {icon:'🏨', label:'Base / Hotel'},
+  castello:   {icon:'🏰', label:'Castello'},
+  distilleria:{icon:'🥃', label:'Distilleria'},
+  viewpoint:  {icon:'🏔', label:'Panorama'},
+  sentiero:   {icon:'🥾', label:'Sentiero'},
+  ristorante: {icon:'🍽', label:'Ristorante'},
+  spiaggia:   {icon:'🏖', label:'Spiaggia / Loch'},
+  citta:      {icon:'🏙', label:'Città / Paese'},
+  altro:      {icon:'📍', label:'Altro'}
+};
+
+const PACK_PRESET = [
+  'Giacca antipioggia','Strati caldi (pile/maglione)','Scarpe da trekking impermeabili',
+  'Repellente anti-midge','Cappello e guanti leggeri','Power bank','Adattatore UK (tipo G)',
+  'Borraccia','Occhiali da sole','Costume (per le SPA/loch coraggiosi)','Mappa offline scaricata',
+  'Documenti e patente','Carta + un po\' di contanti GBP'
+];
+
+/* Libreria di luoghi noti — coordinate da dati aperti (OpenStreetMap),
+   note scritte originali (nessun testo copiato da guide). */
+const POIS = [
+  {name:'Edinburgh Castle', cat:'castello', lat:55.9486, lng:-3.1999, note:'Fortezza sulla roccia vulcanica, cuore storico della capitale.'},
+  {name:'Stirling Castle', cat:'castello', lat:56.1241, lng:-3.9486, note:'Castello strategico legato a Wallace e Robert the Bruce.'},
+  {name:'Eilean Donan Castle', cat:'castello', lat:57.2741, lng:-5.5163, note:'Il castello su isolotto più fotografato di Scozia.'},
+  {name:'Urquhart Castle', cat:'castello', lat:57.3242, lng:-4.4426, note:'Rovine affacciate su Loch Ness.'},
+  {name:'Dunnottar Castle', cat:'castello', lat:56.9462, lng:-2.1973, note:'Rovine su un promontorio a picco sul mare.'},
+  {name:'Castle Stalker', cat:'castello', lat:56.5719, lng:-5.3838, note:'Torre solitaria su una piccola isola di marea.'},
+
+  {name:'Talisker Distillery', cat:'distilleria', lat:57.3022, lng:-6.3569, note:'Unica distilleria storica dell\u2019Isola di Skye.'},
+  {name:'Oban Distillery', cat:'distilleria', lat:56.4140, lng:-5.4730, note:'Nel cuore della cittadina portuale di Oban.'},
+  {name:'Glenfiddich', cat:'distilleria', lat:57.4575, lng:-3.1265, note:'Speyside, una delle distillerie più conosciute.'},
+  {name:'The Macallan', cat:'distilleria', lat:57.4895, lng:-3.2069, note:'Distilleria-architettura nella valle dello Spey.'},
+  {name:'Lagavulin', cat:'distilleria', lat:55.6360, lng:-6.1268, note:'Islay, whisky molto torbato sulla costa sud.'},
+  {name:'Laphroaig', cat:'distilleria', lat:55.6300, lng:-6.1530, note:'Islay, profumi marini e di torba intensi.'},
+
+  {name:'Old Man of Storr', cat:'viewpoint', lat:57.5072, lng:-6.1836, note:'Pinnacoli di roccia iconici a Skye, salita panoramica.'},
+  {name:'Quiraing', cat:'viewpoint', lat:57.6440, lng:-6.2680, note:'Paesaggio di frana spettacolare nel nord di Skye.'},
+  {name:'Glencoe', cat:'viewpoint', lat:56.6667, lng:-5.1000, note:'Valle glaciale tra le più drammatiche delle Highlands.'},
+  {name:'Glenfinnan Viaduct', cat:'viewpoint', lat:56.8728, lng:-5.4337, note:'Viadotto ferroviario reso celebre dai treni a vapore.'},
+  {name:'Neist Point', cat:'viewpoint', lat:57.4236, lng:-6.7903, note:'Faro all\u2019estremo ovest di Skye, tramonti sull\u2019oceano.'},
+
+  {name:'Ben Nevis', cat:'sentiero', lat:56.7969, lng:-5.0036, note:'La vetta più alta del Regno Unito (1.345 m).'},
+  {name:'Fairy Pools', cat:'sentiero', lat:57.2497, lng:-6.2547, note:'Pozze e cascate cristalline ai piedi dei Cuillin, Skye.'},
+  {name:'West Highland Way (inizio)', cat:'sentiero', lat:55.9410, lng:-4.3170, note:'Partenza del celebre cammino da Milngavie.'},
+  {name:'Cairngorms', cat:'sentiero', lat:57.0833, lng:-3.6667, note:'Vasto parco nazionale di montagne e foreste.'},
+
+  {name:'Loch Ness', cat:'spiaggia', lat:57.3229, lng:-4.4244, note:'Il lago più famoso, lungo e profondo, vicino a Inverness.'},
+  {name:'Loch Lomond', cat:'spiaggia', lat:56.1000, lng:-4.6200, note:'Grande lago a nord di Glasgow, isole e villaggi.'},
+  {name:'Luskentyre Beach', cat:'spiaggia', lat:57.8870, lng:-6.9760, note:'Sabbia bianca e acque turchesi a Harris.'},
+
+  {name:'Edimburgo', cat:'citta', lat:55.9533, lng:-3.1883, note:'La capitale: Royal Mile, castello, Arthur\u2019s Seat.'},
+  {name:'Glasgow', cat:'citta', lat:55.8642, lng:-4.2518, note:'La più grande città, arte, musica e architettura.'},
+  {name:'Inverness', cat:'citta', lat:57.4778, lng:-4.2247, note:'Capitale delle Highlands, base per Loch Ness e NC500.'},
+  {name:'Fort William', cat:'citta', lat:56.8198, lng:-5.1052, note:'Ai piedi del Ben Nevis, snodo per le Highlands ovest.'},
+  {name:'Portree', cat:'citta', lat:57.4125, lng:-6.1956, note:'Vivace capoluogo dell\u2019Isola di Skye, porto colorato.'},
+  {name:'St Andrews', cat:'citta', lat:56.3398, lng:-2.7967, note:'Università storica e culla del golf.'},
+  {name:'Oban', cat:'citta', lat:56.4150, lng:-5.4720, note:'Porto per le isole Ebridi, frutti di mare.'}
+];
+
+let state = load();
+let map, youMarker, baseMarker, trailLine, placeLayer = {};
+let lastPos = null, deviceHeading = null, watchId = null, trailWatchId = null;
+
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return { base:null, places:[], breadcrumbs:[], itinerary:[], packing:[], trailOn:false, aiEndpoint:'', chat:[] };
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){ toast('Spazio di archiviazione pieno'); } }
+
+/* ---------- Toast & Modal ---------- */
+let toastT;
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200); }
+function openSheet(html){ $('#sheetBody').innerHTML=html; $('#modal').classList.add('open'); }
+function closeSheet(){ $('#modal').classList.remove('open'); }
+$('#modal').addEventListener('click', e=>{ if(e.target.id==='modal') closeSheet(); });
+
+/* ---------- Navigazione tab ---------- */
+$$('nav.tabs button').forEach(b=>b.addEventListener('click',()=>{
+  $$('nav.tabs button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  $$('.view').forEach(v=>v.classList.remove('active'));
+  $('#view-'+b.dataset.view).classList.add('active');
+  if(b.dataset.view==='map' && map) setTimeout(()=>map.invalidateSize(),60);
+  if(b.dataset.view==='info') refreshKpis();
+}));
+
+/* ---------- Geo helpers ---------- */
+const R=6371000;
+const toRad=d=>d*Math.PI/180, toDeg=r=>r*180/Math.PI;
+function haversine(a,b){
+  const dLat=toRad(b.lat-a.lat), dLon=toRad(b.lng-a.lng);
+  const s=Math.sin(dLat/2)**2 + Math.cos(toRad(a.lat))*Math.cos(toRad(b.lat))*Math.sin(dLon/2)**2;
+  return 2*R*Math.asin(Math.sqrt(s));
+}
+function bearing(a,b){
+  const y=Math.sin(toRad(b.lng-a.lng))*Math.cos(toRad(b.lat));
+  const x=Math.cos(toRad(a.lat))*Math.sin(toRad(b.lat))-Math.sin(toRad(a.lat))*Math.cos(toRad(b.lat))*Math.cos(toRad(b.lng-a.lng));
+  return (toDeg(Math.atan2(y,x))+360)%360;
+}
+function fmtDist(m){ return m<1000 ? Math.round(m)+' m' : (m/1000).toFixed(m<10000?1:0)+' km'; }
+
+/* ---------- Mappa ---------- */
+function initMap(){
+  map = L.map('map',{zoomControl:true,attributionControl:true}).setView([56.82,-4.18], 6); // Highlands
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    maxZoom:19, attribution:'© OpenStreetMap contributors'
+  }).addTo(map);
+  map.on('click', e=>{ pendingLatLng = e.latlng; });
+  renderMapMarkers();
+  drawTrail();
+}
+let pendingLatLng = null;
+
+function youIcon(){ return L.divIcon({className:'',html:'<div style="width:18px;height:18px;border-radius:50%;background:#4da6ff;border:3px solid #fff;box-shadow:0 0 0 4px rgba(77,166,255,.35)"></div>',iconSize:[18,18],iconAnchor:[9,9]}); }
+function catIcon(cat){ const c=CATS[cat]||CATS.altro; return L.divIcon({className:'',html:`<div style="font-size:26px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6))">${c.icon}</div>`,iconSize:[30,30],iconAnchor:[15,28]}); }
+
+function renderMapMarkers(){
+  Object.values(placeLayer).forEach(m=>map.removeLayer(m)); placeLayer={};
+  if(baseMarker){map.removeLayer(baseMarker);baseMarker=null;}
+  if(state.base){
+    baseMarker=L.marker([state.base.lat,state.base.lng],{icon:catIcon('hotel')}).addTo(map)
+      .bindPopup(`<b>🏨 ${esc(state.base.name||'La mia base')}</b>`);
+  }
+  state.places.forEach(p=>{
+    placeLayer[p.id]=L.marker([p.lat,p.lng],{icon:catIcon(p.cat)}).addTo(map)
+      .bindPopup(`<b>${(CATS[p.cat]||CATS.altro).icon} ${esc(p.name)}</b>${p.note?'<br>'+esc(p.note):''}`);
+  });
+}
+function drawTrail(){
+  if(trailLine){map.removeLayer(trailLine);trailLine=null;}
+  if(state.breadcrumbs.length>1){
+    trailLine=L.polyline(state.breadcrumbs.map(b=>[b.lat,b.lng]),{color:'#e7a651',weight:3,opacity:.8,dashArray:'1 8',lineCap:'round'}).addTo(map);
+  }
+}
+
+/* ---------- Geolocalizzazione ---------- */
+function locate(center=true){
+  if(!navigator.geolocation){ toast('Geolocalizzazione non disponibile'); return; }
+  navigator.geolocation.getCurrentPosition(pos=>{
+    onPos(pos);
+    if(center) map.setView([pos.coords.latitude,pos.coords.longitude], 14);
+  }, err=>{
+    toast(err.code===1?'Permesso posizione negato':'Posizione non disponibile');
+  }, {enableHighAccuracy:true, timeout:10000, maximumAge:5000});
+}
+function onPos(pos){
+  lastPos={lat:pos.coords.latitude,lng:pos.coords.longitude};
+  if(!youMarker) youMarker=L.marker([lastPos.lat,lastPos.lng],{icon:youIcon(),zIndexOffset:1000}).addTo(map);
+  else youMarker.setLatLng([lastPos.lat,lastPos.lng]);
+  updateCompass();
+}
+$('#locBtn').addEventListener('click',()=>locate(true));
+
+/* ---------- Bussola "verso la base" ---------- */
+function updateCompass(){
+  const c=$('#compass');
+  if(!state.base || !lastPos){ c.style.display='none'; return; }
+  c.style.display='flex';
+  const d=haversine(lastPos,state.base);
+  const brg=bearing(lastPos,state.base);
+  $('#compassDist').textContent=fmtDist(d);
+  $('#compassLabel').textContent = state.base.name ? 'verso '+state.base.name : 'verso la base';
+  const rot = deviceHeading==null ? brg : (brg - deviceHeading);
+  $('#needle').style.transform=`rotate(${rot}deg)`;
+}
+function enableCompassSensor(){
+  const handler=e=>{
+    let h = e.webkitCompassHeading!=null ? e.webkitCompassHeading : (e.alpha!=null ? 360-e.alpha : null);
+    if(h!=null){ deviceHeading=h; updateCompass(); }
+  };
+  if(typeof DeviceOrientationEvent!=='undefined' && DeviceOrientationEvent.requestPermission){
+    DeviceOrientationEvent.requestPermission().then(s=>{ if(s==='granted') window.addEventListener('deviceorientation',handler,true); }).catch(()=>{});
+  } else {
+    window.addEventListener('deviceorientationabsolute', handler, true);
+    window.addEventListener('deviceorientation', handler, true);
+  }
+}
+
+/* ---------- Imposta base ---------- */
+$('#setBaseBtn').addEventListener('click', ()=>{
+  openSheet(`
+    <h3>🏨 Imposta la tua base</h3>
+    <p class="notice">È l'ancora di "non perdermi mai": l'hotel, il B&amp;B, il parcheggio.</p>
+    <label>Nome</label><input id="baseName" placeholder="Es. Hotel a Inverness" value="${esc(state.base?.name||'')}">
+    <div class="row" style="margin-top:1rem">
+      <button class="btn" id="baseHere">📍 Usa la mia posizione</button>
+    </div>
+    <p class="notice" style="margin-top:.7rem">Oppure tocca un punto sulla mappa e premi "Usa punto scelto".</p>
+    <div class="row" style="margin-top:.4rem">
+      <button class="btn sec" id="basePin">📌 Usa punto scelto</button>
+    </div>
+  `);
+  $('#baseHere').onclick=()=>{
+    if(!navigator.geolocation) return toast('Geolocalizzazione non disponibile');
+    navigator.geolocation.getCurrentPosition(p=>{
+      state.base={name:$('#baseName').value.trim(),lat:p.coords.latitude,lng:p.coords.longitude};
+      save();renderMapMarkers();onPos(p);closeSheet();toast('Base impostata 🏨');
+    },()=>toast('Posizione non disponibile'),{enableHighAccuracy:true});
+  };
+  $('#basePin').onclick=()=>{
+    if(!pendingLatLng) return toast('Tocca prima un punto sulla mappa');
+    state.base={name:$('#baseName').value.trim(),lat:pendingLatLng.lat,lng:pendingLatLng.lng};
+    save();renderMapMarkers();updateCompass();closeSheet();toast('Base impostata 🏨');
+  };
+});
+
+/* ---------- Traccia briciole di pane ---------- */
+$('#trailBtn').addEventListener('click', ()=>{
+  state.trailOn=!state.trailOn; save(); reflectTrail();
+});
+function reflectTrail(){
+  $('#trailBtn').textContent = state.trailOn ? '🍞 Traccia: ON' : '🍞 Traccia: off';
+  $('#trailBtn').style.borderColor = state.trailOn ? 'var(--amber)' : 'var(--line)';
+  if(state.trailOn){
+    if(!navigator.geolocation) return toast('Geolocalizzazione non disponibile');
+    trailWatchId=navigator.geolocation.watchPosition(p=>{
+      onPos(p);
+      const pt={lat:p.coords.latitude,lng:p.coords.longitude,t:Date.now()};
+      const last=state.breadcrumbs[state.breadcrumbs.length-1];
+      if(!last || haversine(last,pt)>20){ state.breadcrumbs.push(pt); save(); drawTrail(); }
+    },()=>{},{enableHighAccuracy:true,maximumAge:5000});
+    toast('Traccia attiva: registro il percorso');
+  } else if(trailWatchId!=null){
+    navigator.geolocation.clearWatch(trailWatchId); trailWatchId=null;
+  }
+}
+
+/* ---------- Luoghi ---------- */
+function renderPlaces(){
+  const list=$('#placesList'); const arr=state.places.slice();
+  $('#placesCount').textContent = arr.length ? arr.length+(arr.length===1?' luogo':' luoghi') : '';
+  if(state.base){ /* mostra anche la base in cima */ }
+  if(!arr.length){
+    list.innerHTML=`<div class="empty"><span class="big">📌</span>Nessun luogo salvato.<br>Aggiungi castelli, distillerie, panorami…</div>`;
+    return;
+  }
+  arr.sort((a,b)=>{
+    if(lastPos) return haversine(lastPos,a)-haversine(lastPos,b);
+    return (b.created||0)-(a.created||0);
+  });
+  list.innerHTML = arr.map(p=>{
+    const c=CATS[p.cat]||CATS.altro;
+    const d = lastPos ? `<div class="dist">⟶ ${fmtDist(haversine(lastPos,p))} da te</div>` : '';
+    return `<div class="card"><div class="place">
+      <div class="pin">${c.icon}</div>
+      <div class="body">
+        <span class="tag">${c.label}</span>
+        <b>${esc(p.name)}</b>
+        ${p.note?`<p>${esc(p.note)}</p>`:''}
+        ${d}
+      </div>
+      <div class="acts">
+        <button class="mini" data-go="${p.id}" title="Vedi sulla mappa">🧭</button>
+        <button class="mini" data-edit="${p.id}" title="Modifica">✎</button>
+        <button class="mini del" data-del="${p.id}" title="Elimina">🗑</button>
+      </div>
+    </div></div>`;
+  }).join('');
+  list.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{ const p=state.places.find(x=>x.id===b.dataset.go); switchTo('map'); map.setView([p.lat,p.lng],14); placeLayer[p.id]?.openPopup(); });
+  list.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>placeForm(state.places.find(x=>x.id===b.dataset.edit)));
+  list.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{ state.places=state.places.filter(x=>x.id!==b.dataset.del); save(); renderPlaces(); renderMapMarkers(); toast('Luogo eliminato'); });
+}
+function switchTo(v){ $(`nav.tabs button[data-view="${v}"]`).click(); }
+
+function placeForm(edit){
+  const p = edit || {name:'',cat:'castello',note:'',lat:null,lng:null};
+  openSheet(`
+    <h3>${edit?'Modifica luogo':'Nuovo luogo'}</h3>
+    <label>Nome</label><input id="pName" value="${esc(p.name)}" placeholder="Es. Eilean Donan Castle">
+    <label>Categoria</label>
+    <div class="chips" id="pCats">${Object.entries(CATS).filter(([k])=>k!=='hotel').map(([k,v])=>`<div class="chip ${p.cat===k?'on':''}" data-c="${k}">${v.icon} ${v.label}</div>`).join('')}</div>
+    <label>Nota</label><textarea id="pNote" rows="3" placeholder="Orari, prezzo, perché ci vuoi andare…">${esc(p.note||'')}</textarea>
+    <label>Posizione</label>
+    <div class="row">
+      <button class="btn sec" id="pHere">📍 Posizione attuale</button>
+      <button class="btn sec" id="pPin">📌 Punto sulla mappa</button>
+    </div>
+    <div id="pLatLng" class="notice" style="margin-top:.5rem">${p.lat?`Impostata: ${p.lat.toFixed(4)}, ${p.lng.toFixed(4)}`:'Nessuna posizione ancora'}</div>
+    <button class="btn" id="pSave" style="margin-top:1rem">${edit?'Salva modifiche':'Aggiungi luogo'}</button>
+  `);
+  let cat=p.cat, lat=p.lat, lng=p.lng;
+  $('#pCats').querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{ $('#pCats').querySelectorAll('.chip').forEach(x=>x.classList.remove('on')); ch.classList.add('on'); cat=ch.dataset.c; });
+  $('#pHere').onclick=()=>{ navigator.geolocation?.getCurrentPosition(pos=>{ lat=pos.coords.latitude;lng=pos.coords.longitude; $('#pLatLng').textContent=`Impostata: ${lat.toFixed(4)}, ${lng.toFixed(4)}`; },()=>toast('Posizione non disponibile'),{enableHighAccuracy:true}); };
+  $('#pPin').onclick=()=>{ if(!pendingLatLng) return toast('Tocca prima un punto sulla mappa'); lat=pendingLatLng.lat;lng=pendingLatLng.lng; $('#pLatLng').textContent=`Impostata: ${lat.toFixed(4)}, ${lng.toFixed(4)}`; };
+  $('#pSave').onclick=()=>{
+    const name=$('#pName').value.trim(); if(!name) return toast('Dai un nome al luogo');
+    if(lat==null) return toast('Imposta una posizione');
+    if(edit){ Object.assign(edit,{name,cat,note:$('#pNote').value.trim(),lat,lng}); }
+    else { state.places.push({id:uid(),name,cat,note:$('#pNote').value.trim(),lat,lng,created:Date.now()}); }
+    save(); renderPlaces(); renderMapMarkers(); closeSheet(); toast(edit?'Modifiche salvate':'Luogo aggiunto 📌');
+  };
+}
+$('#addPlaceBtn').addEventListener('click',()=>placeForm(null));
+
+/* ---------- Esplora la Scozia ---------- */
+function placeExists(p){ return state.places.some(x=>x.name===p.name && Math.abs(x.lat-p.lat)<0.01 && Math.abs(x.lng-p.lng)<0.01); }
+$('#exploreBtn').addEventListener('click',()=>{
+  const cats=['tutti',...new Set(POIS.map(p=>p.cat))];
+  openSheet(`
+    <h3>🏰 Esplora la Scozia</h3>
+    <p class="notice">Tocca ＋ per aggiungere un luogo ai tuoi. Coordinate da dati aperti.</p>
+    <input id="poiSearch" placeholder="Cerca… (es. Skye, whisky, castello)" style="margin:.6rem 0 .5rem">
+    <div class="filterbar" id="poiFilters">${cats.map((c,i)=>`<div class="fb ${i===0?'on':''}" data-f="${c}">${c==='tutti'?'Tutti':(CATS[c]?.label||c)}</div>`).join('')}</div>
+    <div class="explore-grid" id="poiGrid"></div>
+  `);
+  let filter='tutti', q='';
+  const draw=()=>{
+    const grid=$('#poiGrid');
+    const items=POIS.filter(p=>(filter==='tutti'||p.cat===filter) && (!q || (p.name+' '+p.note+' '+(CATS[p.cat]?.label||'')).toLowerCase().includes(q)));
+    if(!items.length){ grid.innerHTML='<p class="notice" style="padding:1rem">Nessun risultato.</p>'; return; }
+    grid.innerHTML=items.map(p=>{
+      const added=placeExists(p);
+      return `<div class="poi"><div class="e">${(CATS[p.cat]||CATS.altro).icon}</div>
+        <div class="b"><b>${esc(p.name)}</b><small>${esc(p.note)}</small></div>
+        <button class="add ${added?'added':''}" data-poi="${esc(p.name)}" ${added?'disabled':''}>${added?'✓':'＋'}</button></div>`;
+    }).join('');
+    grid.querySelectorAll('[data-poi]').forEach(b=>b.onclick=()=>{
+      const p=POIS.find(x=>x.name===b.dataset.poi); if(!p||placeExists(p))return;
+      state.places.push({id:uid(),name:p.name,cat:p.cat,note:p.note,lat:p.lat,lng:p.lng,created:Date.now()});
+      save(); renderPlaces(); renderMapMarkers(); b.classList.add('added'); b.textContent='✓'; b.disabled=true; toast(p.name+' aggiunto 📌');
+    });
+  };
+  $('#poiSearch').oninput=e=>{ q=e.target.value.toLowerCase().trim(); draw(); };
+  $('#poiFilters').querySelectorAll('.fb').forEach(f=>f.onclick=()=>{ $('#poiFilters').querySelectorAll('.fb').forEach(x=>x.classList.remove('on')); f.classList.add('on'); filter=f.dataset.f; draw(); });
+  draw();
+});
+
+/* ---------- Itinerario ---------- */
+function renderTrip(){
+  const c=$('#itinerary');
+  if(!state.itinerary.length){ c.innerHTML=`<div class="empty"><span class="big">🗓</span>Pianifica le tue giornate.</div>`; return; }
+  c.innerHTML=state.itinerary.map((d,i)=>`
+    <div class="card">
+      <div class="day-head"><b>Giorno ${i+1}</b><span class="muted" style="flex:1">${esc(d.title||'')}</span>
+        <button class="mini del" data-delday="${i}">🗑</button></div>
+      <input data-title="${i}" value="${esc(d.title||'')}" placeholder="Titolo (es. Loch Ness e Inverness)">
+      <textarea data-plan="${i}" rows="4" style="margin-top:.5rem" placeholder="Tappe della giornata…">${esc(d.plan||'')}</textarea>
+    </div>`).join('');
+  c.querySelectorAll('[data-title]').forEach(e=>e.oninput=()=>{ state.itinerary[+e.dataset.title].title=e.value; save(); });
+  c.querySelectorAll('[data-plan]').forEach(e=>e.oninput=()=>{ state.itinerary[+e.dataset.plan].plan=e.value; save(); });
+  c.querySelectorAll('[data-delday]').forEach(e=>e.onclick=()=>{ state.itinerary.splice(+e.dataset.delday,1); save(); renderTrip(); });
+}
+$('#addDayBtn').addEventListener('click',()=>{ state.itinerary.push({title:'',plan:''}); save(); renderTrip(); });
+
+/* ---------- Valigia ---------- */
+function ensurePacking(){ if(!state.packing.length) state.packing=PACK_PRESET.map(t=>({id:uid(),text:t,done:false})); }
+function renderPack(){
+  const c=$('#packCard');
+  const done=state.packing.filter(x=>x.done).length;
+  $('#packCount').textContent = state.packing.length ? `${done}/${state.packing.length}` : '';
+  if(!state.packing.length){ c.innerHTML=`<div class="empty"><span class="big">🧳</span>Lista vuota.</div>`; return; }
+  c.innerHTML=state.packing.map(it=>`<label class="check ${it.done?'done':''}">
+    <input type="checkbox" data-id="${it.id}" ${it.done?'checked':''}>
+    <span>${esc(it.text)}</span>
+    <button class="mini del" data-delpack="${it.id}">✕</button>
+  </label>`).join('');
+  c.querySelectorAll('input[data-id]').forEach(i=>i.onchange=()=>{ const it=state.packing.find(x=>x.id===i.dataset.id); it.done=i.checked; save(); renderPack(); });
+  c.querySelectorAll('[data-delpack]').forEach(b=>b.onclick=(e)=>{ e.preventDefault(); state.packing=state.packing.filter(x=>x.id!==b.dataset.delpack); save(); renderPack(); });
+}
+$('#addPackBtn').addEventListener('click',()=>{
+  openSheet(`<h3>Aggiungi articolo</h3><label>Cosa metti in valigia?</label><input id="packText" placeholder="Es. Kilt 😄"><button class="btn" id="packAdd" style="margin-top:1rem">Aggiungi</button>`);
+  $('#packAdd').onclick=()=>{ const t=$('#packText').value.trim(); if(!t)return; state.packing.push({id:uid(),text:t,done:false}); save(); renderPack(); closeSheet(); };
+});
+$('#resetPackBtn').addEventListener('click',()=>{ state.packing=PACK_PRESET.map(t=>({id:uid(),text:t,done:false})); save(); renderPack(); toast('Preset Scozia ripristinato'); });
+
+/* ---------- Assistente AI ---------- */
+function renderChat(){
+  const c=$('#chat');
+  if(!state.chat.length){
+    c.innerHTML=`<div class="bubble sys">Chiedimi un itinerario, cosa vedere vicino a te, o consigli pratici sulla Scozia.</div>`;
+    return;
+  }
+  c.innerHTML=state.chat.map(m=>`<div class="bubble ${m.role==='user'?'me':'ai'}">${esc(m.text)}</div>`).join('');
+  c.scrollTop=c.scrollHeight;
+}
+async function askAI(q){
+  state.chat.push({role:'user',text:q}); save(); renderChat();
+  const c=$('#chat');
+  const t=document.createElement('div'); t.className='bubble ai'; t.innerHTML='<span class="typing"><i></i><i></i><i></i></span>';
+  c.appendChild(t); c.scrollTop=c.scrollHeight;
+  const ctx = buildContext();
+  let reply;
+  if(state.aiEndpoint){
+    try{
+      const r=await fetch(state.aiEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:q,context:ctx})});
+      const data=await r.json();
+      reply=data.reply||data.text||'(nessuna risposta)';
+    }catch(e){ reply='Non riesco a contattare il backend AI. Controlla l\'endpoint in Impostazioni → AI.'; }
+  } else {
+    await new Promise(r=>setTimeout(r,500));
+    reply=demoAI(q,ctx);
+  }
+  t.remove();
+  state.chat.push({role:'ai',text:reply}); save(); renderChat();
+}
+function buildContext(){
+  const near = lastPos ? state.places.map(p=>({...p,d:haversine(lastPos,p)})).sort((a,b)=>a.d-b.d).slice(0,5) : state.places.slice(0,5);
+  return { base:state.base, position:lastPos, nearby:near.map(p=>({name:p.name,cat:p.cat,note:p.note,dist:p.d?Math.round(p.d):null})) };
+}
+function demoAI(q,ctx){
+  const s=q.toLowerCase();
+  const tail='\n\n— Modalità demo locale. Collega Claude in Impostazioni → AI per risposte su misura.';
+  const pick=(cat,n)=>POIS.filter(p=>p.cat===cat).slice(0,n).map(p=>`${(CATS[p.cat]).icon} ${p.name}`);
+  if(/itinerar|giorn|3 giorni|tre giorni|programma/.test(s)){
+    return `Un classico di 3 giorni nelle Highlands:\n\n`+
+      `Giorno 1 — Edimburgo: castello, Royal Mile, Arthur's Seat.\n`+
+      `Giorno 2 — Verso ovest: Stirling Castle, Glencoe, notte a Fort William.\n`+
+      `Giorno 3 — Skye: Old Man of Storr, Fairy Pools, Portree.\n\n`+
+      `Vuoi che lo adatti ai luoghi che hai già salvato?`+tail;
+  }
+  if(/vicin|intorno|qui|adesso|dove sono/.test(s)){
+    if(ctx.nearby.length) return 'Vicino a te:\n'+ctx.nearby.map(p=>`• ${(CATS[p.cat]||CATS.altro).icon} ${p.name}${p.dist?` — ${fmtDist(p.dist)}`:''}`).join('\n')+tail;
+    return 'Attiva la posizione (📍 in alto) e aggiungi qualche luogo: ti dirò cosa hai vicino.'+tail;
+  }
+  if(/whisky|distiller/.test(s)) return 'Distillerie da non perdere:\n'+pick('distilleria',5).map(x=>'• '+x).join('\n')+'\nPrenota in anticipo i tour.'+tail;
+  if(/castell/.test(s)) return 'Castelli iconici:\n'+pick('castello',5).map(x=>'• '+x).join('\n')+tail;
+  if(/midge|moscerin|insett/.test(s)) return 'I midge pungono soprattutto all\'alba e al tramonto, da fine maggio a settembre, nelle zone umide e senza vento. Porta repellente (a base di DEET o Smidge) e una retina per il viso se fai trekking.'+tail;
+  if(/meteo|tempo|piov|cosa metto/.test(s)) return 'Il meteo scozzese cambia in fretta: vesti a strati, giacca antipioggia sempre con te, scarpe impermeabili. Anche d\'estate porta qualcosa di caldo.'+tail;
+  if(/fras|ingles|lingu|gaelic/.test(s)) return 'Qualche dritta: "Slàinte" (salute, brindisi), "ceilidh" (festa con musica e balli), "loch" (lago), "ben" (monte), "glen" (valle). L\'inglese basta ovunque.'+tail;
+  if(/emergenz|aiuto|ospedal|polizia/.test(s)) return 'Emergenze: 999 o 112. Polizia non urgente: 101. Sanità non urgente: 111. In montagna avvisa sempre qualcuno del tuo itinerario.'+tail;
+  if(ctx.nearby.length) return 'Posso aiutarti con itinerari, cosa vedere vicino a te, whisky, castelli, meteo e consigli pratici.\n\nIntanto, luoghi vicini:\n'+ctx.nearby.map(p=>`• ${(CATS[p.cat]||CATS.altro).icon} ${p.name}`).join('\n')+tail;
+  return 'Posso aiutarti con itinerari, cosa vedere, distillerie, castelli, meteo, midge e frasi utili. Prova un suggerimento qui sopra 👆'+tail;
+}
+function renderAiChips(){
+  const chips=['Itinerario di 3 giorni','Cosa vedere vicino a me','Le migliori distillerie','Castelli da visitare','Consigli sui midge','Frasi utili'];
+  $('#aiChips').innerHTML=chips.map(c=>`<button class="ac">${c}</button>`).join('');
+  $('#aiChips').querySelectorAll('.ac').forEach(b=>b.onclick=()=>askAI(b.textContent));
+}
+$('#aiSend').addEventListener('click',()=>{ const v=$('#aiInput').value.trim(); if(!v)return; $('#aiInput').value=''; askAI(v); });
+$('#aiInput').addEventListener('keydown',e=>{ if(e.key==='Enter'){ $('#aiSend').click(); } });
+
+/* ---------- Impostazioni: AI endpoint, export/import/wipe ---------- */
+$('#saveAiBtn')?.addEventListener('click',()=>{ state.aiEndpoint=$('#aiEndpoint').value.trim(); save(); toast(state.aiEndpoint?'Endpoint salvato':'Endpoint rimosso'); });
+$('#exportBtn').addEventListener('click',()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='highland-backup-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
+  toast('Backup esportato');
+});
+$('#importBtn').addEventListener('click',()=>$('#importFile').click());
+$('#importFile').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f)return; const r=new FileReader();
+  r.onload=()=>{ try{ const d=JSON.parse(r.result); state=Object.assign(load(),d); save(); refreshAll(); toast('Dati importati'); }catch(_){ toast('File non valido'); } };
+  r.readAsText(f);
+});
+$('#wipeBtn').addEventListener('click',()=>{
+  openSheet(`<h3>Cancellare tutto?</h3><p class="notice">Verranno eliminati base, luoghi, itinerario, valigia, tracce e chat. Operazione irreversibile.</p>
+    <button class="btn warn" id="wipeYes" style="margin-top:1rem">Sì, cancella tutto</button>
+    <button class="btn sec" id="wipeNo" style="margin-top:.6rem">Annulla</button>`);
+  $('#wipeYes').onclick=()=>{ localStorage.removeItem(KEY); state=load(); ensurePacking(); save(); refreshAll(); closeSheet(); toast('Dati cancellati'); };
+  $('#wipeNo').onclick=closeSheet;
+});
+
+/* ---------- KPIs ---------- */
+function refreshKpis(){
+  $('#kpiPlaces').textContent=state.places.length;
+  $('#kpiDays').textContent=state.itinerary.length;
+  $('#kpiTrail').textContent=state.breadcrumbs.length;
+  $('#aiEndpoint').value=state.aiEndpoint||'';
+}
+
+/* ---------- util ---------- */
+function uid(){ return Math.random().toString(36).slice(2,10); }
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function refreshAll(){ renderMapMarkers(); drawTrail(); renderPlaces(); renderTrip(); renderPack(); renderChat(); renderAiChips(); refreshKpis(); updateCompass(); reflectTrail(); }
+
+/* ---------- boot ---------- */
+function maybeOnboard(){
+  if(localStorage.getItem('highland_seen')) return;
+  $('#onboard').classList.add('open');
+  $('#obStart').onclick=()=>{
+    localStorage.setItem('highland_seen','1');
+    $('#onboard').classList.remove('open');
+    if(navigator.geolocation) locate(true);
+    enableCompassSensor();
+  };
+}
+window.addEventListener('load',()=>{
+  ensurePacking(); save();
+  initMap();
+  refreshAll();
+  enableCompassSensor();
+  maybeOnboard();
+  // primo avvio: prova a localizzare in modo soft
+  if(navigator.geolocation){ navigator.permissions?.query({name:'geolocation'}).then(p=>{ if(p.state==='granted') locate(true); }).catch(()=>{}); }
+  // service worker
+  if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
+});
+</script>
 </body>
 </html>
