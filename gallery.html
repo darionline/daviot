@@ -193,7 +193,7 @@ var DATA=[
   {n:'The Kelpies',t:'The Kelpies',c:'scotland'}
 ];
 
-var CACHE_KEY='gal_img_v1';
+var CACHE_KEY='gal_img_v2';
 var cache={};
 try{ cache=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}'); }catch(e){ cache={}; }
 var items=new Array(DATA.length);  // resolved records, .ok flag
@@ -259,7 +259,7 @@ function resolve(i){
     .then(function(d){
       var th=d.thumbnail && d.thumbnail.source;
       if(!th){ kill(); return; }
-      var rec={ u:up(th,600), big:up(th,1280), page:(d.content_urls&&d.content_urls.desktop&&d.content_urls.desktop.page)||'', desc:(d.extract||'').split('. ')[0] };
+      var rec={ u:th, page:(d.content_urls&&d.content_urls.desktop&&d.content_urls.desktop.page)||'', desc:(d.extract||'').split('. ')[0] };
       cache[it.t]=rec; fill(rec);
     })
     .catch(function(){ kill(); });
@@ -272,16 +272,16 @@ function saveCache(){ try{ localStorage.setItem(CACHE_KEY, JSON.stringify(cache)
 function strip(h){ var d=document.createElement('div'); d.innerHTML=h||''; return (d.textContent||'').trim(); }
 function fileInfo(u){ if(!u) return null; var host=u.indexOf('/wikipedia/commons/')>-1?'commons.wikimedia.org':(u.indexOf('/wikipedia/en/')>-1?'en.wikipedia.org':'commons.wikimedia.org'); var base=u.slice(0,u.lastIndexOf('/')); var file=decodeURIComponent(base.slice(base.lastIndexOf('/')+1)); return file?{host:host,file:file}:null; }
 function creditHtml(cr){ if(!cr) return '<span class="src">Photo: Wikimedia Commons</span>'; var a=cr.author?esc(cr.author):'Unknown author'; var lic=cr.lic?(cr.licUrl?'<a href="'+esc(cr.licUrl)+'" target="_blank" rel="noopener">'+esc(cr.lic)+'</a>':esc(cr.lic)):''; var file=cr.file?'<a href="'+esc(cr.file)+'" target="_blank" rel="noopener">Wikimedia Commons</a>':'Wikimedia Commons'; return '<span class="src">Photo: '+a+(lic?' \u00b7 '+lic:'')+' \u00b7 via '+file+'</span>'; }
-function fetchCredit(i){ var rec=items[i]; if(!rec||rec.cr||!rec.u) return; var info=fileInfo(rec.u); if(!info) return; var api='https://'+info.host+'/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=extmetadata|url&titles='+encodeURIComponent('File:'+info.file); fetch(api).then(function(r){return r.json();}).then(function(d){ try{ var pages=d.query.pages; var k=Object.keys(pages)[0]; var ii=pages[k].imageinfo[0]; var em=ii.extmetadata||{}; var cr={author:strip((em.Artist&&em.Artist.value)||''),lic:(em.LicenseShortName&&em.LicenseShortName.value)||'',licUrl:(em.LicenseUrl&&em.LicenseUrl.value)||'',file:ii.descriptionurl||''}; rec.cr=cr; cache[DATA[i].t]=rec; saveCache(); if(curI===i){ var s=lbCap.querySelector('.src'); if(s) s.outerHTML=creditHtml(cr); } }catch(e){} }).catch(function(){}); }
+function fetchBig(i){ var rec=items[i]; if(!rec||!rec.u) return; var info=fileInfo(rec.u); if(!info) return; var api='https://'+info.host+'/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=extmetadata|url&iiurlwidth=1280&titles='+encodeURIComponent('File:'+info.file); fetch(api).then(function(r){return r.json();}).then(function(d){ try{ var pages=d.query.pages; var k=Object.keys(pages)[0]; var ii=pages[k].imageinfo[0]; var em=ii.extmetadata||{}; rec.big=ii.thumburl||ii.url||rec.u; rec.cr={author:strip((em.Artist&&em.Artist.value)||''),lic:(em.LicenseShortName&&em.LicenseShortName.value)||'',licUrl:(em.LicenseUrl&&em.LicenseUrl.value)||'',file:ii.descriptionurl||''}; cache[DATA[i].t]=rec; saveCache(); if(curI===i){ lbImg.src=rec.big; var s=lbCap.querySelector('.src'); if(s) s.outerHTML=creditHtml(rec.cr); } }catch(e){} }).catch(function(){}); }
 function visibleIdx(){ return Array.prototype.slice.call(grid.querySelectorAll('.tile')).filter(function(t){return t.style.display!=='none' && !t.classList.contains('dead');}).map(function(t){return +t.dataset.i;}); }
 function openLB(i){
   var rec=items[i]; if(!rec||!rec.ok) return;
   curI=i;
-  lbImg.src=rec.big; lbImg.alt=DATA[i].n;
+  lbImg.src=rec.big||rec.u; lbImg.alt=DATA[i].n;
   var link=rec.page?'<a href="'+esc(rec.page)+'" target="_blank" rel="noopener">View on Wikipedia &rsaquo;</a> ':'';
   lbCap.innerHTML='<b>'+esc(DATA[i].n)+'</b>'+(rec.desc?esc(rec.desc)+'. ':'')+link+creditHtml(rec.cr);
   lb.classList.add('open'); lb.setAttribute('aria-hidden','false');
-  if(!rec.cr) fetchCredit(i);
+  if(!rec.big||!rec.cr) fetchBig(i);
 }
 function closeLB(){ lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); lbImg.src=''; curI=-1; }
 function step(d){ var v=visibleIdx(); if(!v.length) return; var p=v.indexOf(curI); if(p<0) p=0; p=(p+d+v.length)%v.length; openLB(v[p]); }
