@@ -250,7 +250,6 @@ path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
     <span class="ic"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
     <input id="q" placeholder="Search by name or place&hellip;" autocomplete="off">
   </div>
-  <button class="locate" id="locateBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/></svg>Near me</button>
 </div>
 
 <div class="viewseg" id="viewseg">
@@ -481,7 +480,7 @@ function process(elements){
   });
   lighthouses = cur;
   computeZoneShapes(); draw(); renderZoneChips(); fitInitial();
-  if(!autoLocated && navigator.geolocation && navigator.permissions){ navigator.permissions.query({name:'geolocation'}).then(p=>{ if(p.state==='granted'){ autoLocated=true; locateMe(); } }).catch(function(){}); }
+  /* auto-locate removed with the Near me button */
   enrichImages();
 }
 
@@ -733,7 +732,7 @@ function locateMe(){
   }, {enableHighAccuracy:true, timeout:10000, maximumAge:60000});
 }
 
-$('#locateBtn').addEventListener('click', locateMe);
+
 document.querySelectorAll('#viewseg button').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.v)));
 function setMapTop(){ const hb=document.getElementById('hostbar'), m=document.getElementById('map');
   if(!hb||!m) return;
