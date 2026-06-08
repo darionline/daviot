@@ -74,8 +74,11 @@ svg.ico{width:1em;height:1em;display:inline-block;vertical-align:-.14em;fill:non
 
 .lb{position:fixed; inset:0; z-index:60; background:rgba(8,20,28,.92); display:none; align-items:center; justify-content:center; padding:2.2rem 1rem 1rem; backdrop-filter:blur(3px)}
 .lb.open{display:flex}
-.lb figure{margin:0; max-width:1200px; width:100%; display:flex; flex-direction:column; align-items:center}
-.lb img{max-width:100%; max-height:80vh; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,.5); background:#0d2c3c}
+.lb figure{margin:0; max-width:1200px; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; min-height:160px}
+.lb img{max-width:100%; max-height:80vh; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,.5); background:#0d2c3c; opacity:0; transition:opacity .28s}
+.lb img.ready{opacity:1}
+.lbspin{display:none; position:absolute; top:50%; left:50%; width:44px; height:44px; margin:-22px 0 0 -22px; border-radius:50%; border:3px solid rgba(255,255,255,.25); border-top-color:#fff; animation:spin .8s linear infinite; z-index:2}
+.lb.loading .lbspin{display:block}
 .lb figcaption{color:#eaf1f6; text-align:center; margin-top:.8rem; max-width:70ch; font-size:.9rem; font-weight:400; line-height:1.45}
 .lb figcaption b{display:block; font-weight:600; font-size:1.05rem; margin-bottom:.2rem; color:#fff}
 .lb .src{display:block; margin-top:.3rem; font-size:.78rem; color:rgba(255,255,255,.6)}
@@ -119,7 +122,7 @@ footer a:hover{text-decoration:underline}
   <button class="lbbtn close" id="lbClose" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   <button class="lbbtn prev" id="lbPrev" aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
   <button class="lbbtn next" id="lbNext" aria-label="Next"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
-  <figure><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
+  <figure><div class="lbspin"></div><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
 </div>
 
 <footer>
@@ -216,15 +219,23 @@ function setFilter(c){ activeC=c; renderFilters(); applyFilter(); }
 /* Lightbox */
 var lb=document.getElementById('lb'), lbImg=document.getElementById('lbImg'), lbCap=document.getElementById('lbCap');
 var curI=-1;
-function openLB(i){
+function loadInto(i){
   var it=items[i]; if(!it) return; curI=i;
-  lbImg.src=it.big; lbImg.alt=it.alt;
+  lbImg.alt=it.alt;
   var credit=it.ph?'<a href="'+esc(it.purl)+'" target="_blank" rel="noopener">'+esc(it.ph)+'</a>':'Pexels';
   lbCap.innerHTML='<b>'+esc(it.capt)+'</b><span class="src">Photo: '+credit+' \u00b7 Pexels</span>';
-  lb.classList.add('open'); lb.setAttribute('aria-hidden','false');
+  lbImg.classList.remove('ready');
+  lb.classList.add('loading');
+  var im=new Image();
+  im.onload=function(){ if(curI!==i) return; lbImg.src=it.big; lbImg.classList.add('ready'); lb.classList.remove('loading'); };
+  im.onerror=function(){ if(curI!==i) return; lbImg.src=it.grid; lbImg.classList.add('ready'); lb.classList.remove('loading'); };
+  im.src=it.big;
+  preload(i+1); preload(i-1);
 }
-function closeLB(){ lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); lbImg.src=''; curI=-1; }
-function step(d){ var v=Array.prototype.slice.call(grid.querySelectorAll('.tile')).filter(function(t){return t.style.display!=='none'&&!t.classList.contains('dead');}).map(function(t){return +t.dataset.i;}); if(!v.length) return; var p=v.indexOf(curI); if(p<0)p=0; p=(p+d+v.length)%v.length; openLB(v[p]); }
+function preload(i){ var it=items[i]; if(it){ var p=new Image(); p.src=it.big; } }
+function openLB(i){ if(!items[i]) return; lb.classList.add('open'); lb.setAttribute('aria-hidden','false'); loadInto(i); }
+function closeLB(){ lb.classList.remove('open'); lb.classList.remove('loading'); lb.setAttribute('aria-hidden','true'); lbImg.classList.remove('ready'); lbImg.src=''; curI=-1; }
+function step(d){ var v=Array.prototype.slice.call(grid.querySelectorAll('.tile')).filter(function(t){return t.style.display!=='none'&&!t.classList.contains('dead');}).map(function(t){return +t.dataset.i;}); if(!v.length) return; var p=v.indexOf(curI); if(p<0)p=0; p=(p+d+v.length)%v.length; loadInto(v[p]); }
 
 grid.addEventListener('click',function(e){ var t=e.target.closest('.tile'); if(!t||t.classList.contains('dead')||t.classList.contains('sk')&&!t.dataset.i) return; if(t.dataset.i!=null) openLB(+t.dataset.i); });
 filtersEl.addEventListener('click',function(e){ var b=e.target.closest('.fchip'); if(b) setFilter(b.dataset.c); });
