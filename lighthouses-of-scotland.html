@@ -101,11 +101,13 @@ aside .head .sort:hover{border-color:var(--loch); color:var(--loch)}
 .zone-h{font-family:"Jost",system-ui,sans-serif; color:var(--loch); font-size:1rem; font-weight:600; padding:.7rem .55rem .35rem; display:flex; align-items:center; position:sticky; top:0; background:var(--paper); z-index:2}
 .zone-h span{margin-left:auto; font-family:"Jost"; font-size:.72rem; color:var(--muted); font-weight:700; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.05rem .5rem}
 /* place card — horizontal compact, consistent with the "near us" page */
-.card{display:flex; gap:1rem; align-items:flex-start; background:var(--card); border:1px solid var(--line);
+.card{display:flex; gap:1rem; align-items:flex-start; background:var(--card); border:1px solid var(--line); position:relative;
   border-radius:16px; padding:.95rem; margin:.55rem 0; box-shadow:0 4px 16px rgba(18,59,79,.06); cursor:pointer;
   transition:transform .16s, box-shadow .16s; opacity:0; transform:translateY(8px); animation:rise .45s ease forwards}
 @keyframes rise{to{opacity:1; transform:none}}
 .card:hover{box-shadow:0 16px 34px rgba(43,124,196,.18); transform:translateY(-2px); border-color:var(--azure)}
+.card.sel{border-color:var(--loch); box-shadow:0 10px 26px rgba(18,59,79,.22)}
+.card.sel:before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--loch); border-radius:16px 0 0 16px}
 .card:hover .locbadge{background:var(--azure); color:#fff; border-color:var(--azure)}
 .card:active{transform:scale(.994)}
 .media{position:relative; width:104px; height:104px; flex:0 0 auto; border-radius:13px; overflow:hidden;
@@ -298,6 +300,15 @@ const pinSVG = '<svg width="32" height="40" viewBox="0 0 32 40" xmlns="http://ww
   +'<g stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(16,14.5) scale(0.62) translate(-12,-12)">'
   +'<path d="M9.5 21h5"/><path d="M10.2 21 11 10h2l.8 11"/><path d="M10.6 6.4h2.8l-1-2.4h-.8z"/><path d="M10.4 6.4h3.2V10h-3.2z"/><path d="M11 13.5h2"/><path d="M14.4 7.2 18 6M14.4 8.8 18 10"/><path d="M9.6 7.2 6 6M9.6 8.8 6 10"/></g></svg>';
 const lhIcon = L.divIcon({className:'', html:pinSVG, iconSize:[32,40], iconAnchor:[16,38], popupAnchor:[0,-34]});
+const pinSVGSel = pinSVG.replace('width="32" height="40"','width="42" height="52"').replace('fill="#c5872e"','fill="#123b4f"');
+const lhIconSel = L.divIcon({className:'lhsel', html:pinSVGSel, iconSize:[42,52], iconAnchor:[21,50], popupAnchor:[0,-46]});
+let selectedId=null;
+function selectMarker(id){
+  if(selectedId===id) return;
+  if(selectedId && markers[selectedId]) markers[selectedId].setIcon(lhIcon);
+  selectedId=id;
+  if(markers[id]) markers[id].setIcon(lhIconSel);
+}
 
 let lighthouses = [], markers = {}, sortAZ = true;
 
@@ -555,7 +566,7 @@ function draw(){
   let items=lighthouses.filter(l=>(!filter||(l.name+' '+l.place).toLowerCase().includes(filter)) && (activeZone==='All'||l.zone===activeZone));
 
   const overview = (activeZone==='All' && !filter);
-  items.forEach(l=>{ const m=L.marker([l.lat,l.lng],{icon:lhIcon}).bindPopup(popupHtml(l)); markers[l.id]=m; cluster.addLayer(m); });
+  items.forEach(l=>{ const m=L.marker([l.lat,l.lng],{icon:(l.id===selectedId?lhIconSel:lhIcon)}).bindPopup(popupHtml(l)); m.on('popupopen',()=>selectMarker(l.id)); markers[l.id]=m; cluster.addLayer(m); });
 
   const list=$('#list');
   if(!items.length){ list.innerHTML='<div class="state">No lighthouse matches your filters.</div>'; return; }
@@ -574,6 +585,8 @@ function draw(){
     const l=lighthouses.find(x=>x.id===el.dataset.id); if(!l) return;
     if(!markers[l.id]){ activeZone=l.zone; renderZoneChips(); draw(); }
     try{ map.invalidateSize(); }catch(err){}
+    list.querySelectorAll('.card.sel').forEach(c=>c.classList.remove('sel')); el.classList.add('sel');
+    selectMarker(l.id);
     const mk=markers[l.id]; const z=Math.max(map.getZoom(), 9);
     map.flyTo([l.lat,l.lng], z, {duration:.7});
     if(mk) setTimeout(()=>{ try{ mk.openPopup(); }catch(e){} }, 760);
