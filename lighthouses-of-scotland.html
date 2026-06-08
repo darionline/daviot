@@ -199,8 +199,12 @@ path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
   .list{overflow:visible; flex:none; padding:.4rem 1rem 1.3rem; transform:translateZ(0); -webkit-transform:translateZ(0); backface-visibility:hidden; -webkit-backface-visibility:hidden}
   .media{width:104px;height:104px}
   .zone-h{position:static}
-  #map{height:40vh; border-radius:0; position:sticky; z-index:1; box-shadow:0 8px 16px rgba(18,59,79,.14)}
+  #map{height:46vh; border-radius:0; position:sticky; z-index:1; box-shadow:0 8px 16px rgba(18,59,79,.14)}
   .leaflet-control-zoom{display:none!important}
+  .leaflet-popup-content{margin:.55rem .7rem}
+  .pop b{font-size:1.02rem}
+  .pop img{max-height:96px; object-fit:cover; margin:.4rem 0}
+  .pop .meta{font-size:.78rem}
 }
 </style>
 </head>
@@ -286,7 +290,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   maxZoom:19, subdomains:'abcd',
   attribution:'&copy; OpenStreetMap contributors &copy; CARTO'
 }).addTo(map);
-const cluster = L.markerClusterGroup({maxClusterRadius:48, showCoverageOnHover:false});
+const cluster = L.markerClusterGroup({maxClusterRadius:1, disableClusteringAtZoom:5, showCoverageOnHover:false, spiderfyOnMaxZoom:true});
 map.addLayer(cluster);
 
 const pinSVG = '<svg width="32" height="40" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg">'
@@ -570,7 +574,9 @@ function draw(){
     const l=lighthouses.find(x=>x.id===el.dataset.id); if(!l) return;
     if(!markers[l.id]){ activeZone=l.zone; renderZoneChips(); draw(); }
     try{ map.invalidateSize(); }catch(err){}
-    const mk=markers[l.id]; if(mk) cluster.zoomToShowLayer(mk, ()=>mk.openPopup()); else map.flyTo([l.lat,l.lng],11,{duration:.8});
+    const mk=markers[l.id]; const z=Math.max(map.getZoom(), 9);
+    map.flyTo([l.lat,l.lng], z, {duration:.7});
+    if(mk) setTimeout(()=>{ try{ mk.openPopup(); }catch(e){} }, 760);
   }));
 }
 
