@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://www.wikidata.org" crossorigin>
 <link rel="preconnect" href="https://commons.wikimedia.org" crossorigin>
 <link rel="preconnect" href="https://a.basemaps.cartocdn.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -29,8 +29,8 @@
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{background:radial-gradient(1100px 520px at 88% -8%, rgba(108,133,236,.13), transparent 60%), radial-gradient(900px 480px at -6% 4%, rgba(18,59,79,.06), transparent 55%), var(--paper); color:var(--ink); font-family:"Mulish",system-ui,sans-serif; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column}
-h1,h2,h3{font-family:"Spectral",Georgia,serif; font-weight:500; margin:0; letter-spacing:.005em}
+body{background:radial-gradient(1100px 520px at 88% -8%, rgba(108,133,236,.13), transparent 60%), radial-gradient(900px 480px at -6% 4%, rgba(18,59,79,.06), transparent 55%), var(--paper); color:var(--ink); font-family:"Jost",system-ui,sans-serif; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column}
+h1,h2,h3{font-family:"Jost",system-ui,sans-serif; font-weight:600; margin:0}
 svg.ico{width:1em;height:1em;display:inline-block;vertical-align:-.12em;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 
 /* Header */
@@ -44,17 +44,17 @@ header .wrap{position:relative; max-width:1240px; margin:0 auto; padding:1.5rem 
 .mark{width:48px;height:48px;flex:0 0 auto;color:#fff}
 header h1{font-size:clamp(1.7rem,3.6vw,2.4rem); line-height:1.05; color:#fff}
 header p{margin:.35rem 0 0; color:rgba(255,255,255,.92); font-size:.95rem; max-width:64ch; font-weight:400}
-header .kicker{font-family:"Mulish";font-weight:700;letter-spacing:.18em;text-transform:uppercase;font-size:.7rem;color:rgba(255,255,255,.85);margin-bottom:.3rem}
+header .kicker{font-family:"Jost";font-weight:700;text-transform:uppercase;font-size:.7rem;color:rgba(255,255,255,.85);margin-bottom:.3rem}
 
 /* Toolbar */
-.hostbar{background:#7189ed; border-bottom:1px solid rgba(255,255,255,.35); box-shadow:0 3px 12px rgba(40,70,120,.12)}
+.hostbar{background:#7189ed; border-bottom:1px solid rgba(255,255,255,.35); box-shadow:0 3px 12px rgba(40,70,120,.12); position:sticky; top:0; z-index:30}
 .hb-inner{max-width:1240px; margin:0 auto; padding:.55rem 1.7rem; display:flex; align-items:center; gap:.7rem; flex-wrap:wrap}
 .hb-mark{width:30px; height:30px; flex:0 0 auto; color:var(--loch)}
 .hb-logo{height:42px; width:auto; max-width:190px; flex:0 0 auto; display:block}
 .hb-name{display:flex; flex-direction:column; line-height:1.12}
-.hb-name b{font-family:"Spectral",serif; font-weight:600; color:#fff; font-size:1rem}
+.hb-name b{font-family:"Jost",system-ui,sans-serif; font-weight:600; color:#fff; font-size:1rem}
 .hb-name span{font-size:.72rem; color:rgba(255,255,255,.85)}
-.hb-tag{margin-left:auto; font-size:.7rem; font-weight:700; letter-spacing:.04em; color:#fff; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.4); padding:.22rem .6rem; border-radius:999px; white-space:nowrap}
+.hb-tag{margin-left:auto; font-size:.7rem; font-weight:700; color:#fff; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.4); padding:.22rem .6rem; border-radius:999px; white-space:nowrap}
 .hb-addr{font-size:.78rem; color:rgba(255,255,255,.9)}
 @media(max-width:880px){ .hb-tag{margin-left:auto} .hb-addr{margin-left:0; flex-basis:100%} }
 
@@ -65,12 +65,21 @@ header .kicker{font-family:"Mulish";font-weight:700;letter-spacing:.18em;text-tr
 .search input:focus{outline:none; border-color:var(--loch); box-shadow:0 0 0 3px rgba(18,59,79,.1)}
 .search .ic{position:absolute; left:.95rem; top:50%; transform:translateY(-50%); color:var(--muted); font-size:1.05rem}
 .stat{display:flex; align-items:baseline; gap:.5rem; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:.65rem 1rem; white-space:nowrap}
-.stat b{font-family:"Spectral",serif; font-size:1.5rem; color:var(--loch)}
+.stat b{font-family:"Jost",system-ui,sans-serif; font-size:1.5rem; color:var(--loch)}
 .stat span{color:var(--muted); font-size:.82rem}
 
 /* Layout */
 .layout{flex:1; min-height:0; max-width:1240px; width:100%; margin:0 auto; display:grid; grid-template-columns:1fr 468px}
 #map{min-height:0; height:100%; background:#e8eef0}
+.leaflet-control-zoom{border:none!important; box-shadow:0 2px 10px rgba(18,59,79,.16)!important; border-radius:11px!important; overflow:hidden; margin:10px 10px 0 0!important}
+.leaflet-control-zoom a{width:30px!important; height:30px!important; line-height:30px!important; font-size:17px!important; font-weight:400!important; color:#2b7cc4!important; background:rgba(255,255,255,.9)!important; border:none!important}
+.leaflet-control-zoom a:hover{background:#fff!important; color:#123b4f!important}
+.leaflet-control-zoom a:first-child{border-bottom:1px solid #e7edf5!important}
+.totop{position:fixed; right:14px; bottom:16px; z-index:1500; width:44px; height:44px; border-radius:50%; border:none; background:var(--loch); color:#fff; display:none; align-items:center; justify-content:center; box-shadow:0 8px 22px rgba(8,28,38,.3); cursor:pointer; transition:transform .15s}
+.totop.show{display:inline-flex}
+.totop:hover{background:#0d2c3c}
+.totop:active{transform:scale(.92)}
+.totop svg{width:20px; height:20px; fill:none; stroke:#fff; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round}
 .leaflet-container{background:#e8eef0; font-family:inherit}
 aside{border-left:1px solid var(--line); background:var(--paper); display:flex; flex-direction:column; min-height:0}
 aside .head{padding:.9rem 1.15rem; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:.5rem}
@@ -85,8 +94,8 @@ aside .head .sort:hover{border-color:var(--loch); color:var(--loch)}
 .zchip .c{color:var(--muted); font-weight:700}
 .zchip.on{border-color:var(--loch); background:var(--loch); color:#fff; box-shadow:0 6px 16px rgba(18,59,79,.22)}
 .zchip.on .c{color:#bcd9e4}
-.zone-h{font-family:"Spectral",serif; color:var(--loch); font-size:1rem; font-weight:600; padding:.7rem .55rem .35rem; display:flex; align-items:center; letter-spacing:.01em; position:sticky; top:0; background:var(--paper); z-index:2}
-.zone-h span{margin-left:auto; font-family:"Mulish"; font-size:.72rem; color:var(--muted); font-weight:700; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.05rem .5rem}
+.zone-h{font-family:"Jost",system-ui,sans-serif; color:var(--loch); font-size:1rem; font-weight:600; padding:.7rem .55rem .35rem; display:flex; align-items:center; position:sticky; top:0; background:var(--paper); z-index:2}
+.zone-h span{margin-left:auto; font-family:"Jost"; font-size:.72rem; color:var(--muted); font-weight:700; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.05rem .5rem}
 /* place card — horizontal compact, consistent with the "near us" page */
 .card{display:flex; gap:1rem; align-items:flex-start; background:var(--card); border:1px solid var(--line);
   border-radius:16px; padding:.95rem; margin:.55rem 0; box-shadow:0 4px 16px rgba(18,59,79,.06); cursor:pointer;
@@ -113,7 +122,7 @@ aside .head .sort:hover{border-color:var(--loch); color:var(--loch)}
 @keyframes shim{0%{background-position:100% 0}100%{background-position:0 0}}
 .cbody{flex:1; min-width:0; display:flex; flex-direction:column}
 .ttl{display:flex; align-items:flex-start; gap:.6rem}
-.ttl h3{flex:1; min-width:0; font-family:"Spectral",serif; font-weight:500; font-size:1.16rem; color:var(--loch); line-height:1.18; margin:0}
+.ttl h3{flex:1; min-width:0; font-family:"Jost",system-ui,sans-serif; font-weight:500; font-size:1.16rem; color:var(--loch); line-height:1.18; margin:0}
 .pill{flex:0 0 auto; margin-top:.12rem; background:#eef4f6; color:var(--loch); border:1px solid var(--line); border-radius:999px;
   padding:.18rem .55rem; font-size:.7rem; font-weight:700; white-space:nowrap}
 .sub2{color:var(--muted); font-size:.8rem; margin-top:.25rem}
@@ -136,7 +145,7 @@ aside .head .sort:hover{border-color:var(--loch); color:var(--loch)}
 .state .btn{margin-top:1rem;background:var(--loch);color:#fff;border:none;border-radius:10px;padding:.6rem 1.1rem;font-family:inherit;font-weight:600;cursor:pointer}
 
 /* Cluster colours */
-.marker-cluster div{font-family:"Mulish";font-weight:700;color:#fff}
+.marker-cluster div{font-family:"Jost";font-weight:700;color:#fff}
 .marker-cluster-small{background:rgba(124,92,158,.30)} .marker-cluster-small div{background:rgba(124,92,158,.92)}
 .marker-cluster-medium{background:rgba(197,135,46,.30)} .marker-cluster-medium div{background:rgba(197,135,46,.95)}
 .marker-cluster-large{background:rgba(18,59,79,.30)} .marker-cluster-large div{background:rgba(18,59,79,.95)}
@@ -145,7 +154,7 @@ aside .head .sort:hover{border-color:var(--loch); color:var(--loch)}
 .leaflet-popup-content-wrapper{background:var(--card); color:var(--ink); border-radius:14px; border:1px solid var(--line); box-shadow:var(--shadow)}
 .leaflet-popup-content{margin:.8rem .95rem}
 .leaflet-popup-tip{background:var(--card)}
-.pop b{font-family:"Spectral",serif;font-size:1.18rem;color:var(--loch)}
+.pop b{font-family:"Jost",system-ui,sans-serif;font-size:1.18rem;color:var(--loch)}
 .pop img{width:100%;max-width:280px;border-radius:10px;margin:.55rem 0;display:block}
 .pop .meta{color:var(--muted); font-size:.82rem; margin:.15rem 0}
 .pop .links{margin-top:.55rem;display:flex;gap:.45rem;flex-wrap:wrap}
@@ -156,8 +165,9 @@ aside .head .sort:hover{border-color:var(--loch); color:var(--loch)}
 .pop .credit{color:var(--muted); font-size:.66rem; margin-top:.35rem}
 .pop .nophoto{font-style:italic; opacity:.85; margin:.5rem 0}
 .pop .nearnote{color:var(--azure); font-weight:700; font-style:normal; margin:.25rem 0}
-.maphint{background:rgba(255,255,255,.94); border:1px solid var(--line); border-radius:10px; padding:.4rem .6rem; font-size:.74rem; color:var(--loch); box-shadow:var(--shadow); max-width:190px; line-height:1.25; font-weight:600}
-.zone-label{background:rgba(255,255,255,.92)!important; border:1px solid var(--line)!important; border-radius:999px!important; color:var(--loch)!important; font-family:"Mulish",sans-serif!important; font-weight:700!important; font-size:.72rem!important; padding:.12rem .55rem!important; box-shadow:0 2px 8px rgba(18,59,79,.18)!important; white-space:nowrap; pointer-events:none!important}
+.maphint{display:flex; align-items:center; gap:.4rem; font-size:.8rem; color:#0d0e0f; background:rgba(255,255,255,.97); border:1px solid rgba(43,124,196,.18); border-radius:10px; padding:.5rem .65rem; margin:0 .55rem .7rem; font-weight:600}
+.maphint svg{width:16px; height:16px; flex:0 0 auto; fill:none; stroke:var(--azure); stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.zone-label{background:rgba(255,255,255,.92)!important; border:1px solid var(--line)!important; border-radius:999px!important; color:var(--loch)!important; font-family:"Jost",system-ui,sans-serif!important; font-weight:700!important; font-size:.72rem!important; padding:.12rem .55rem!important; box-shadow:0 2px 8px rgba(18,59,79,.18)!important; white-space:nowrap; pointer-events:none!important}
 .zone-label:before{display:none!important}
 .zone-label.sel{background:var(--loch)!important; color:#fff!important; border-color:var(--loch)!important}
 .leaflet-interactive{transition:fill-opacity .18s ease}
@@ -179,19 +189,14 @@ path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
   header .wrap{padding:1.05rem 1.2rem 1rem}
   .toolbar .stat{display:none}
   .zonebar{padding:.4rem 1.2rem .7rem}
-  .viewseg{display:flex; gap:.5rem; position:sticky; top:0; z-index:40; background:var(--paper); padding:.6rem 1.2rem .7rem}
-  .viewseg button{flex:1; border:1px solid var(--line); background:var(--card); color:#54636a; border-radius:12px;
-    padding:.72rem; font-family:inherit; font-weight:800; font-size:.94rem; display:inline-flex; align-items:center; justify-content:center; gap:.45rem; cursor:pointer; transition:.14s}
-  .viewseg button.on{background:var(--loch); color:#fff; border-color:var(--loch); box-shadow:0 8px 20px rgba(18,59,79,.22)}
+  .viewseg{display:none}
   .layout{display:block; max-width:none; margin:0}
   aside{border-left:none; border-top:1px solid var(--line)}
-  .list{overflow:visible; flex:none; padding:.4rem 1rem 1.2rem}
+  .list{overflow:visible; flex:none; padding:.4rem 1rem 1.3rem}
   .media{width:104px;height:104px}
   .zone-h{position:static}
-  #map{height:calc(100vh - 64px)}
-  body[data-view="list"] #map{display:none}
-  body[data-view="map"] aside{display:none}
-  body[data-view="map"] .attr{display:none}
+  #map{height:40vh; border-radius:0; position:sticky; z-index:1; box-shadow:0 8px 16px rgba(18,59,79,.14)}
+  .leaflet-control-zoom{display:none!important}
 }
 </style>
 </head>
@@ -227,6 +232,8 @@ path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
     </div>
   </aside>
 </div>
+
+<button class="totop" id="toTop" aria-label="Back to top"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></button>
 
 <div class="attr">Sample prepared for Daviot Guest House &middot; Data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> (ODbL) &middot; Photography via <a href="https://commons.wikimedia.org" target="_blank" rel="noopener">Wikimedia Commons</a> (see each file for its licence) &middot; Map tiles &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a> &middot; Google links are external references only</div>
 
@@ -269,7 +276,8 @@ const I = {
   lh:'<svg class="ph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 21h5"/><path d="M10.2 21 11 10h2l.8 11"/><path d="M10.6 6.4h2.8l-1-2.4h-.8z"/><path d="M10.4 6.4h3.2V10h-3.2z"/><path d="M11 13.5h2"/><path d="M14.4 7.2 18 6M14.4 8.8 18 10"/><path d="M9.6 7.2 6 6M9.6 8.8 6 10"/></svg>'
 };
 
-const map = L.map('map', {zoomControl:true}).setView([57.5,-4.6], 6);
+const map = L.map('map', {zoomControl:false}).setView([57.5,-4.6], 6);
+L.control.zoom({position:'topright'}).addTo(map);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   maxZoom:19, subdomains:'abcd',
   attribution:'&copy; OpenStreetMap contributors &copy; CARTO'
@@ -560,9 +568,8 @@ function draw(){
     if(e.target.closest('a')) return;
     const l=lighthouses.find(x=>x.id===el.dataset.id); if(!l) return;
     if(!markers[l.id]){ activeZone=l.zone; renderZoneChips(); draw(); }
-    const open=()=>{ const mk=markers[l.id]; if(mk) cluster.zoomToShowLayer(mk, ()=>mk.openPopup()); else map.flyTo([l.lat,l.lng],12,{duration:.8}); };
-    if(window.matchMedia('(max-width:880px)').matches){ setView('map'); setTimeout(open,150); }
-    else open();
+    try{ map.invalidateSize(); }catch(err){}
+    const mk=markers[l.id]; if(mk) cluster.zoomToShowLayer(mk, ()=>mk.openPopup()); else map.flyTo([l.lat,l.lng],11,{duration:.8});
   }));
 }
 
@@ -641,6 +648,18 @@ function locateMe(){
 
 $('#locateBtn').addEventListener('click', locateMe);
 document.querySelectorAll('#viewseg button').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.v)));
+function setMapTop(){ const hb=document.getElementById('hostbar'), m=document.getElementById('map');
+  if(!hb||!m) return;
+  if(window.matchMedia('(max-width:880px)').matches){ m.style.top=hb.offsetHeight+'px'; } else { m.style.top=''; }
+  try{ map.invalidateSize(); }catch(e){} }
+window.addEventListener('resize', setMapTop); setMapTop(); setTimeout(setMapTop, 400);
+window.addEventListener('load', ()=>{ setTimeout(()=>{ try{ setMapTop(); map.invalidateSize(); }catch(e){} }, 60); });
+(function(){ const btn=document.getElementById('toTop'); if(!btn) return; const list=document.getElementById('list');
+  const upd=()=>{ const sc=(window.scrollY||0)>300 || (list && list.scrollTop>300); btn.classList.toggle('show', !!sc); };
+  window.addEventListener('scroll',upd,{passive:true});
+  if(list) list.addEventListener('scroll',upd,{passive:true});
+  btn.addEventListener('click',()=>{ window.scrollTo({top:0,behavior:'smooth'}); if(list) list.scrollTo({top:0,behavior:'smooth'}); });
+})();
 
 renderHostBar();
 addHostMarker();
