@@ -153,6 +153,9 @@ var HOST={ name:"Daviot Guest House", tagline:"Photo gallery \u00b7 a sample pre
 /* Themes -> Pexels search query */
 var THEMES=[
   ['coast','Ayr & Coast','Ayrshire Scotland coast'],
+  ['ayr','Ayr','Ayr Scotland'],
+  ['glasgow','Glasgow','Glasgow Scotland city'],
+  ['edinburgh','Edinburgh','Edinburgh Scotland city'],
   ['castles','Castles','Scotland castle'],
   ['lighthouses','Lighthouses','Scotland lighthouse'],
   ['burns','Countryside','Scotland countryside village'],
@@ -205,6 +208,7 @@ function renderFilters(){
   filtersEl.innerHTML=all.map(function(c){
     var key=c[0];
     var n = key==='all' ? items.length : items.filter(function(x){return x.cat===key;}).length;
+    if(key!=='all' && n===0) return '';
     return '<button class="fchip'+(activeC===key?' on':'')+'" data-c="'+key+'">'+esc(c[1])+(n?' <span class="n">'+n+'</span>':'')+'</button>';
   }).join('');
 }
