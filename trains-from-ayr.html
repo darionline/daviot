@@ -52,7 +52,7 @@ svg.ico{width:1em;height:1em;display:inline-block;vertical-align:-.14em;fill:non
 
 /* Board header (dark) */
 .board{background:linear-gradient(165deg,#143f55,#0d2c3c); color:#fff; border-radius:22px 22px 0 0; padding:1.25rem 1.3rem 1.15rem; box-shadow:var(--shadow); position:relative; overflow:hidden}
-.board::after{content:""; position:absolute; inset:0; background:radial-gradient(420px 200px at 85% -20%, rgba(124,160,210,.28), transparent 60%); pointer-events:none}
+.board::after{content:""; position:absolute; inset:0; background:radial-gradient(420px 200px at 85% -20%, rgb(113, 137, 237), transparent 60%); pointer-events:none}
 .board .stn{display:flex; align-items:flex-end; gap:.7rem; flex-wrap:wrap; position:relative; z-index:1}
 .board .stn h2{font-size:1.5rem; font-weight:600}
 .board .crs{font-size:.74rem; font-weight:700; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.32); border-radius:8px; padding:.18rem .5rem; align-self:center}
@@ -253,10 +253,11 @@ function tick(){
 tick(); setInterval(tick,15000);
 
 /* ---- Live departures board ----
-   Data source: change RAIL_API to your own free proxy (e.g. a Cloudflare Worker
-   holding a free Rail Data Marketplace key) for a production-grade, always-on board.
-   Default uses the public Huxley demo (zero setup, but no uptime guarantee). */
-var RAIL_API = "https://huxley2.azurewebsites.net";
+   Data source. When you deploy your own Cloudflare Worker (see WORKER-SETUP.md),
+   paste its URL into WORKER_URL below — the page switches over instantly.
+   Until then it uses the public Huxley demo (fine for showing Linda; no uptime guarantee). */
+var WORKER_URL = "";  // e.g. "https://daviot-rail.yourname.workers.dev"  <-- paste your Worker URL here
+var RAIL_API = WORKER_URL || "https://huxley2.azurewebsites.net";
 var ORIGIN = "AYR";
 var ROWS = 12;
 var filter = null;   // {crs, name} or null
