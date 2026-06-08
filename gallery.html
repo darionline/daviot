@@ -8,8 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%237189ed'/%3E%3Crect x='4' y='6' width='16' height='12' rx='2' fill='%23fff'/%3E%3Ccircle cx='9' cy='11' r='1.6' fill='%237189ed'/%3E%3Cpath d='M5 16l4-3 3 2 3-3 4 4z' fill='%237189ed'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://en.wikipedia.org" crossorigin>
-<link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
+<link rel="preconnect" href="https://images.pexels.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -17,13 +16,13 @@
   --loch:#123b4f; --loch-2:#0d2c3c; --line:#e2e8f1; --shadow:0 14px 40px rgba(40,70,120,.12);
 }
 *{box-sizing:border-box}
+html{overflow-y:scroll}
 html,body{margin:0}
 body{background:radial-gradient(1100px 520px at 88% -8%, rgba(108,133,236,.13), transparent 60%), var(--paper); color:var(--ink); font-family:"Jost",system-ui,sans-serif; -webkit-font-smoothing:antialiased; min-height:100vh; display:flex; flex-direction:column}
 h1,h2,h3{font-family:"Jost",system-ui,sans-serif; font-weight:600; margin:0}
 a{color:inherit}
 svg.ico{width:1em;height:1em;display:inline-block;vertical-align:-.14em;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 
-/* Hostbar */
 .hostbar{background:#7189ed; border-bottom:1px solid rgba(255,255,255,.35); box-shadow:0 3px 12px rgba(40,70,120,.12); position:sticky; top:0; z-index:30}
 .hb-inner{max-width:1240px; margin:0 auto; padding:.55rem 1.7rem; display:flex; align-items:center; gap:.7rem; flex-wrap:wrap}
 .hb-logo{height:42px; width:auto; max-width:190px; flex:0 0 auto; display:block}
@@ -32,7 +31,6 @@ svg.ico{width:1em;height:1em;display:inline-block;vertical-align:-.14em;fill:non
 .hb-name span{font-size:.72rem; color:rgba(255,255,255,.85)}
 .hb-tag{margin-left:auto; font-size:.7rem; font-weight:700; color:#fff; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.4); padding:.22rem .6rem; border-radius:999px; white-space:nowrap}
 
-/* Guide menu */
 .guidenav{display:flex; justify-content:center; padding:.6rem .7rem; background:var(--paper); border-bottom:1px solid var(--line)}
 .gnwrap{display:inline-flex; gap:.2rem; max-width:100%; overflow-x:auto; scrollbar-width:none; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.24rem; box-shadow:0 4px 14px rgba(40,70,120,.10)}
 .gnwrap::-webkit-scrollbar{display:none}
@@ -40,14 +38,12 @@ svg.ico{width:1em;height:1em;display:inline-block;vertical-align:-.14em;fill:non
 .gnwrap .gn:hover{color:var(--azure); background:rgba(43,124,196,.08)}
 .gnwrap .gn.active{background:var(--loch); color:#fff; cursor:default; box-shadow:0 3px 10px rgba(18,59,79,.22)}
 
-/* Intro */
 .wrap{max-width:1180px; width:100%; margin:0 auto; padding:1.3rem 1.1rem 2.4rem; flex:1}
 .intro{text-align:center; margin:.4rem 0 1rem}
 .intro .kick{font-size:.72rem; font-weight:700; text-transform:uppercase; color:var(--azure); margin-bottom:.4rem}
 .intro h1{font-size:clamp(1.7rem,5vw,2.3rem); color:var(--loch); line-height:1.08}
 .intro p{margin:.55rem auto 0; max-width:54ch; color:var(--muted); font-size:1rem; font-weight:400; line-height:1.5}
 
-/* Filters */
 .filters{position:sticky; top:54px; z-index:20; display:flex; justify-content:center; padding:.55rem 0 .7rem; background:linear-gradient(var(--paper) 72%, rgba(238,242,250,0))}
 .fwrap{display:inline-flex; gap:.35rem; max-width:100%; overflow-x:auto; scrollbar-width:none; padding:.1rem}
 .fwrap::-webkit-scrollbar{display:none}
@@ -56,34 +52,35 @@ svg.ico{width:1em;height:1em;display:inline-block;vertical-align:-.14em;fill:non
 .fchip.on{background:var(--loch); color:#fff; border-color:var(--loch); box-shadow:0 3px 10px rgba(18,59,79,.2)}
 .fchip .n{font-size:.72rem; opacity:.7}
 
-/* Grid */
 .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:.5rem}
-@media(min-width:640px){ .grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:.6rem} }
+@media(min-width:640px){ .grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:.6rem} }
 .tile{position:relative; margin:0; padding:0; border:none; border-radius:14px; overflow:hidden; aspect-ratio:1/1; background:#dde6f1; cursor:zoom-in; display:block; box-shadow:0 4px 14px rgba(18,59,79,.08)}
 .tile.sk{background:linear-gradient(100deg,#e6ecf4 30%,#dde6f1 50%,#e6ecf4 70%); background-size:200% 100%; animation:sh 1.3s infinite}
 @keyframes sh{to{background-position:-200% 0}}
+.tile.sk::after{content:""; position:absolute; top:50%; left:50%; width:26px; height:26px; margin:-13px 0 0 -13px; border-radius:50%; border:3px solid rgba(18,59,79,.16); border-top-color:var(--azure); animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 .tile img{width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .5s, transform .4s}
 .tile.on img{opacity:1}
 .tile:hover img{transform:scale(1.06)}
-.tile .cap{position:absolute; left:0; right:0; bottom:0; padding:.95rem .6rem .5rem; color:#fff; font-size:.82rem; font-weight:600; line-height:1.2; text-align:left; background:linear-gradient(transparent, rgba(8,28,38,.72)); opacity:0; transform:translateY(6px); transition:.2s; pointer-events:none}
+.tile .cap{position:absolute; left:0; right:0; bottom:0; padding:.95rem .6rem .5rem; color:#fff; font-size:.8rem; font-weight:600; line-height:1.2; text-align:left; background:linear-gradient(transparent, rgba(8,28,38,.72)); opacity:0; transform:translateY(6px); transition:.2s; pointer-events:none}
 .tile.on:hover .cap, .tile.on:focus-visible .cap{opacity:1; transform:none}
-@media(hover:none){ .tile.on .cap{opacity:1; transform:none} }
 .tile .zoom{position:absolute; top:.5rem; right:.5rem; width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.9); color:var(--loch); display:grid; place-items:center; opacity:0; transition:.2s; pointer-events:none}
 .tile.on:hover .zoom{opacity:1}
 .tile .zoom svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-.state{grid-column:1/-1; text-align:center; color:var(--muted); padding:2rem 1rem; font-weight:400}
+.state{grid-column:1/-1; text-align:center; color:var(--muted); padding:2.4rem 1rem; font-weight:400; line-height:1.6}
+.state b{display:block; color:var(--ink); font-weight:600; margin-bottom:.3rem}
+.state code{background:#e6ecf4; border-radius:5px; padding:.05rem .35rem; font-size:.85em}
 
-/* Lightbox */
 .lb{position:fixed; inset:0; z-index:60; background:rgba(8,20,28,.92); display:none; align-items:center; justify-content:center; padding:2.2rem 1rem 1rem; backdrop-filter:blur(3px)}
 .lb.open{display:flex}
-.lb figure{margin:0; max-width:1100px; width:100%; display:flex; flex-direction:column; align-items:center}
-.lb img{max-width:100%; max-height:78vh; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,.5); background:#0d2c3c}
+.lb figure{margin:0; max-width:1200px; width:100%; display:flex; flex-direction:column; align-items:center}
+.lb img{max-width:100%; max-height:80vh; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,.5); background:#0d2c3c}
 .lb figcaption{color:#eaf1f6; text-align:center; margin-top:.8rem; max-width:70ch; font-size:.9rem; font-weight:400; line-height:1.45}
 .lb figcaption b{display:block; font-weight:600; font-size:1.05rem; margin-bottom:.2rem; color:#fff}
-.lb figcaption a{color:#bcd4ea; text-decoration:none; font-weight:600; white-space:nowrap}
-.lb figcaption a:hover{text-decoration:underline}
-.lb .src{display:block; margin-top:.35rem; font-size:.74rem; color:rgba(255,255,255,.55)}
+.lb .src{display:block; margin-top:.3rem; font-size:.78rem; color:rgba(255,255,255,.6)}
+.lb .src a{color:#bcd4ea; text-decoration:none; font-weight:600}
+.lb .src a:hover{text-decoration:underline}
 .lbbtn{position:absolute; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.3); color:#fff; width:46px; height:46px; border-radius:50%; cursor:pointer; display:grid; place-items:center; transition:.15s}
 .lbbtn:hover{background:rgba(255,255,255,.24)}
 .lbbtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -112,9 +109,8 @@ footer a:hover{text-decoration:underline}
   <div class="intro">
     <div class="kick">A few snapshots</div>
     <h1>Ayrshire &amp; Scotland in pictures</h1>
-    <p>A taste of what&rsquo;s around you and across Scotland. Tap any photo to view it larger.</p>
+    <p>A taste of the coast, castles and wild beauty around you and across Scotland. Tap any photo to view it larger.</p>
   </div>
-
   <div class="filters"><div class="fwrap" id="filters"></div></div>
   <div class="grid" id="grid"></div>
 </div>
@@ -123,19 +119,23 @@ footer a:hover{text-decoration:underline}
   <button class="lbbtn close" id="lbClose" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   <button class="lbbtn prev" id="lbPrev" aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
   <button class="lbbtn next" id="lbNext" aria-label="Next"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
-  <figure>
-    <img id="lbImg" alt="">
-    <figcaption id="lbCap"></figcaption>
-  </figure>
+  <figure><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
 </div>
 
 <footer>
-  Photos from <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener">Wikimedia Commons</a> &amp; Wikipedia, shown at reduced size. Each photo&rsquo;s author and licence are shown when you open it.
+  Photos from <a href="https://www.pexels.com/" target="_blank" rel="noopener">Pexels</a>, free to use. Shown at reduced size and loaded only as needed.
   <br>A guest companion prepared for visitors of Daviot Guest House.
 </footer>
 
 <script>
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+/* ---- Photo source ----
+   Quick local test: paste your free Pexels API key in PEXELS_KEY (do NOT commit it to GitHub).
+   For publishing: leave PEXELS_KEY empty and set PHOTO_WORKER to your Cloudflare Worker URL
+   (it holds the key safely). See PHOTOS-SETUP.md. */
+var PEXELS_KEY = "";
+var PHOTO_WORKER = "https://daviot-photos.dariopri3.workers.dev";
 
 /* Host bar */
 var HOST={ name:"Daviot Guest House", tagline:"Photo gallery \u00b7 a sample prepared for our guests" };
@@ -146,147 +146,87 @@ var HOST={ name:"Daviot Guest House", tagline:"Photo gallery \u00b7 a sample pre
     +'<span class="hb-tag">Photos</span></div>';
 })();
 
-/* Categories + subjects (Wikipedia article titles with free Commons images) */
-var CATS=[['all','All'],['coast','Ayr & Coast'],['castles','Castles'],['lighthouses','Lighthouses'],['burns','Burns Country'],['islands','Islands'],['scotland','Scotland']];
-var DATA=[
-  {n:'Ayr',t:'Ayr',c:'coast'},
-  {n:'Troon',t:'Troon',c:'coast'},
-  {n:'Dunure',t:'Dunure',c:'coast'},
-  {n:'Electric Brae',t:'Electric Brae',c:'coast'},
-  {n:'Largs',t:'Largs',c:'coast'},
-  {n:'Saltcoats',t:'Saltcoats',c:'coast'},
-
-  {n:'Culzean Castle',t:'Culzean Castle',c:'castles'},
-  {n:'Dundonald Castle',t:'Dundonald Castle',c:'castles'},
-  {n:'Dean Castle',t:'Dean Castle',c:'castles'},
-  {n:'Greenan Castle',t:'Greenan Castle',c:'castles'},
-  {n:'Crossraguel Abbey',t:'Crossraguel Abbey',c:'castles'},
-  {n:'Dumfries House',t:'Dumfries House',c:'castles'},
-
-  {n:'Turnberry Lighthouse',t:'Turnberry Lighthouse',c:'lighthouses'},
-  {n:'Bell Rock Lighthouse',t:'Bell Rock Lighthouse',c:'lighthouses'},
-  {n:'Skerryvore',t:'Skerryvore',c:'lighthouses'},
-  {n:'Neist Point',t:'Neist Point',c:'lighthouses'},
-  {n:'Mull of Galloway',t:'Mull of Galloway',c:'lighthouses'},
-  {n:'Eilean Glas Lighthouse',t:'Eilean Glas Lighthouse',c:'lighthouses'},
-
-  {n:'Robert Burns',t:'Robert Burns',c:'burns'},
-  {n:'Burns Cottage',t:'Burns Cottage',c:'burns'},
-  {n:"Brig o' Doon",t:"Brig o' Doon",c:'burns'},
-  {n:'Alloway',t:'Alloway',c:'burns'},
-  {n:'Burns Birthplace Museum',t:'Robert Burns Birthplace Museum',c:'burns'},
-
-  {n:'Isle of Arran',t:'Isle of Arran',c:'islands'},
-  {n:'Goat Fell',t:'Goat Fell',c:'islands'},
-  {n:'Ailsa Craig',t:'Ailsa Craig',c:'islands'},
-  {n:'Brodick Castle',t:'Brodick Castle',c:'islands'},
-  {n:'Holy Isle',t:'Holy Isle, Firth of Clyde',c:'islands'},
-  {n:'Great Cumbrae',t:'Great Cumbrae',c:'islands'},
-
-  {n:'Edinburgh Castle',t:'Edinburgh Castle',c:'scotland'},
-  {n:'Eilean Donan',t:'Eilean Donan',c:'scotland'},
-  {n:'Glenfinnan Viaduct',t:'Glenfinnan Viaduct',c:'scotland'},
-  {n:'Loch Lomond',t:'Loch Lomond',c:'scotland'},
-  {n:'Glen Coe',t:'Glen Coe',c:'scotland'},
-  {n:'Ben Nevis',t:'Ben Nevis',c:'scotland'},
-  {n:'Old Man of Storr',t:'Old Man of Storr',c:'scotland'},
-  {n:'The Kelpies',t:'The Kelpies',c:'scotland'}
+/* Themes -> Pexels search query */
+var THEMES=[
+  ['coast','Ayr & Coast','Ayrshire Scotland coast'],
+  ['castles','Castles','Scotland castle'],
+  ['lighthouses','Lighthouses','Scotland lighthouse'],
+  ['burns','Countryside','Scotland countryside village'],
+  ['islands','Islands','Isle of Arran Scotland'],
+  ['scotland','Scotland','Scotland highlands landscape']
 ];
+var PER=8;
 
-var CACHE_KEY='gal_img_v2';
-var cache={};
-try{ cache=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}'); }catch(e){ cache={}; }
-var items=new Array(DATA.length);  // resolved records, .ok flag
+var CACHE_KEY='gal_pexels_v1';
+var cache={}; try{ cache=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}'); }catch(e){ cache={}; }
+function saveCache(){ try{ localStorage.setItem(CACHE_KEY, JSON.stringify(cache)); }catch(e){} }
+
+var items=[];        // {grid,big,ph,purl,alt,cat,capt}
 var activeC='all';
-
 var grid=document.getElementById('grid');
 var filtersEl=document.getElementById('filters');
 
-function up(src,w){ return src.replace(/\/(\d+)px-/, '/'+w+'px-'); }
+function withParams(u,p){ if(!u) return u; return u + (u.indexOf('?')>-1?'&':'?') + p; }
 
-/* Build grid skeleton */
-grid.innerHTML=DATA.map(function(it,i){
-  return '<button class="tile sk" data-i="'+i+'" data-c="'+it.c+'" type="button">'
-    +'<img alt="'+esc(it.n)+'" loading="lazy" decoding="async">'
-    +'<span class="zoom"><svg viewBox="0 0 24 24"><path d="M21 21l-4.3-4.3M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM11 8v6M8 11h6"/></svg></span>'
-    +'<span class="cap">'+esc(it.n)+'</span>'
-    +'</button>';
-}).join('');
+function apiSearch(q){
+  if(PHOTO_WORKER){ return fetch(PHOTO_WORKER.replace(/\/$/,'')+'/search?q='+encodeURIComponent(q)+'&per='+PER).then(function(r){ if(!r.ok) throw 0; return r.json(); }); }
+  if(PEXELS_KEY){ return fetch('https://api.pexels.com/v1/search?orientation=landscape&per_page='+PER+'&query='+encodeURIComponent(q), {headers:{Authorization:PEXELS_KEY}}).then(function(r){ if(!r.ok) throw 0; return r.json(); }); }
+  return Promise.reject('nosrc');
+}
 
-/* Filters */
+function skeletons(n){ var h=''; for(var i=0;i<n;i++) h+='<button class="tile sk" type="button" disabled></button>'; return h; }
+
+function noSource(){
+  grid.innerHTML='<div class="state"><b>Photo source not set yet</b>'
+    +'To show the gallery, add a free <a href="https://www.pexels.com/api/" target="_blank" rel="noopener">Pexels</a> key '
+    +'in <code>PHOTO_WORKER</code> (recommended) or <code>PEXELS_KEY</code> for a quick local test. See <code>PHOTOS-SETUP.md</code>.</div>';
+}
+
+function tLoaded(img){ var t=img.closest('.tile'); if(t){ t.classList.remove('sk'); t.classList.add('on'); } }
+function tFail(img){ var t=img.closest('.tile'); if(t){ t.classList.add('dead'); t.style.display='none'; } }
+
+function renderGrid(){
+  if(!items.length){ grid.innerHTML='<div class="state"><b>No photos right now</b>Please try again in a moment.</div>'; return; }
+  grid.innerHTML=items.map(function(it,i){
+    return '<button class="tile sk" data-i="'+i+'" data-c="'+it.cat+'" type="button">'
+      +'<img alt="'+esc(it.alt)+'" loading="lazy" decoding="async" src="'+esc(it.grid)+'" onload="tLoaded(this)" onerror="tFail(this)">'
+      +'<span class="zoom"><svg viewBox="0 0 24 24"><path d="M21 21l-4.3-4.3M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM11 8v6M8 11h6"/></svg></span>'
+      +'<span class="cap">'+esc(it.capt)+'</span>'
+      +'</button>';
+  }).join('');
+}
+
 function renderFilters(){
-  filtersEl.innerHTML=CATS.map(function(c){
+  var all=[['all','All']].concat(THEMES.map(function(t){return [t[0],t[1]];}));
+  filtersEl.innerHTML=all.map(function(c){
     var key=c[0];
-    var n = key==='all'
-      ? items.filter(function(x){return x&&x.ok;}).length
-      : DATA.filter(function(d,i){return d.c===key && items[i]&&items[i].ok;}).length;
+    var n = key==='all' ? items.length : items.filter(function(x){return x.cat===key;}).length;
     return '<button class="fchip'+(activeC===key?' on':'')+'" data-c="'+key+'">'+esc(c[1])+(n?' <span class="n">'+n+'</span>':'')+'</button>';
   }).join('');
 }
 
 function applyFilter(){
-  var any=false;
   grid.querySelectorAll('.tile').forEach(function(t){
     if(t.classList.contains('dead')){ t.style.display='none'; return; }
-    var show=(activeC==='all'||t.dataset.c===activeC);
-    t.style.display=show?'':'none';
-    if(show) any=true;
+    t.style.display=(activeC==='all'||t.dataset.c===activeC)?'':'none';
   });
-  var s=document.getElementById('emptyState');
-  if(!any){ if(!s){ s=document.createElement('div'); s.className='state'; s.id='emptyState'; grid.appendChild(s);} s.textContent='No photos in this category yet.'; s.style.display=''; }
-  else if(s){ s.style.display='none'; }
 }
-
 function setFilter(c){ activeC=c; renderFilters(); applyFilter(); }
-
-/* Resolve one image */
-function resolve(i){
-  var it=DATA[i];
-  var tile=grid.querySelector('.tile[data-i="'+i+'"]');
-  if(!tile) return Promise.resolve();
-  function fill(rec){
-    items[i]=rec; items[i].ok=true;
-    var img=tile.querySelector('img');
-    img.onload=function(){ tile.classList.remove('sk'); tile.classList.add('on'); };
-    img.onerror=function(){ kill(); };
-    img.src=rec.u;
-  }
-  function kill(){ items[i]={ok:false}; tile.classList.add('dead'); tile.style.display='none'; }
-  if(cache[it.t] && cache[it.t].u){ fill(cache[it.t]); return Promise.resolve(); }
-  var url='https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(it.t.replace(/ /g,'_'));
-  return fetch(url,{headers:{'accept':'application/json'}})
-    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
-    .then(function(d){
-      var th=d.thumbnail && d.thumbnail.source;
-      if(!th){ kill(); return; }
-      var rec={ u:th, page:(d.content_urls&&d.content_urls.desktop&&d.content_urls.desktop.page)||'', desc:(d.extract||'').split('. ')[0] };
-      cache[it.t]=rec; fill(rec);
-    })
-    .catch(function(){ kill(); });
-}
 
 /* Lightbox */
 var lb=document.getElementById('lb'), lbImg=document.getElementById('lbImg'), lbCap=document.getElementById('lbCap');
 var curI=-1;
-function saveCache(){ try{ localStorage.setItem(CACHE_KEY, JSON.stringify(cache)); }catch(e){} }
-function strip(h){ var d=document.createElement('div'); d.innerHTML=h||''; return (d.textContent||'').trim(); }
-function fileInfo(u){ if(!u) return null; var host=u.indexOf('/wikipedia/commons/')>-1?'commons.wikimedia.org':(u.indexOf('/wikipedia/en/')>-1?'en.wikipedia.org':'commons.wikimedia.org'); var base=u.slice(0,u.lastIndexOf('/')); var file=decodeURIComponent(base.slice(base.lastIndexOf('/')+1)); return file?{host:host,file:file}:null; }
-function creditHtml(cr){ if(!cr) return '<span class="src">Photo: Wikimedia Commons</span>'; var a=cr.author?esc(cr.author):'Unknown author'; var lic=cr.lic?(cr.licUrl?'<a href="'+esc(cr.licUrl)+'" target="_blank" rel="noopener">'+esc(cr.lic)+'</a>':esc(cr.lic)):''; var file=cr.file?'<a href="'+esc(cr.file)+'" target="_blank" rel="noopener">Wikimedia Commons</a>':'Wikimedia Commons'; return '<span class="src">Photo: '+a+(lic?' \u00b7 '+lic:'')+' \u00b7 via '+file+'</span>'; }
-function fetchBig(i){ var rec=items[i]; if(!rec||!rec.u) return; var info=fileInfo(rec.u); if(!info) return; var api='https://'+info.host+'/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=extmetadata|url&iiurlwidth=1280&titles='+encodeURIComponent('File:'+info.file); fetch(api).then(function(r){return r.json();}).then(function(d){ try{ var pages=d.query.pages; var k=Object.keys(pages)[0]; var ii=pages[k].imageinfo[0]; var em=ii.extmetadata||{}; rec.big=ii.thumburl||ii.url||rec.u; rec.cr={author:strip((em.Artist&&em.Artist.value)||''),lic:(em.LicenseShortName&&em.LicenseShortName.value)||'',licUrl:(em.LicenseUrl&&em.LicenseUrl.value)||'',file:ii.descriptionurl||''}; cache[DATA[i].t]=rec; saveCache(); if(curI===i){ lbImg.src=rec.big; var s=lbCap.querySelector('.src'); if(s) s.outerHTML=creditHtml(rec.cr); } }catch(e){} }).catch(function(){}); }
-function visibleIdx(){ return Array.prototype.slice.call(grid.querySelectorAll('.tile')).filter(function(t){return t.style.display!=='none' && !t.classList.contains('dead');}).map(function(t){return +t.dataset.i;}); }
 function openLB(i){
-  var rec=items[i]; if(!rec||!rec.ok) return;
-  curI=i;
-  lbImg.src=rec.big||rec.u; lbImg.alt=DATA[i].n;
-  var link=rec.page?'<a href="'+esc(rec.page)+'" target="_blank" rel="noopener">View on Wikipedia &rsaquo;</a> ':'';
-  lbCap.innerHTML='<b>'+esc(DATA[i].n)+'</b>'+(rec.desc?esc(rec.desc)+'. ':'')+link+creditHtml(rec.cr);
+  var it=items[i]; if(!it) return; curI=i;
+  lbImg.src=it.big; lbImg.alt=it.alt;
+  var credit=it.ph?'<a href="'+esc(it.purl)+'" target="_blank" rel="noopener">'+esc(it.ph)+'</a>':'Pexels';
+  lbCap.innerHTML='<b>'+esc(it.capt)+'</b><span class="src">Photo: '+credit+' \u00b7 Pexels</span>';
   lb.classList.add('open'); lb.setAttribute('aria-hidden','false');
-  if(!rec.big||!rec.cr) fetchBig(i);
 }
 function closeLB(){ lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); lbImg.src=''; curI=-1; }
-function step(d){ var v=visibleIdx(); if(!v.length) return; var p=v.indexOf(curI); if(p<0) p=0; p=(p+d+v.length)%v.length; openLB(v[p]); }
+function step(d){ var v=Array.prototype.slice.call(grid.querySelectorAll('.tile')).filter(function(t){return t.style.display!=='none'&&!t.classList.contains('dead');}).map(function(t){return +t.dataset.i;}); if(!v.length) return; var p=v.indexOf(curI); if(p<0)p=0; p=(p+d+v.length)%v.length; openLB(v[p]); }
 
-grid.addEventListener('click',function(e){ var t=e.target.closest('.tile'); if(!t||t.classList.contains('dead')) return; var i=+t.dataset.i; if(items[i]&&items[i].ok) openLB(i); });
+grid.addEventListener('click',function(e){ var t=e.target.closest('.tile'); if(!t||t.classList.contains('dead')||t.classList.contains('sk')&&!t.dataset.i) return; if(t.dataset.i!=null) openLB(+t.dataset.i); });
 filtersEl.addEventListener('click',function(e){ var b=e.target.closest('.fchip'); if(b) setFilter(b.dataset.c); });
 document.getElementById('lbClose').addEventListener('click',closeLB);
 document.getElementById('lbPrev').addEventListener('click',function(){ step(-1); });
@@ -294,13 +234,35 @@ document.getElementById('lbNext').addEventListener('click',function(){ step(1); 
 lb.addEventListener('click',function(e){ if(e.target===lb) closeLB(); });
 document.addEventListener('keydown',function(e){ if(!lb.classList.contains('open')) return; if(e.key==='Escape') closeLB(); else if(e.key==='ArrowLeft') step(-1); else if(e.key==='ArrowRight') step(1); });
 
-/* Go */
-renderFilters();
-var jobs=DATA.map(function(_,i){ return resolve(i); });
-Promise.all(jobs).then(function(){
-  try{ saveCache(); }catch(e){}
-  renderFilters(); applyFilter();
-});
+/* Load */
+function ingest(themeKey, label, data){
+  var photos=(data&&data.photos)||[];
+  photos.forEach(function(p){
+    var orig=p.src&&(p.src.original||p.src.large2x||p.src.large); if(!orig) return;
+    items.push({
+      grid: withParams(orig,'auto=compress&cs=tinysrgb&fit=crop&w=520&h=520'),
+      big:  withParams(orig,'auto=compress&cs=tinysrgb&w=1400'),
+      ph: p.photographer||'', purl: p.photographer_url||p.url||'',
+      alt: p.alt||label, capt: label, cat: themeKey
+    });
+  });
+}
+
+function start(){
+  if(!PEXELS_KEY && !PHOTO_WORKER){ noSource(); renderFilters(); return; }
+  grid.innerHTML=skeletons(12);
+  renderFilters();
+  var jobs=THEMES.map(function(t){
+    var key=t[0], label=t[1], q=t[2];
+    if(cache[q]){ ingest(key,label,cache[q]); return Promise.resolve(); }
+    return apiSearch(q).then(function(d){ cache[q]=d; ingest(key,label,d); }).catch(function(){});
+  });
+  Promise.all(jobs).then(function(){
+    saveCache();
+    renderGrid(); renderFilters(); applyFilter();
+  });
+}
+start();
 </script>
 </body>
 </html>
