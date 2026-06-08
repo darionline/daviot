@@ -196,7 +196,7 @@ path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
   .viewseg{display:none}
   .layout{display:block; max-width:none; margin:0}
   aside{border-left:none; border-top:1px solid var(--line)}
-  .list{overflow:visible; flex:none; padding:.4rem 1rem 1.3rem}
+  .list{overflow:visible; flex:none; padding:.4rem 1rem 1.3rem; transform:translateZ(0); -webkit-transform:translateZ(0); backface-visibility:hidden; -webkit-backface-visibility:hidden}
   .media{width:104px;height:104px}
   .zone-h{position:static}
   #map{height:40vh; border-radius:0; position:sticky; z-index:1; box-shadow:0 8px 16px rgba(18,59,79,.14)}
@@ -232,7 +232,6 @@ path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
       <svg class="zpico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
       <select id="zoneSel" aria-label="Filter by region"><option value="All">All regions</option></select>
     </div>
-    <div class="maphint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Tap any lighthouse to see exactly where it is on the map.</div>
     <div class="list" id="list">
       <div class="state"><div class="spin"></div>Querying OpenStreetMap&hellip;</div>
     </div>
@@ -330,7 +329,7 @@ const LH_CURATED=[
   ["Pladda Lighthouse",55.4252,-5.1185,"Pladda, off Arran"],
   ["Rubha nan Gall Lighthouse",56.6380,-6.0674,"Tobermory, Mull"],
   ["Eilean Musdile Lighthouse, Lismore",56.4557,-5.6073,"Lismore, Firth of Lorn"],
-  ["Skerryvore Lighthouse",56.3251,-7.1106,"off Tiree"],
+  ["Skerryvore Lighthouse",56.3232,-7.1135,"off Tiree"],
   ["Davaar Lighthouse",55.4279,-5.5405,"Campbeltown Loch"],
   ["Butt of Lewis Lighthouse",58.5154,-6.2611,"Isle of Lewis"],
   ["Tiumpan Head Lighthouse",58.2583,-6.1386,"Isle of Lewis"],
@@ -345,7 +344,7 @@ const LH_CURATED=[
   ["Girdle Ness Lighthouse",57.1390,-2.0485,"Aberdeen"],
   ["Covesea Skerries Lighthouse",57.7240,-3.3387,"Lossiemouth, Moray"],
   ["Tarbat Ness Lighthouse",57.8649,-3.7765,"Easter Ross"],
-  ["Bell Rock Lighthouse",56.4340,-2.3880,"off Arbroath"],
+  ["Bell Rock Lighthouse",56.4329,-2.3881,"off Arbroath"],
   ["Bass Rock Lighthouse",56.0761,-2.6407,"Firth of Forth"],
   ["Fidra Lighthouse",56.0732,-2.7852,"Firth of Forth"],
   ["Isle of May Lighthouse",56.1833,-2.5667,"Firth of Forth"],
@@ -610,9 +609,7 @@ function toast(m){ const t=$('#toast'); if(!t) return; t.textContent=m; t.classL
 function haversineKm(a,b){ const R=6371,r=d=>d*Math.PI/180; const dla=r(b.lat-a.lat),dln=r(b.lng-a.lng); const s=Math.sin(dla/2)**2+Math.cos(r(a.lat))*Math.cos(r(b.lat))*Math.sin(dln/2)**2; return 2*R*Math.asin(Math.sqrt(s)); }
 function fmtKm(km){ const mi=km*0.621371; return mi<1?Math.round(mi*1760)+' yd':mi.toFixed(mi<10?1:0)+' mi'; }
 
-const hint=L.control({position:'topright'});
-hint.onAdd=function(){ const d=L.DomUtil.create('div','maphint'); d.textContent='Tap a region to see its lighthouses \u2014 or “Near me”'; return d; };
-hint.addTo(map);
+const hint=null;
 function killHint(){ const el=document.querySelector('.maphint'); if(el) el.remove(); }
 
 function revealNearest(latlng, fromLabel){
@@ -657,7 +654,9 @@ function setMapTop(){ const hb=document.getElementById('hostbar'), m=document.ge
 window.addEventListener('resize', setMapTop); setMapTop(); setTimeout(setMapTop, 400);
 window.addEventListener('load', ()=>{ setTimeout(()=>{ try{ setMapTop(); map.invalidateSize(); }catch(e){} }, 60); });
 (function(){ const btn=document.getElementById('toTop'); if(!btn) return; const list=document.getElementById('list');
-  const upd=()=>{ const sc=(window.scrollY||0)>300 || (list && list.scrollTop>300); btn.classList.toggle('show', !!sc); };
+  const isMobile=()=>window.matchMedia('(max-width:880px)').matches;
+  const upd=()=>{ const sc=(window.scrollY||0)>300 || (list && list.scrollTop>300); btn.classList.toggle('show', !!sc);
+    if(isMobile()){ try{ map.closePopup(); }catch(e){} } };
   window.addEventListener('scroll',upd,{passive:true});
   if(list) list.addEventListener('scroll',upd,{passive:true});
   btn.addEventListener('click',()=>{ window.scrollTo({top:0,behavior:'smooth'}); if(list) list.scrollTo({top:0,behavior:'smooth'}); });
