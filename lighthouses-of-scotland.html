@@ -393,7 +393,7 @@ async function fetchData(){
     writeCache(d.elements||[]); process(d.elements||[]);
   }catch(e){
     clearTimeout(timer); console.warn('all overpass mirrors failed', e);
-    if(!lighthouses.length){ lighthouses=curatedLighthouses(); computeZoneShapes(); draw(); renderZoneChips(); fitToActive(); }
+    if(!lighthouses.length){ lighthouses=curatedLighthouses(); computeZoneShapes(); draw(); renderZoneChips(); fitInitial(); }
   }
 }
 function commonsThumb(file,w){ file=String(file).replace(/^File:/i,'').trim(); return 'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(file)+'?width='+(w||400); }
@@ -431,7 +431,7 @@ function process(elements){
     return true;
   });
   lighthouses = osm.concat(cur);
-  computeZoneShapes(); draw(); renderZoneChips(); fitToActive();
+  computeZoneShapes(); draw(); renderZoneChips(); fitInitial();
   if(!autoLocated && navigator.geolocation && navigator.permissions){ navigator.permissions.query({name:'geolocation'}).then(p=>{ if(p.state==='granted'){ autoLocated=true; locateMe(); } }).catch(function(){}); }
   enrichImages();
 }
@@ -551,13 +551,17 @@ function renderZoneChips(){
   html+=zones.map(z=>'<option value="'+esc(z)+'">'+esc(ZONE_SHORT[z]||z)+' ('+counts[z]+')</option>').join('');
   sel.innerHTML=html;
   sel.value=activeZone;
-  sel.onchange=function(){ activeZone=this.value; draw(); fitToActive(); try{map.invalidateSize();}catch(e){} renderZoneChips(); };
+  sel.onchange=function(){ userInteracted=true; activeZone=this.value; draw(); fitToActive(); try{map.invalidateSize();}catch(e){} renderZoneChips(); };
 }
 
 function fitToActive(){
   const pts=lighthouses.filter(l=>activeZone==='All'||l.zone===activeZone).map(l=>[l.lat,l.lng]);
   if(pts.length){ try{ map.fitBounds(L.latLngBounds(pts).pad(0.15)); }catch(_){} }
 }
+function fitAyr(){ try{ map.fitBounds(L.latLngBounds([[54.6,-5.3],[56.0,-4.45]]), {padding:[18,18]}); }catch(_){} }
+let initialFitDone=false, userInteracted=false;
+function fitInitial(){ if(initialFitDone) return; initialFitDone=true; fitAyr(); }
+map.on('dragstart', ()=>{ userInteracted=true; });
 
 function draw(){
   cluster.clearLayers(); markers={}; zoneLayer.clearLayers();
@@ -583,6 +587,7 @@ function draw(){
   list.querySelectorAll('.card').forEach(el=>el.addEventListener('click',e=>{
     if(e.target.closest('a')) return;
     const l=lighthouses.find(x=>x.id===el.dataset.id); if(!l) return;
+    userInteracted=true;
     if(!markers[l.id]){ activeZone=l.zone; renderZoneChips(); draw(); }
     try{ map.invalidateSize(); }catch(err){}
     list.querySelectorAll('.card.sel').forEach(c=>c.classList.remove('sel')); el.classList.add('sel');
@@ -671,7 +676,7 @@ function setMapTop(){ const hb=document.getElementById('hostbar'), m=document.ge
   if(window.matchMedia('(max-width:880px)').matches){ m.style.top=hb.offsetHeight+'px'; } else { m.style.top=''; }
   try{ map.invalidateSize(); }catch(e){} }
 window.addEventListener('resize', setMapTop); setMapTop(); setTimeout(setMapTop, 400);
-window.addEventListener('load', ()=>{ setTimeout(()=>{ try{ setMapTop(); map.invalidateSize(); }catch(e){} }, 60); });
+window.addEventListener('load', ()=>{ setTimeout(()=>{ try{ setMapTop(); map.invalidateSize(); if(!userInteracted) fitAyr(); }catch(e){} }, 120); });
 (function(){ const btn=document.getElementById('toTop'); if(!btn) return; const list=document.getElementById('list');
   const isMobile=()=>window.matchMedia('(max-width:880px)').matches;
   const upd=()=>{ const sc=(window.scrollY||0)>300 || (list && list.scrollTop>300); btn.classList.toggle('show', !!sc);
@@ -687,7 +692,7 @@ addHostMarker();
   const c=readCache();
   if(c){ process(c.elements); if(Date.now()-c.t>CACHE_STALE) fetchData(); }  // instant from cache; quiet refresh if stale
   else {                                                                      // first visit: show the frozen lighthouses instantly, then enrich live
-    lighthouses=curatedLighthouses(); computeZoneShapes(); draw(); renderZoneChips(); fitToActive();
+    lighthouses=curatedLighthouses(); computeZoneShapes(); draw(); renderZoneChips(); fitInitial();
     fetchData();
   }
 })();
