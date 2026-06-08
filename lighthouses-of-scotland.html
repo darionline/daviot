@@ -85,7 +85,12 @@ header .kicker{font-family:"Jost";font-weight:700;text-transform:uppercase;font-
 aside{border-left:1px solid var(--line); background:var(--paper); display:flex; flex-direction:column; min-height:0}
 aside .head{padding:.9rem 1.15rem; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:.5rem}
 aside .head h2{font-size:1.25rem; color:var(--loch)}
-aside .head .sort{margin-left:auto; display:inline-flex; align-items:center; gap:.35rem; background:var(--card); border:1px solid var(--line); color:var(--muted); border-radius:9px; padding:.42rem .7rem; font-size:.8rem; font-family:inherit; cursor:pointer}
+aside .head .sort{margin-left:.45rem; display:inline-flex; align-items:center; gap:.35rem; background:var(--card); border:1px solid var(--line); color:var(--muted); border-radius:9px; padding:.42rem .7rem; font-size:.8rem; font-family:inherit; cursor:pointer}
+.savedtoggle{margin-left:auto; display:inline-flex; align-items:center; gap:.35rem; background:var(--card); border:1px solid var(--line); color:#5a666c; border-radius:9px; padding:.42rem .7rem; font-size:.8rem; font-family:inherit; font-weight:600; cursor:pointer; transition:.15s}
+.savedtoggle svg{width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.savedtoggle:hover{border-color:#e0556b; color:#e0556b}
+.savedtoggle.on{background:#e0556b; border-color:#e0556b; color:#fff}
+.savedtoggle.on svg{fill:#fff; stroke:#fff}
 aside .head .sort:hover{border-color:var(--loch); color:var(--loch)}
 .list{overflow:auto; padding:.7rem 1.1rem 1.4rem; flex:1}
 .zonebar{max-width:1240px; width:100%; margin:0 auto; display:flex; gap:.5rem; padding:.5rem 1.7rem .9rem; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch}
@@ -120,6 +125,12 @@ aside .head .sort:hover{border-color:var(--loch); color:var(--loch)}
   background:rgba(255,255,255,.94); color:var(--azure); display:grid; place-items:center;
   box-shadow:0 2px 7px rgba(8,28,38,.28); border:1px solid transparent; transition:background .14s, color .14s, border-color .14s; pointer-events:none}
 .locbadge svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.like{position:absolute; top:5px; right:5px; z-index:4; width:31px; height:31px; padding:0; border:none; border-radius:50%; background:rgba(255,255,255,.94); color:#5a666c; display:grid; place-items:center; cursor:pointer; box-shadow:0 2px 7px rgba(8,28,38,.28); transition:transform .12s, color .12s}
+.like svg{width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.like:hover{color:#e0556b}
+.like:active{transform:scale(.88)}
+.like.on{color:#e0556b}
+.like.on svg{fill:#e0556b; stroke:#e0556b}
 .maphint{display:flex; align-items:center; gap:.4rem; font-size:.8rem; color:var(--azure);
   background:rgba(43,124,196,.08); border:1px solid rgba(43,124,196,.18); border-radius:10px;
   padding:.5rem .65rem; margin:.7rem 1.1rem 0; font-weight:600}
@@ -240,6 +251,7 @@ path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
   <aside>
     <div class="head">
       <h2>Directory</h2>
+      <button class="savedtoggle" id="savedToggle" type="button" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg><span id="savedToggleTxt">Saved</span></button>
       <button class="sort" id="sortBtn"><svg class="ico" viewBox="0 0 24 24"><path d="M3 6h13M3 12h9M3 18h5"/><path d="M18 9l3-3 3 3M21 6v12"/></svg><span>A&ndash;Z</span></button>
     </div>
     <div class="zonepick">
@@ -288,6 +300,7 @@ function addHostMarker(){
 
 /* SVG icon strings */
 const I = {
+  heart:'<svg viewBox="0 0 24 24"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg>',
   pin:'<svg class="ico" viewBox="0 0 24 24"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
   nav:'<svg class="ico" viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>',
   ext:'<svg class="ico" viewBox="0 0 24 24"><path d="M14 3h7v7"/><path d="M21 3l-9 9"/><path d="M19 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/></svg>',
@@ -311,6 +324,14 @@ const lhIcon = L.divIcon({className:'', html:pinSVG, iconSize:[32,40], iconAncho
 const pinSVGSel = pinSVG.replace('width="32" height="40"','width="42" height="52"').replace('fill="#c5872e"','fill="#123b4f"');
 const lhIconSel = L.divIcon({className:'lhsel', html:pinSVGSel, iconSize:[42,52], iconAnchor:[21,50], popupAnchor:[0,-46]});
 let selectedId=null;
+
+/* Favourites */
+const FAV_KEY='lh_fav_v1';
+let saved=new Set((function(){ try{ return JSON.parse(localStorage.getItem(FAV_KEY)||'[]'); }catch(e){ return []; } })());
+function toggleSave(id){ if(saved.has(id)) saved.delete(id); else saved.add(id); try{ localStorage.setItem(FAV_KEY, JSON.stringify([...saved])); }catch(e){} return saved.has(id); }
+function likeBtn(id){ return '<button class="like'+(saved.has(id)?' on':'')+'" data-save="'+id+'" title="Save to favourites" aria-label="Save to favourites">'+I.heart+'</button>'; }
+let _savedHinted=false;
+function updateSavedToggle(){ var b=document.getElementById('savedToggle'); if(!b) return; var n=lighthouses.filter(function(l){return saved.has(l.id);}).length; var t=document.getElementById('savedToggleTxt'); if(t) t.textContent='Saved'+(n?' ('+n+')':''); var on=(activeZone==='__saved'); b.classList.toggle('on',on); b.setAttribute('aria-pressed', on?'true':'false'); }
 function selectMarker(id){
   if(selectedId===id) return;
   if(selectedId && markers[selectedId]) markers[selectedId].setIcon(lhIcon);
@@ -473,7 +494,7 @@ async function enrichImages(){
 function refreshPopups(){ Object.keys(markers).forEach(id=>{ const l=lighthouses.find(x=>x.id===id); if(l&&markers[id]) markers[id].setPopupContent(popupHtml(l)); }); }
 function updateThumb(id,url){
   const m0=document.querySelector('.media[data-id="'+id+'"]');
-  if(m0){ m0.classList.remove('noimg'); m0.innerHTML='<img loading="lazy" src="'+esc(url)+'" alt="" onerror="phFail(this)"><span class="locbadge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>'; }
+  if(m0){ m0.classList.remove('noimg'); m0.innerHTML='<img loading="lazy" src="'+esc(url)+'" alt="" onerror="phFail(this)"><span class="locbadge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>'+likeBtn(id); }
   const m=markers[id]; if(m) m.setPopupContent(popupHtml(lighthouses.find(l=>l.id===id)));
 }
 
@@ -540,7 +561,7 @@ function renderZoneRegions(){
 
 function itemHtml(l){
   const gm='https://www.google.com/maps/search/?api=1&query='+l.lat+','+l.lng;
-  const media='<div class="media'+(l.img?'':' noimg')+'" data-id="'+l.id+'">'+(l.img?'<img loading="lazy" src="'+esc(l.img)+'" alt="" onerror="phFail(this)">':I.lh)+'<span class="locbadge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span></div>';
+  const media='<div class="media'+(l.img?'':' noimg')+'" data-id="'+l.id+'">'+(l.img?'<img loading="lazy" src="'+esc(l.img)+'" alt="" onerror="phFail(this)">':I.lh)+'<span class="locbadge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>'+likeBtn(l.id)+'</div>';
   const pill = showZonePill ? '<span class="pill">'+esc(ZONE_SHORT[l.zone]||l.zone)+'</span>' : '';
   return '<article class="card" data-id="'+l.id+'">'
     + media
@@ -556,14 +577,16 @@ function renderZoneChips(){
   const counts={}; lighthouses.forEach(l=>{ counts[l.zone]=(counts[l.zone]||0)+1; });
   const zones=ZONE_ORDER.filter(z=>counts[z]);
   let html='<option value="All">All regions ('+lighthouses.length+')</option>';
+  const savedN=lighthouses.filter(l=>saved.has(l.id)).length;
+  if(savedN || activeZone==='__saved') html+='<option value="__saved">\u2665 Saved ('+savedN+')</option>';
   html+=zones.map(z=>'<option value="'+esc(z)+'">'+esc(ZONE_SHORT[z]||z)+' ('+counts[z]+')</option>').join('');
   sel.innerHTML=html;
-  sel.value=activeZone;
+  sel.value=activeZone; updateSavedToggle();
   sel.onchange=function(){ userInteracted=true; activeZone=this.value; draw(); fitToActive(); try{map.invalidateSize();}catch(e){} renderZoneChips(); };
 }
 
 function fitToActive(){
-  const pts=lighthouses.filter(l=>activeZone==='All'||l.zone===activeZone).map(l=>[l.lat,l.lng]);
+  const pts=lighthouses.filter(l=> activeZone==='All'?true : activeZone==='__saved'?saved.has(l.id) : l.zone===activeZone).map(l=>[l.lat,l.lng]);
   if(pts.length){ try{ map.fitBounds(L.latLngBounds(pts).pad(0.15)); }catch(_){} }
 }
 function fitAyr(){ try{ map.fitBounds(L.latLngBounds([[54.6,-5.3],[56.0,-4.45]]), {padding:[18,18]}); }catch(_){} }
@@ -575,13 +598,14 @@ function draw(){
   cluster.clearLayers(); markers={}; zoneLayer.clearLayers();
   const filter=$('#q').value.trim().toLowerCase();
   const cmp=(a,b)=> sortAZ ? a.name.localeCompare(b.name,'en') : b.name.localeCompare(a.name,'en');
-  let items=lighthouses.filter(l=>(!filter||(l.name+' '+l.place).toLowerCase().includes(filter)) && (activeZone==='All'||l.zone===activeZone));
+  let items=lighthouses.filter(l=>(!filter||(l.name+' '+l.place).toLowerCase().includes(filter)) && (activeZone==='All'||activeZone==='__saved'||l.zone===activeZone));
+  if(activeZone==='__saved') items=items.filter(l=>saved.has(l.id));
 
   const overview = (activeZone==='All' && !filter);
   items.forEach(l=>{ const m=L.marker([l.lat,l.lng],{icon:(l.id===selectedId?lhIconSel:lhIcon)}).bindPopup(popupHtml(l)); m.on('popupopen',()=>selectMarker(l.id)); markers[l.id]=m; cluster.addLayer(m); });
 
   const list=$('#list');
-  if(!items.length){ list.innerHTML='<div class="state">No lighthouse matches your filters.</div>'; return; }
+  if(!items.length){ list.innerHTML='<div class="state">'+(activeZone==='__saved'?'No saved lighthouses yet \u2014 tap the \u2665 heart on any card to keep it for your trip.':'No lighthouse matches your filters.')+'</div>'; return; }
   showZonePill = !overview;   // in overview the zone headers already label groups
   const groups={}; items.forEach(l=>{ (groups[l.zone]=groups[l.zone]||[]).push(l); });
   let html='';
@@ -593,7 +617,7 @@ function draw(){
   });
   list.innerHTML=html;
   list.querySelectorAll('.card').forEach(el=>el.addEventListener('click',e=>{
-    if(e.target.closest('a')) return;
+    if(e.target.closest('a')||e.target.closest('.like')) return;
     const l=lighthouses.find(x=>x.id===el.dataset.id); if(!l) return;
     userInteracted=true;
     if(!markers[l.id]){ activeZone=l.zone; renderZoneChips(); draw(); }
@@ -607,6 +631,18 @@ function draw(){
 }
 
 let showZonePill=false;
+
+document.addEventListener('click',function(e){
+  const b=e.target.closest && e.target.closest('.like'); if(!b) return;
+  e.stopPropagation();
+  const id=b.getAttribute('data-save');
+  const on=toggleSave(id);
+  b.classList.toggle('on', on);
+  renderZoneChips();
+  if(activeZone==='__saved'){ draw(); }
+  else if(on && !_savedHinted){ _savedHinted=true; toast('Saved \u2014 see them under \u2665 Saved at the top of the list'); }
+});
+(function(){ var st=document.getElementById('savedToggle'); if(st) st.addEventListener('click',function(){ userInteracted=true; activeZone=(activeZone==='__saved')?'All':'__saved'; renderZoneChips(); draw(); fitToActive(); try{map.invalidateSize();}catch(e){} }); })();
 function setView(v){
   document.body.dataset.view=v;
   document.querySelectorAll('#viewseg button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));

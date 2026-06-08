@@ -85,7 +85,12 @@ header .kicker{font-family:"Jost";font-weight:700;text-transform:uppercase;font-
 aside{border-left:1px solid var(--line); background:var(--paper); display:flex; flex-direction:column; min-height:0}
 aside .head{padding:.9rem 1.15rem; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:.5rem}
 aside .head h2{font-size:1.25rem; color:var(--loch)}
-aside .head .sort{margin-left:auto; display:inline-flex; align-items:center; gap:.35rem; background:var(--card); border:1px solid var(--line); color:var(--muted); border-radius:9px; padding:.42rem .7rem; font-size:.8rem; font-family:inherit; cursor:pointer}
+aside .head .sort{margin-left:.45rem; display:inline-flex; align-items:center; gap:.35rem; background:var(--card); border:1px solid var(--line); color:var(--muted); border-radius:9px; padding:.42rem .7rem; font-size:.8rem; font-family:inherit; cursor:pointer}
+.savedtoggle{margin-left:auto; display:inline-flex; align-items:center; gap:.35rem; background:var(--card); border:1px solid var(--line); color:#5a666c; border-radius:9px; padding:.42rem .7rem; font-size:.8rem; font-family:inherit; font-weight:600; cursor:pointer; transition:.15s}
+.savedtoggle svg{width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.savedtoggle:hover{border-color:#e0556b; color:#e0556b}
+.savedtoggle.on{background:#e0556b; border-color:#e0556b; color:#fff}
+.savedtoggle.on svg{fill:#fff; stroke:#fff}
 aside .head .sort:hover{border-color:var(--loch); color:var(--loch)}
 .list{overflow:auto; padding:.7rem 1.1rem 1.4rem; flex:1}
 .zonebar{max-width:1240px; width:100%; margin:0 auto; display:flex; gap:.5rem; padding:.5rem 1.7rem .9rem; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch}
@@ -258,6 +263,7 @@ path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
   <aside>
     <div class="head">
       <h2>Places</h2>
+      <button class="savedtoggle" id="savedToggle" type="button" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg><span id="savedToggleTxt">Saved</span></button>
       <button class="sort" id="sortBtn"><svg class="ico" viewBox="0 0 24 24"><path d="M3 6h13M3 12h9M3 18h5"/><path d="M18 9l3-3 3 3M21 6v12"/></svg><span>A&ndash;Z</span></button>
     </div>
     <div class="seafront" id="seafront">
@@ -349,6 +355,7 @@ let saved=new Set((function(){ try{ return JSON.parse(localStorage.getItem(FAV_K
 function toggleSave(id){ if(saved.has(id)) saved.delete(id); else saved.add(id); try{ localStorage.setItem(FAV_KEY, JSON.stringify([...saved])); }catch(e){} return saved.has(id); }
 function likeBtn(id){ return '<button class="like'+(saved.has(id)?' on':'')+'" data-save="'+id+'" title="Save to favourites" aria-label="Save to favourites">'+I.heart+'</button>'; }
 let _savedHinted=false;
+function updateSavedToggle(){ var b=document.getElementById('savedToggle'); if(!b) return; var n=lighthouses.filter(function(l){return saved.has(l.id);}).length; var t=document.getElementById('savedToggleTxt'); if(t) t.textContent='Saved'+(n?' ('+n+')':''); var on=(activeZone==='__saved'); b.classList.toggle('on',on); b.setAttribute('aria-pressed', on?'true':'false'); }
 function selectMarker(id){
   if(selectedId===id) return;
   if(selectedId && markers[selectedId]){ const pl=lighthouses.find(x=>x.id===selectedId); markers[selectedId].setIcon(iconFor(pl?pl.zone:null)); }
@@ -594,7 +601,7 @@ function renderZoneChips(){
   if(savedN || activeZone==='__saved') html+='<option value="__saved">\u2665 Saved ('+savedN+')</option>';
   html+=zones.map(z=>'<option value="'+esc(z)+'">'+esc(ZONE_SHORT[z]||z)+' ('+counts[z]+')</option>').join('');
   sel.innerHTML=html;
-  sel.value=activeZone;
+  sel.value=activeZone; updateSavedToggle();
   sel.onchange=function(){ userInteracted=true; activeZone=this.value; draw(); fitToActive(); try{map.invalidateSize();}catch(e){} renderZoneChips(); };
 }
 
@@ -653,8 +660,9 @@ document.addEventListener('click',function(e){
   b.classList.toggle('on', on);
   renderZoneChips();
   if(activeZone==='__saved'){ draw(); }
-  else if(on && !_savedHinted){ _savedHinted=true; toast('Saved \u2014 find it in the \u201c\u2665 Saved\u201d filter above'); }
+  else if(on && !_savedHinted){ _savedHinted=true; toast('Saved \u2014 see them under \u2665 Saved at the top of the list'); }
 });
+(function(){ var st=document.getElementById('savedToggle'); if(st) st.addEventListener('click',function(){ userInteracted=true; activeZone=(activeZone==='__saved')?'All':'__saved'; renderZoneChips(); draw(); fitToActive(); try{map.invalidateSize();}catch(e){} }); })();
 function setView(v){
   document.body.dataset.view=v;
   document.querySelectorAll('#viewseg button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
