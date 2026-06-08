@@ -133,6 +133,11 @@ header p{margin:.35rem 0 0; color:rgba(255,255,255,.92); font-size:.94rem; max-w
 .leaflet-container{background:#e8eef0; font-family:inherit}
 aside{border-left:1px solid var(--line); background:transparent; display:flex; flex-direction:column; min-height:0}
 aside .head{padding:.9rem 1.35rem .35rem; display:flex; align-items:center; gap:.5rem}
+.savedtoggle{margin-left:auto; display:inline-flex; align-items:center; gap:.35rem; background:var(--card); border:1px solid var(--line); color:#5a666c; border-radius:9px; padding:.42rem .7rem; font-size:.8rem; font-family:inherit; font-weight:600; cursor:pointer; transition:.15s}
+.savedtoggle svg{width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.savedtoggle:hover{border-color:#e0556b; color:#e0556b}
+.savedtoggle.on{background:#e0556b; border-color:#e0556b; color:#fff}
+.savedtoggle.on svg{fill:#fff; stroke:#fff}
 aside .head h2{font-size:1.25rem; color:var(--loch)}
 aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
 .list{overflow:auto; padding:.7rem 1.25rem 1.5rem; flex:1; display:flex; flex-direction:column; gap:1rem}
@@ -225,7 +230,8 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
 
   .layout{display:block;max-width:none;margin:0}
   aside{border-left:none}
-  aside .head{display:none}
+  aside .head{display:flex; padding:.5rem 1rem .1rem; gap:.5rem}
+  aside .head h2, aside .head #headNote{display:none}
   #map{height:40vh; border-radius:0; box-shadow:0 8px 16px rgba(18,59,79,.14); position:sticky; z-index:1}
   .leaflet-control-zoom{display:none!important}
   .maphint{margin:.7rem 1rem .35rem}
@@ -301,7 +307,7 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
 <div class="layout">
   <div id="map"></div>
   <aside>
-    <div class="head"><h2>Nearby</h2><small id="headNote"></small></div>
+    <div class="head"><h2>Nearby</h2><small id="headNote"></small><button class="savedtoggle" id="savedToggle" type="button" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg><span id="savedToggleTxt">Saved</span></button></div>
     <div class="maphint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Tap any place to see exactly where it is on the map.</div>
     <div class="list" id="list"><div class="state"><div class="spin"></div>Finding places around you&hellip;</div></div>
   </aside>
@@ -618,11 +624,11 @@ function renderCats(){
   const order=Object.keys(CATS).filter(c=>counts[c]);
   let html='<button class="cchip '+(activeCat==='All'?'on':'')+'" data-c="All">All <span class="c">'+places.length+'</span></button>';
   const savedN=places.filter(p=>saved.has(p.id)).length;
-  html+='<button class="cchip starchip '+(activeCat==='Saved'?'on':'')+'" data-c="Saved">'+I.heart+'Saved <span class="c">'+savedN+'</span></button>';
   html+=order.map(c=>'<button class="cchip '+(activeCat===c?'on':'')+'" data-c="'+c+'"><span class="sw" style="background:'+CATS[c].color+'"></span>'+esc(CATS[c].label)+' <span class="c">'+counts[c]+'</span></button>').join('');
   if(!liveLoaded){ html+='<span class="cchip skel"><span class="cspin"></span></span><span class="cchip skel"><span class="cspin"></span></span><span class="cchip skel"><span class="cspin"></span></span><span class="cchip skel"><span class="cspin"></span></span>'; }
   const bar=$('#catbar'); bar.innerHTML=html;
   bar.querySelectorAll('.cchip[data-c]').forEach(b=>b.addEventListener('click',function(){ activeCat=this.dataset.c; renderCats(); draw(); fitToVisible(); }));
+  if(typeof updateSavedToggle==='function') updateSavedToggle();
   if(window.updateCatNav) window.updateCatNav();
 }
 
@@ -687,10 +693,12 @@ function fitToVisible(){
   map.fitBounds(L.latLngBounds(pts), {padding:[36,36], maxZoom:14, animate:true});
 }
 let _savedHinted=false;
+function updateSavedToggle(){ var b=document.getElementById('savedToggle'); if(!b) return; var n=places.filter(function(p){return saved.has(p.id);}).length; var t=document.getElementById('savedToggleTxt'); if(t) t.textContent='Saved'+(n?' ('+n+')':''); var on=(activeCat==='Saved'); b.classList.toggle('on',on); b.setAttribute('aria-pressed', on?'true':'false'); }
+(function(){ var st=document.getElementById('savedToggle'); if(st) st.addEventListener('click',function(){ activeCat=(activeCat==='Saved')?'All':'Saved'; renderCats(); draw(); fitToVisible(); }); })();
 function onListClick(e){
   const like=e.target.closest('.like');
   if(like){ e.stopPropagation(); const id=like.dataset.save; const on=toggleSave(id); like.classList.toggle('on',on); renderCats();
-    if(activeCat==='Saved'){ draw(); } else if(on && !_savedHinted){ _savedHinted=true; toast('Saved \u2014 find your favourites in the \u201cSaved\u201d filter above'); }
+    if(activeCat==='Saved'){ draw(); } else if(on && !_savedHinted){ _savedHinted=true; toast('Saved \u2014 see them under \u2665 Saved at the top of the list'); }
     return; }
   const card=e.target.closest('.card'); if(!card) return;
   if(e.target.closest('a')) return;
