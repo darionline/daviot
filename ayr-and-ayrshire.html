@@ -270,6 +270,7 @@ path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
       <span><i style="background:#5f7f96"></i>Castles</span>
       <span><i style="background:#5e9a5e"></i>Golf</span>
       <span><i style="background:#2b9fb3"></i>Coast</span>
+      <span><i style="background:#c5872e"></i>Family</span>
     </div>
     <div class="list" id="list">
       <div class="state"><div class="spin"></div>Loading places&hellip;</div>
@@ -376,19 +377,27 @@ const LH_CURATED=[
   ["Alloway Auld Kirk",55.4279,-4.6376,"Alloway","Robert Burns","Auld Kirk, Alloway"],
   ["Tam o' Shanter Inn",55.4608,-4.6286,"Ayr High Street","Robert Burns",""],
   ["Auld Brig o' Ayr",55.4646,-4.6295,"Ayr","Robert Burns","Auld Brig, Ayr"],
-  ["Culzean Castle",55.3547,-4.7893,"Maybole","Castles & Abbeys","Culzean Castle"],
-  ["Dunure Castle",55.4050,-4.7617,"Dunure","Castles & Abbeys","Dunure Castle"],
-  ["Crossraguel Abbey",55.3389,-4.7210,"Maybole","Castles & Abbeys","Crossraguel Abbey"],
-  ["Dundonald Castle",55.5768,-4.5970,"Dundonald","Castles & Abbeys","Dundonald Castle"],
-  ["Greenan Castle",55.4386,-4.6702,"Ayr (Doonfoot)","Castles & Abbeys","Greenan Castle"],
+  ["Culzean Castle",55.3547,-4.7893,"Maybole","Castles & Houses","Culzean Castle"],
+  ["Dunure Castle",55.4050,-4.7617,"Dunure","Castles & Houses","Dunure Castle"],
+  ["Crossraguel Abbey",55.3389,-4.7210,"Maybole","Castles & Houses","Crossraguel Abbey"],
+  ["Dundonald Castle",55.5768,-4.5970,"Dundonald","Castles & Houses","Dundonald Castle"],
+  ["Greenan Castle",55.4386,-4.6702,"Ayr (Doonfoot)","Castles & Houses","Greenan Castle"],
+  ["Dumfries House",55.4556,-4.3080,"Cumnock","Castles & Houses","Dumfries House"],
+  ["Dean Castle",55.6206,-4.4859,"Kilmarnock","Castles & Houses","Dean Castle"],
   ["Royal Troon Golf Club",55.5328,-4.6504,"Troon","Golf","Royal Troon Golf Club"],
   ["Trump Turnberry (Ailsa)",55.3143,-4.8318,"Turnberry","Golf","Turnberry (golf course)"],
   ["Prestwick Golf Club",55.5014,-4.6153,"Prestwick","Golf","Prestwick Golf Club"],
   ["Belleisle Golf Course",55.4391,-4.6420,"Ayr","Golf",""],
-  ["Ayr Beach & Esplanade",55.4584,-4.6423,"Ayr","Beaches & Coast",""],
-  ["Croy Shore Beach",55.3730,-4.7698,"near Culzean","Beaches & Coast",""],
-  ["Dunure Harbour",55.4072,-4.7584,"Dunure","Beaches & Coast","Dunure"],
-  ["Electric Brae",55.3812,-4.7572,"Croy, A719","Beaches & Coast","Electric Brae"]
+  ["Ayr Beach & Esplanade",55.4584,-4.6423,"Ayr","Coast & Islands",""],
+  ["Croy Shore Beach",55.3730,-4.7698,"near Culzean","Coast & Islands",""],
+  ["Dunure Harbour",55.4072,-4.7584,"Dunure","Coast & Islands","Dunure"],
+  ["Electric Brae",55.3812,-4.7572,"Croy, A719","Coast & Islands","Electric Brae"],
+  ["Isle of Arran",55.5763,-5.1382,"Brodick (ferry)","Coast & Islands","Isle of Arran"],
+  ["Ailsa Craig",55.2519,-5.1085,"off Girvan","Coast & Islands","Ailsa Craig"],
+  ["Heads of Ayr Farm Park",55.4264,-4.6912,"Ayr","Family & Culture",""],
+  ["Pirate Pete's",55.4622,-4.6402,"Ayr seafront","Family & Culture",""],
+  ["The Gaiety Theatre",55.4613,-4.6313,"Ayr","Family & Culture","Gaiety Theatre, Ayr"],
+  ["Maclaurin Gallery & Rozelle House",55.4366,-4.6262,"Ayr","Family & Culture","Rozelle House"]
 ];
 function curatedLighthouses(){
   return LH_CURATED.map(c=>({
@@ -487,9 +496,9 @@ function updateThumb(id,url){
   const m=markers[id]; if(m) m.setPopupContent(popupHtml(lighthouses.find(l=>l.id===id)));
 }
 
-const ZONE_ORDER=['Robert Burns','Castles & Abbeys','Golf','Beaches & Coast'];
-const ZONE_SHORT={'Robert Burns':'Burns','Castles & Abbeys':'Castles','Golf':'Golf','Beaches & Coast':'Coast'};
-const ZONE_COLORS={'Robert Burns':'#9a5bb0','Castles & Abbeys':'#5f7f96','Golf':'#5e9a5e','Beaches & Coast':'#2b9fb3'};
+const ZONE_ORDER=['Robert Burns','Castles & Houses','Golf','Coast & Islands','Family & Culture'];
+const ZONE_SHORT={'Robert Burns':'Burns','Castles & Houses':'Castles','Golf':'Golf','Coast & Islands':'Coast','Family & Culture':'Family'};
+const ZONE_COLORS={'Robert Burns':'#9a5bb0','Castles & Houses':'#5f7f96','Golf':'#5e9a5e','Coast & Islands':'#2b9fb3','Family & Culture':'#c5872e'};
 let activeZone='All';
 const zoneLayer=L.layerGroup().addTo(map);
 const ZONE_SHAPES={};
@@ -576,7 +585,7 @@ function fitToActive(){
   const pts=lighthouses.filter(l=>activeZone==='All'||l.zone===activeZone).map(l=>[l.lat,l.lng]);
   if(pts.length){ try{ map.fitBounds(L.latLngBounds(pts).pad(0.15)); }catch(_){} }
 }
-function fitAyr(){ const pts=lighthouses.map(l=>[l.lat,l.lng]); if(pts.length){ try{ map.fitBounds(L.latLngBounds(pts).pad(0.12)); }catch(_){} } else { try{ map.setView([55.40,-4.70],10);}catch(_){} } }
+function fitAyr(){ try{ map.fitBounds(L.latLngBounds([[55.30,-5.00],[55.66,-4.50]]), {padding:[16,16]}); }catch(_){} }
 let initialFitDone=false, userInteracted=false;
 function fitInitial(){ if(initialFitDone) return; initialFitDone=true; fitAyr(); }
 map.on('dragstart', ()=>{ userInteracted=true; });
