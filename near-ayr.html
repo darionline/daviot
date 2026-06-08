@@ -266,17 +266,18 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
 .trgo:hover{background:var(--loch-2)}
 .trnote{font-size:.74rem; color:var(--muted); margin-top:.8rem; line-height:1.5}
 .trnote a{color:var(--azure); font-weight:700; text-decoration:none; white-space:nowrap}
-.guidenav{display:flex; gap:.4rem; padding:.5rem .7rem; overflow-x:auto; scrollbar-width:none; background:var(--paper); border-bottom:1px solid var(--line)}
-.guidenav::-webkit-scrollbar{display:none}
-.guidenav .gn{flex:0 0 auto; font-size:.8rem; font-weight:600; text-decoration:none; color:var(--loch); background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.34rem .72rem; white-space:nowrap; cursor:pointer; transition:.14s}
-.guidenav .gn:hover{border-color:var(--azure); color:var(--azure)}
-.guidenav .gn.active{background:var(--loch); color:#fff; border-color:var(--loch); cursor:default}
+.guidenav{display:flex; justify-content:center; padding:.6rem .7rem; background:var(--paper); border-bottom:1px solid var(--line)}
+.gnwrap{display:inline-flex; gap:.2rem; max-width:100%; overflow-x:auto; scrollbar-width:none; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.24rem; box-shadow:0 4px 14px rgba(40,70,120,.10)}
+.gnwrap::-webkit-scrollbar{display:none}
+.gnwrap .gn{flex:0 0 auto; font-size:.82rem; font-weight:600; text-decoration:none; color:var(--loch); background:transparent; border:none; border-radius:999px; padding:.4rem .85rem; white-space:nowrap; cursor:pointer; transition:.16s}
+.gnwrap .gn:hover{color:var(--azure); background:rgba(43,124,196,.08)}
+.gnwrap .gn.active{background:var(--loch); color:#fff; cursor:default; box-shadow:0 3px 10px rgba(18,59,79,.22)}
 </style>
 </head>
 <body data-view="list">
 
 <div class="hostbar" id="hostbar"></div>
-<nav class="guidenav"><a class="gn active" aria-current="page">Nearby</a><a class="gn" href="ayr-and-ayrshire.html">Ayr &amp; Ayrshire</a><a class="gn" href="lighthouses-of-scotland.html">Lighthouses</a></nav>
+<nav class="guidenav"><div class="gnwrap"><a class="gn active" aria-current="page">Nearby</a><a class="gn" href="ayr-and-ayrshire.html">Ayr &amp; Ayrshire</a><a class="gn" href="lighthouses-of-scotland.html">Lighthouses</a></div></nav>
 
 <div class="catwrap">
   <button type="button" class="catnav prev" id="catPrev" aria-label="Scroll categories left">&lsaquo;</button>
