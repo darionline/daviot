@@ -101,6 +101,9 @@ aside .head .sort:hover{border-color:var(--loch); color:var(--loch)}
 .seafront .sf-sun{display:flex; align-items:center; justify-content:space-between; gap:.5rem; margin-top:.45rem; font-size:.78rem; color:var(--ink)}
 .seafront .sf-sun a{color:var(--azure); font-weight:600; text-decoration:none; white-space:nowrap}
 .seafront .sf-sun a:hover{text-decoration:underline}
+.legend{display:flex; flex-wrap:wrap; gap:.45rem .9rem; margin:0 .6rem .55rem; font-size:.74rem; color:var(--muted); font-weight:600}
+.legend span{display:inline-flex; align-items:center; gap:.34rem}
+.legend i{width:10px; height:10px; border-radius:50%; display:inline-block; flex:0 0 auto}
 .zonepick .zpico{width:16px; height:16px; flex:0 0 auto; fill:none; stroke:var(--azure); stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
 .zonepick select{flex:1; appearance:none; -webkit-appearance:none; background:var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232b7cc4' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right .65rem center; background-size:14px; border:1px solid var(--line); border-radius:11px; padding:.62rem 2rem .62rem .7rem; font-family:inherit; font-size:.92rem; font-weight:600; color:var(--ink); cursor:pointer}
 .zonepick select:focus{outline:none; border-color:var(--azure); box-shadow:0 0 0 3px rgba(43,124,196,.15)}
@@ -255,6 +258,12 @@ path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
       <svg class="zpico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
       <select id="zoneSel" aria-label="Filter by theme"><option value="All">All themes</option></select>
     </div>
+    <div class="legend" aria-hidden="true">
+      <span><i style="background:#9a5bb0"></i>Burns</span>
+      <span><i style="background:#5f7f96"></i>Castles</span>
+      <span><i style="background:#5e9a5e"></i>Golf</span>
+      <span><i style="background:#2b9fb3"></i>Coast</span>
+    </div>
     <div class="list" id="list">
       <div class="state"><div class="spin"></div>Loading places&hellip;</div>
     </div>
@@ -353,32 +362,32 @@ function imgCacheSet(m){ try{ localStorage.setItem(IMG_KEY,JSON.stringify(m)); }
 
 /* Frozen set of notable lighthouses across every zone — instant first paint, no Overpass needed. OSM (below) then quietly enriches with more points + photos. */
 const LH_CURATED=[
-  ["Burns Cottage",55.4328,-4.6334,"Alloway","Robert Burns"],
-  ["Robert Burns Birthplace Museum",55.4275,-4.6344,"Alloway","Robert Burns"],
-  ["Burns Monument & Gardens",55.4269,-4.6368,"Alloway","Robert Burns"],
-  ["Brig o' Doon",55.4271,-4.6373,"Alloway","Robert Burns"],
-  ["Alloway Auld Kirk",55.4279,-4.6376,"Alloway","Robert Burns"],
-  ["Tam o' Shanter Inn",55.4608,-4.6286,"Ayr High Street","Robert Burns"],
-  ["Auld Brig o' Ayr",55.4646,-4.6295,"Ayr","Robert Burns"],
-  ["Culzean Castle",55.3547,-4.7893,"Maybole","Castles & Abbeys"],
-  ["Dunure Castle",55.4050,-4.7617,"Dunure","Castles & Abbeys"],
-  ["Crossraguel Abbey",55.3389,-4.7210,"Maybole","Castles & Abbeys"],
-  ["Dundonald Castle",55.5768,-4.5970,"Dundonald","Castles & Abbeys"],
-  ["Greenan Castle",55.4386,-4.6702,"Ayr (Doonfoot)","Castles & Abbeys"],
-  ["Royal Troon Golf Club",55.5328,-4.6504,"Troon","Golf"],
-  ["Trump Turnberry (Ailsa)",55.3143,-4.8318,"Turnberry","Golf"],
-  ["Prestwick Golf Club",55.5014,-4.6153,"Prestwick","Golf"],
-  ["Belleisle Golf Course",55.4391,-4.6420,"Ayr","Golf"],
-  ["Ayr Beach & Esplanade",55.4584,-4.6423,"Ayr","Beaches & Coast"],
-  ["Croy Shore Beach",55.3730,-4.7698,"near Culzean","Beaches & Coast"],
-  ["Dunure Harbour",55.4072,-4.7584,"Dunure","Beaches & Coast"],
-  ["Electric Brae",55.3812,-4.7572,"Croy, A719","Beaches & Coast"]
+  ["Burns Cottage",55.4328,-4.6334,"Alloway","Robert Burns","Burns Cottage"],
+  ["Robert Burns Birthplace Museum",55.4275,-4.6344,"Alloway","Robert Burns","Robert Burns Birthplace Museum"],
+  ["Burns Monument & Gardens",55.4269,-4.6368,"Alloway","Robert Burns","Burns Monument, Alloway"],
+  ["Brig o' Doon",55.4271,-4.6373,"Alloway","Robert Burns","Brig o' Doon"],
+  ["Alloway Auld Kirk",55.4279,-4.6376,"Alloway","Robert Burns","Auld Kirk, Alloway"],
+  ["Tam o' Shanter Inn",55.4608,-4.6286,"Ayr High Street","Robert Burns",""],
+  ["Auld Brig o' Ayr",55.4646,-4.6295,"Ayr","Robert Burns","Auld Brig, Ayr"],
+  ["Culzean Castle",55.3547,-4.7893,"Maybole","Castles & Abbeys","Culzean Castle"],
+  ["Dunure Castle",55.4050,-4.7617,"Dunure","Castles & Abbeys","Dunure Castle"],
+  ["Crossraguel Abbey",55.3389,-4.7210,"Maybole","Castles & Abbeys","Crossraguel Abbey"],
+  ["Dundonald Castle",55.5768,-4.5970,"Dundonald","Castles & Abbeys","Dundonald Castle"],
+  ["Greenan Castle",55.4386,-4.6702,"Ayr (Doonfoot)","Castles & Abbeys","Greenan Castle"],
+  ["Royal Troon Golf Club",55.5328,-4.6504,"Troon","Golf","Royal Troon Golf Club"],
+  ["Trump Turnberry (Ailsa)",55.3143,-4.8318,"Turnberry","Golf","Turnberry (golf course)"],
+  ["Prestwick Golf Club",55.5014,-4.6153,"Prestwick","Golf","Prestwick Golf Club"],
+  ["Belleisle Golf Course",55.4391,-4.6420,"Ayr","Golf",""],
+  ["Ayr Beach & Esplanade",55.4584,-4.6423,"Ayr","Beaches & Coast",""],
+  ["Croy Shore Beach",55.3730,-4.7698,"near Culzean","Beaches & Coast",""],
+  ["Dunure Harbour",55.4072,-4.7584,"Dunure","Beaches & Coast","Dunure"],
+  ["Electric Brae",55.3812,-4.7572,"Croy, A719","Beaches & Coast","Electric Brae"]
 ];
 function curatedLighthouses(){
   return LH_CURATED.map(c=>({
     id:'ayr_'+c[0].toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,''),
     name:c[0], lat:c[1], lng:c[2], place:c[3]||'',
-    zone:c[4]||'', tags:{}, img:null, qid:null, checked:true, curated:true
+    zone:c[4]||'', wiki:c[5]||null, tags:{}, img:null, qid:null, checked:true, curated:true
   }));
 }
 
@@ -703,16 +712,20 @@ function loadSeafront(){
     }).catch(function(){});
 }
 
+function loadWikiPhotos(){
+  lighthouses.forEach(l=>{
+    if(l.img || !l.wiki) return;
+    fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(l.wiki))
+      .then(r=>r.ok?r.json():null)
+      .then(d=>{ if(!d) return; const src=(d.thumbnail&&d.thumbnail.source)||(d.originalimage&&d.originalimage.source); if(src){ l.img=src; updateThumb(l.id,src); } })
+      .catch(function(){});
+  });
+}
 renderHostBar();
 addHostMarker();
 loadSeafront();
 (function start(){
-  const c=readCache();
-  if(c){ process(c.elements); if(Date.now()-c.t>CACHE_STALE) fetchData(); }  // instant from cache; quiet refresh if stale
-  else {                                                                      // first visit: show the frozen lighthouses instantly, then enrich live
-    lighthouses=curatedLighthouses(); computeZoneShapes(); draw(); renderZoneChips(); fitInitial();
-    fetchData();
-  }
+  lighthouses=curatedLighthouses(); computeZoneShapes(); draw(); renderZoneChips(); fitInitial(); loadWikiPhotos();
 })();
 </script>
 <div class="lh-toast" id="toast"></div>
