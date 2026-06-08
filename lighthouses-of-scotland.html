@@ -59,12 +59,12 @@ header .kicker{font-family:"Jost";font-weight:700;text-transform:uppercase;font-
 .hb-addr{font-size:.78rem; color:rgba(255,255,255,.9)}
 @media(max-width:880px){ .hb-tag{margin-left:auto} .hb-addr{margin-left:0; flex-basis:100%} }
 
-.toolbar{max-width:1240px; width:100%; margin:0 auto; padding:.65rem 1.7rem; display:flex; gap:.8rem; align-items:center; flex-wrap:wrap; border-bottom:1px solid var(--line)}
-.search{flex:1; min-width:230px; position:relative}
-.search input{width:100%; background:var(--card); border:1px solid var(--line); color:var(--ink); border-radius:12px; padding:.78rem 1rem .78rem 2.7rem; font-family:inherit; font-size:.98rem}
+.toolbar{max-width:1240px; width:100%; margin:0 auto; padding:.5rem clamp(1rem,4vw,1.7rem) .55rem; display:flex; gap:.8rem; align-items:center; flex-wrap:wrap}
+.search{flex:1 1 auto; min-width:170px; max-width:340px; position:relative}
+.search input{width:100%; background:var(--card); border:1px solid var(--line); color:var(--ink); border-radius:10px; padding:.5rem .85rem .5rem 2.2rem; font-family:inherit; font-size:.9rem}
 .search input::placeholder{color:var(--muted)}
 .search input:focus{outline:none; border-color:var(--loch); box-shadow:0 0 0 3px rgba(18,59,79,.1)}
-.search .ic{position:absolute; left:.95rem; top:50%; transform:translateY(-50%); color:var(--muted); font-size:1.05rem}
+.search .ic{position:absolute; left:.72rem; top:50%; transform:translateY(-50%); color:var(--muted); font-size:.92rem}
 .stat{display:flex; align-items:baseline; gap:.5rem; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:.65rem 1rem; white-space:nowrap}
 .stat b{font-family:"Jost",system-ui,sans-serif; font-size:1.5rem; color:var(--loch)}
 .stat span{color:var(--muted); font-size:.82rem}
