@@ -279,6 +279,7 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
 .gnwrap .gn:hover{color:var(--azure); background:rgba(43,124,196,.08)}
 .gnwrap .gn.active{background:var(--loch); color:#fff; cursor:default; box-shadow:0 3px 10px rgba(18,59,79,.22)}
 @media(max-width:560px){.gnwrap .gn{font-size:.78rem;padding:.38rem .62rem}.gnwrap{gap:.12rem}}
+.credit a{color:inherit;text-decoration:underline}
 </style>
 <style id="gnmenu-css">
 .guidenav{position:relative}
@@ -598,6 +599,8 @@ function process(elements){
 function finalize(){ places.sort((a,b)=>a.dist-b.dist); renderCats(); draw(); }
 
 function commonsThumb(file,w){ file=String(file).replace(/^File:/i,'').trim(); return 'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(file)+'?width='+(w||400); }
+function wmFilePage(u){ if(!u) return null; u=String(u); var m=u.match(/Special:FilePath\/([^?]+)/i); if(m) return 'https://commons.wikimedia.org/wiki/File:'+m[1]; var um=u.match(/upload\.wikimedia\.org\/wikipedia\/([a-z]+)\//i); if(um){ var p=u.split('?')[0].replace(/\/\d+px-[^/]*$/i,''); var seg=p.substring(p.lastIndexOf('/')+1); if(!seg) return null; var host=(um[1]==='commons')?'commons.wikimedia.org':(um[1]+'.wikipedia.org'); return 'https://'+host+'/wiki/File:'+seg; } return null; }
+function creditHtml(u){ var fp=wmFilePage(u); return '<div class="credit">'+(fp?'Photo: <a href="'+fp+'" target="_blank" rel="noopener">Wikimedia Commons</a> \u00b7 author &amp; licence on file page':'Photo: Wikimedia Commons')+'</div>'; }
 function thumbFail(img){ const box=img.parentNode; box.innerHTML=diIcon(box.getAttribute('data-cat')); }
 function thumbHtml(p){
   return '<div class="thumb" data-for="'+p.id+'" data-cat="'+p.cat+'">'
@@ -659,7 +662,7 @@ function linkBtns(p){
 }
 function popupHtml(p){
   return '<div class="pop"><b>'+esc(p.name)+'</b>'
-    +(p.img?'<div class="photo"><img loading="lazy" src="'+esc(p.img)+'" alt="'+esc(p.name)+'" onerror="this.parentNode.style.display=\'none\'"><div class="credit">Photo: Wikimedia Commons</div></div>':'')
+    +(p.img?'<div class="photo"><img loading="lazy" src="'+esc(p.img)+'" alt="'+esc(p.name)+'" onerror="this.parentNode.style.display=\'none\'">'+creditHtml(p.img)+'</div>':'')
     +'<div class="meta">'+esc(CATS[p.cat].label)+' \u00b7 '+fmtKm(p.dist)+' from '+(originMode==='me'?'you':esc(HOST.name))+'</div>'
     +(p.note?'<div class="note">'+esc(p.note)+'</div>':'')
     +'<div class="links">'+linkBtns(p)+'</div></div>';
