@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eat &amp; drink — places around Ayr</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%237189ed'/%3E%3Cpath d='M8 4v7M6 4v3a2 2 0 0 0 4 0V4' stroke='%23fff' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3Cpath d='M16 4c-1.2 0-2.2 1.4-2.2 4S15 11.5 16 11.5V20' stroke='%23fff' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<style>
+:root{ --paper:#eef2fa; --card:#fff; --ink:#1e2a30; --muted:#65727b; --azure:#2b7cc4; --loch:#123b4f; --line:#e2e8f1; --header:#7189ed; }
+*{box-sizing:border-box}
+html{overflow-y:scroll}
+html,body{margin:0}
+body{background:radial-gradient(1100px 520px at 88% -8%, rgba(108,133,236,.13), transparent 60%), var(--paper); color:var(--ink); font-family:"Jost",system-ui,sans-serif; -webkit-font-smoothing:antialiased; min-height:100vh; display:flex; flex-direction:column}
+h1,h2,h3{font-family:"Jost",system-ui,sans-serif; font-weight:600; margin:0}
+a{color:inherit}
+
+.hostbar{background:var(--header); border-bottom:1px solid rgba(255,255,255,.35); box-shadow:0 3px 12px rgba(40,70,120,.12); position:sticky; top:0; z-index:30}
+.hb-inner{max-width:1240px; margin:0 auto; padding:.55rem 1.7rem; display:flex; align-items:center; gap:.7rem; flex-wrap:wrap}
+.hb-logo{height:42px; width:auto; max-width:190px; flex:0 0 auto; display:block}
+.hb-name{display:flex; flex-direction:column; line-height:1.12}
+.hb-name b{font-weight:600; color:#fff; font-size:1rem}
+.hb-name span{font-size:.72rem; color:rgba(255,255,255,.85)}
+.hb-tag{margin-left:auto; font-size:.7rem; font-weight:700; color:#fff; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.4); padding:.22rem .6rem; border-radius:999px; white-space:nowrap}
+
+.guidenav{display:flex; justify-content:center; padding:.6rem .7rem; background:var(--paper); border-bottom:1px solid var(--line)}
+
+.intro{max-width:1240px; margin:0 auto; padding:1.2rem 1.7rem .2rem; text-align:center}
+.intro .kick{font-size:.72rem; font-weight:700; text-transform:uppercase; color:var(--azure); margin-bottom:.35rem}
+.intro h1{font-size:clamp(1.6rem,4.6vw,2.15rem); color:var(--loch); line-height:1.08}
+.intro p{margin:.5rem auto 0; max-width:62ch; color:var(--muted); font-size:.98rem; font-weight:400; line-height:1.5}
+
+.toolbar{max-width:1240px; margin:.7rem auto 0; padding:0 1.7rem; display:flex; justify-content:center}
+.search{position:relative; width:100%; max-width:360px}
+.search input{width:100%; border:1px solid var(--line); background:var(--card); border-radius:11px; padding:.5rem .8rem .5rem 2.1rem; font:inherit; font-size:.9rem; color:var(--ink); outline:none}
+.search input:focus{border-color:var(--azure); box-shadow:0 0 0 3px rgba(43,124,196,.13)}
+.search svg{position:absolute; left:.65rem; top:50%; transform:translateY(-50%); width:16px; height:16px; fill:none; stroke:var(--muted); stroke-width:2}
+
+.catwrap{position:relative; max-width:1240px; margin:.6rem auto 0; padding:0 1.2rem}
+.catbar{display:flex; gap:.35rem; min-width:0; max-width:100%; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding:.2rem .5rem}
+.catbar::-webkit-scrollbar{display:none}
+.cchip{white-space:nowrap; border:1px solid var(--line); background:var(--card); color:#3f4d54; padding:.44rem .78rem; border-radius:999px; font-size:.83rem; font-weight:500; font-family:inherit; cursor:pointer; display:inline-flex; gap:.38rem; align-items:center; transition:.15s; flex:0 0 auto}
+.cchip:hover{border-color:var(--loch); color:var(--loch)}
+.cchip .sw{width:7px; height:7px; border-radius:50%; flex:0 0 auto}
+.cchip .c{color:var(--muted); font-weight:500}
+.cchip.on{border-color:var(--loch); background:var(--loch); color:#fff; box-shadow:0 6px 16px rgba(18,59,79,.22)}
+.cchip.on .c{color:#bcd9e4}
+.catnav{position:absolute; top:50%; transform:translateY(-50%); z-index:6; width:28px; height:28px; border-radius:50%; border:1px solid var(--line); background:#fff; color:var(--azure); font-size:1.1rem; line-height:1; cursor:pointer; display:none; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(18,59,79,.18)}
+.catnav.prev{left:.3rem} .catnav.next{right:.3rem}
+.catnav.show{display:inline-flex}
+
+.layout{display:flex; flex-direction:row-reverse; gap:1rem; max-width:1240px; margin:.8rem auto 0; padding:0 1.1rem 2.2rem; align-items:flex-start; flex:1}
+.listcol{flex:1 1 auto; min-width:0}
+.listhead{display:flex; align-items:center; gap:.6rem; margin:0 .2rem .55rem}
+.listhead h2{font-size:.82rem; font-weight:700; text-transform:uppercase; color:var(--muted)}
+.savedtoggle{margin-left:auto; font-family:inherit; font-size:.8rem; font-weight:600; color:#b23b5e; background:#fff; border:1px solid var(--line); border-radius:999px; padding:.32rem .7rem; cursor:pointer; display:inline-flex; align-items:center; gap:.35rem; transition:.15s}
+.savedtoggle svg{width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2}
+.savedtoggle.on{background:#fbe9ef; border-color:#f0b8c8; color:#b23b5e}
+.savedtoggle.on svg{fill:#d9536f; stroke:#d9536f}
+
+.card{position:relative; display:flex; gap:.75rem; padding:.7rem .8rem; border:1px solid var(--line); border-radius:14px; background:var(--card); margin-bottom:.5rem; cursor:pointer; transition:.15s; box-shadow:0 3px 10px rgba(40,70,120,.05)}
+.card:hover{border-color:var(--azure); box-shadow:0 8px 22px rgba(40,70,120,.12); transform:translateY(-1px)}
+.card .ic{flex:0 0 auto; width:38px; height:38px; border-radius:10px; display:grid; place-items:center}
+.card .ic svg{width:20px; height:20px; fill:none; stroke:#fff; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
+.card .body{flex:1; min-width:0}
+.card h3{font-size:.98rem; color:var(--loch); line-height:1.2; margin-bottom:.12rem; padding-right:1.7rem}
+.card .meta{font-size:.83rem; color:var(--muted); line-height:1.35}
+.card .row{display:flex; align-items:center; gap:.5rem; margin-top:.4rem; flex-wrap:wrap}
+.card .dist{font-size:.74rem; font-weight:700; color:#fff; border-radius:999px; padding:.12rem .5rem}
+.card a.act{font-size:.78rem; font-weight:600; text-decoration:none; color:var(--azure); display:inline-flex; align-items:center; gap:.25rem}
+.card a.act:hover{text-decoration:underline}
+.card a.act svg{width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:2}
+.like{position:absolute; top:.55rem; right:.55rem; width:26px; height:26px; border:none; background:transparent; cursor:pointer; padding:0; display:grid; place-items:center}
+.like svg{width:18px; height:18px; fill:none; stroke:#b8c2cc; stroke-width:1.8; transition:.15s}
+.like.on svg{fill:#e0566f; stroke:#e0566f}
+.state{text-align:center; color:var(--muted); padding:2rem 1rem; font-weight:400; line-height:1.5}
+.spin{width:26px;height:26px;border:3px solid var(--line);border-top-color:var(--azure);border-radius:50%;animation:sp 1s linear infinite;margin:0 auto .7rem}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+.mapcol{flex:0 0 452px; position:sticky; top:64px}
+#map{height:560px; border-radius:16px; border:1px solid var(--line); box-shadow:0 10px 30px rgba(40,70,120,.12); z-index:1}
+.maphint{font-size:.76rem; color:var(--azure); font-weight:600; text-align:center; margin:.5rem 0 0}
+.marker-cluster{background:rgba(43,124,196,.28)}
+.marker-cluster div{background:#2b7cc4; color:#fff; font-family:"Jost",sans-serif; font-weight:600}
+.leaflet-popup-content{margin:.7rem .8rem; font-family:"Jost",sans-serif}
+.pop b{color:var(--loch); font-size:.98rem}
+.pop .pm{color:var(--muted); font-size:.82rem; margin:.2rem 0 .4rem; line-height:1.35}
+.pop a{color:var(--azure); text-decoration:none; font-weight:600; font-size:.82rem; display:inline-block; margin-right:.7rem}
+
+.totop{position:fixed;right:14px;bottom:16px;z-index:1500;width:44px;height:44px;border-radius:50%;border:none;background:var(--loch);color:#fff;display:none;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(8,28,38,.3);cursor:pointer;transition:transform .15s}
+.totop.show{display:inline-flex}
+.totop:hover{background:#0d2c3c}
+.totop:active{transform:scale(.92)}
+.totop svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+
+@media(max-width:860px){
+  html,body{height:auto}
+  body{display:block}
+  .layout{display:block}
+  .mapcol{position:sticky; top:64px; width:100%; z-index:5; margin-bottom:.7rem}
+  #map{height:42vh; border-radius:14px}
+  .maphint{display:none}
+}
+
+footer{max-width:1240px; width:100%; margin:0 auto; padding:0 1.7rem 2rem; text-align:center; color:var(--muted); font-size:.76rem; line-height:1.5; font-weight:400}
+footer a{color:var(--azure); text-decoration:none; font-weight:600}
+</style>
+<style id="gnmenu-css">
+.guidenav{position:relative}
+.gnbar{display:inline-flex;gap:.2rem;max-width:100%;overflow-x:auto;scrollbar-width:none;background:#fff;border:1px solid #e2e8f1;border-radius:999px;padding:.24rem;box-shadow:0 4px 14px rgba(40,70,120,.10)}
+.gnbar::-webkit-scrollbar{display:none}
+.gnbar .gn{flex:0 0 auto;font-size:.82rem;font-weight:600;font-family:inherit;text-decoration:none;color:#123b4f;background:transparent;border:none;border-radius:999px;padding:.4rem .85rem;white-space:nowrap;cursor:pointer;transition:.16s;display:inline-flex;align-items:center;gap:.28rem}
+.gnbar .gn:hover{color:#2b7cc4;background:rgba(43,124,196,.08)}
+.gnbar .gn.active{background:#123b4f;color:#fff;cursor:default;box-shadow:0 3px 10px rgba(18,59,79,.22)}
+.gnbar .morebtn .mca{font-size:.62rem;opacity:.85}
+.moredrop{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(4px);min-width:208px;background:#fff;border:1px solid #e2e8f1;border-radius:14px;box-shadow:0 16px 40px rgba(40,70,120,.20);padding:.36rem;z-index:4000;opacity:0;visibility:hidden;transition:opacity .16s,transform .16s}
+.moredrop.open{opacity:1;visibility:visible;transform:translateX(-50%) translateY(8px)}
+.moredrop .mdi{display:block;padding:.52rem .72rem;border-radius:10px;text-decoration:none;color:#123b4f;font-size:.86rem;font-weight:500;white-space:nowrap;transition:.13s}
+.moredrop .mdi:hover{background:rgba(43,124,196,.09);color:#2b7cc4}
+.moredrop .mdi.active{background:#123b4f;color:#fff;cursor:default}
+@media(max-width:560px){.gnbar .gn{font-size:.78rem;padding:.38rem .62rem}.gnbar{gap:.12rem}}
+</style>
+</head>
+<body>
+
+<div class="hostbar" id="hostbar"></div>
+<nav class="guidenav"><div class="gnbar"><a class="gn" href="near-ayr.html">Nearby</a><a class="gn" href="ayr-and-ayrshire.html">Ayr &amp; Ayrshire</a><a class="gn" href="trains-from-ayr.html">Trains</a><button type="button" class="gn morebtn active" id="moreBtn" aria-haspopup="true" aria-expanded="false">More <span class="mca" aria-hidden="true">&#9662;</span></button></div><div class="moredrop" id="moreDrop" role="menu" aria-label="More pages"><a class="mdi active" aria-current="page">Eat &amp; drink</a><a class="mdi" href="useful-info.html" role="menuitem">Useful info</a><a class="mdi" href="gallery.html" role="menuitem">Photos</a><a class="mdi" href="lighthouses-of-scotland.html" role="menuitem">Lighthouses</a></div></nav>
+
+<div class="intro">
+  <div class="kick">Eat &amp; drink</div>
+  <h1>Places to eat around Ayr</h1>
+  <p>Restaurants, cafés, takeaways and pubs mapped within about 7&frac12; miles of us, listed by distance. Tap a place to see it on the map, get directions, or open it for full details.</p>
+</div>
+
+<div class="toolbar"><div class="search">
+  <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+  <input id="q" type="search" placeholder="Search by name or cuisine (e.g. Italian, fish)…" autocomplete="off">
+</div></div>
+
+<div class="catwrap">
+  <button type="button" class="catnav prev" id="catPrev" aria-label="Scroll left">&lsaquo;</button>
+  <div class="catbar" id="catbar"></div>
+  <button type="button" class="catnav next" id="catNext" aria-label="Scroll right">&rsaquo;</button>
+</div>
+
+<div class="layout">
+  <div class="mapcol">
+    <div id="map"></div>
+    <p class="maphint">Tap any place to see exactly where it is on the map</p>
+  </div>
+  <div class="listcol">
+    <div class="listhead">
+      <h2 id="countHead">Places</h2>
+      <button class="savedtoggle" id="savedToggle" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg><span id="savedTxt">Saved</span></button>
+    </div>
+    <div id="list"><div class="state"><div class="spin"></div>Loading places…</div></div>
+  </div>
+</div>
+
+<footer>
+  Listings &amp; map data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors (ODbL), tiles &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a> &middot; Details &amp; opening hours open on Google Maps (external) &middot; A guest companion prepared for visitors of Daviot Guest House.
+</footer>
+
+<button class="totop" id="toTop" aria-label="Back to top"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></button>
+
+<script>
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+var HOST={ name:"Daviot Guest House", tagline:"Eat & drink \u00b7 places around Ayr", lat:55.46204, lng:-4.64034 };
+var RADIUS_M=12000, CACHE_KEY='eat_osm_v1', CACHE_DAYS=7;
+(function(){
+  var ico='<img class="hb-logo" src="https://www.daviothouse.co.uk/wp-content/uploads/2019/01/daviot-house-logo-4.png" alt="'+esc(HOST.name)+'" onerror="this.style.display=\'none\'">';
+  document.getElementById('hostbar').innerHTML='<div class="hb-inner">'+ico
+    +'<div class="hb-name"><b>'+esc(HOST.name)+'</b><span>'+esc(HOST.tagline)+'</span></div>'
+    +'<span class="hb-tag">Eat &amp; drink</span></div>';
+})();
+
+var CATS={
+  restaurant:{label:'Restaurants', color:'#4d8cc0', icon:'<path d="M8 3v8M6 3v4a2 2 0 0 0 4 0V3"/><path d="M16 3c-1.2 0-2.2 1.6-2.2 4.5S15 11 16 11v10"/>'},
+  cafe:{label:'Cafés', color:'#cf9b76', icon:'<path d="M5 8h11v4a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5z"/><path d="M16 9h2a2 2 0 0 1 0 4h-2"/><path d="M8 3v2M11 3v2"/>'},
+  fast_food:{label:'Takeaways', color:'#c2a25c', icon:'<path d="M6 9h12l-1 11H7z"/><path d="M9 9a3 3 0 0 1 6 0"/>'},
+  pub:{label:'Pubs', color:'#8a7bb0', icon:'<path d="M6 6h9v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M15 8h2a2 2 0 0 1 0 5h-2"/>'}
+};
+var CATORDER=['restaurant','cafe','fast_food','pub'];
+function catColor(c){ return (CATS[c]||CATS.restaurant).color; }
+function catLabel(c){ return (CATS[c]||{label:'Place'}).label; }
+function prettyCuisine(c){ if(!c) return ''; return c.split(';').map(function(x){ x=x.replace(/_/g,' ').trim(); return x.replace(/\b\w/g,function(m){return m.toUpperCase();}); }).join(', '); }
+
+function miBetween(a,b,c,d){ var R=3958.8,t=Math.PI/180; var dLat=(c-a)*t,dLng=(d-b)*t; var s=Math.sin(dLat/2)**2+Math.cos(a*t)*Math.cos(c*t)*Math.sin(dLng/2)**2; return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s)); }
+function fmtDist(mi){ if(mi<0.19){ return Math.round(mi*1760/10)*10+' yd'; } return (mi<10?mi.toFixed(1):Math.round(mi))+' mi'; }
+
+var FAV_KEY='eat_fav_v1';
+var saved=new Set(); try{ saved=new Set(JSON.parse(localStorage.getItem(FAV_KEY)||'[]')); }catch(e){}
+function saveFav(){ try{ localStorage.setItem(FAV_KEY, JSON.stringify(Array.from(saved))); }catch(e){} }
+
+var PLACES=[], activeCat='All', showSaved=false, query='', didFit=false;
+
+var map=L.map('map',{zoomControl:false}).setView([HOST.lat,HOST.lng],12);
+L.control.zoom({position:'topright'}).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19, subdomains:'abcd', attribution:'&copy; OpenStreetMap contributors &copy; CARTO'}).addTo(map);
+var cluster=L.markerClusterGroup({maxClusterRadius:50, showCoverageOnHover:false, spiderfyOnMaxZoom:true});
+map.addLayer(cluster);
+
+function pin(color){ return L.divIcon({className:'', iconSize:[22,28], iconAnchor:[11,26], popupAnchor:[0,-24],
+  html:'<svg width="22" height="28" viewBox="0 0 26 34" xmlns="http://www.w3.org/2000/svg"><path d="M13 1C6.4 1 1 6 1 12c0 8 12 21 12 21s12-13 12-21C25 6 19.6 1 13 1z" fill="'+color+'" stroke="#fff" stroke-width="1.5"/><circle cx="13" cy="12" r="4" fill="#fff"/></svg>'}); }
+var housePin=L.divIcon({className:'', iconSize:[34,42], iconAnchor:[17,40], popupAnchor:[0,-36],
+  html:'<svg width="34" height="42" viewBox="0 0 34 42" xmlns="http://www.w3.org/2000/svg"><path d="M17 1C9 1 2.5 7.2 2.5 15 2.5 24.5 17 41 17 41S31.5 24.5 31.5 15C31.5 7.2 25 1 17 1z" fill="#7189ed" stroke="#fff" stroke-width="1.6"/><g stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(17,15.5) scale(0.62) translate(-12,-12)"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></g></svg>'});
+L.marker([HOST.lat,HOST.lng],{icon:housePin,zIndexOffset:1200}).addTo(map)
+  .bindPopup('<div class="pop"><b>'+esc(HOST.name)+'</b><div class="pm">Your base.</div></div>')
+  .bindTooltip(HOST.name,{direction:'top'});
+var markers={};
+
+function gmaps(p){ return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.name+' '+(p.town||'Ayr')); }
+function dirLink(p){ return 'https://www.google.com/maps/dir/?api=1&destination='+p.lat+','+p.lng; }
+function popHtml(p){
+  var bits=[catLabel(p.cat).replace(/s$/,'')]; if(p.cuisine) bits.push(prettyCuisine(p.cuisine));
+  var h='<div class="pop"><b>'+esc(p.name)+'</b><div class="pm">'+esc(bits.join(' \u00b7 '))+(p.hours?'<br>'+esc(p.hours):'')+'</div>'
+    +'<a href="'+gmaps(p)+'" target="_blank" rel="noopener">Map &amp; details</a>'
+    +'<a href="'+dirLink(p)+'" target="_blank" rel="noopener">Directions</a>'
+    +(p.website?'<a href="'+esc(p.website)+'" target="_blank" rel="noopener">Website</a>':'')+'</div>';
+  return h;
+}
+
+function rebuildMarkers(items){
+  cluster.clearLayers(); markers={};
+  var batch=items.map(function(p){
+    var m=L.marker([p.lat,p.lng],{icon:pin(catColor(p.cat))}).bindPopup(popHtml(p)).bindTooltip(p.name,{direction:'top'});
+    markers[p.id]=m; return m;
+  });
+  cluster.addLayers(batch);
+}
+
+var listEl=document.getElementById('list');
+function visible(){
+  var arr=PLACES.filter(function(p){
+    if(showSaved && !saved.has(p.id)) return false;
+    if(!showSaved && activeCat!=='All' && p.cat!==activeCat) return false;
+    if(query){ var q=query.toLowerCase(); if((p.name+' '+(p.cuisine||'')+' '+catLabel(p.cat)).toLowerCase().indexOf(q)<0) return false; }
+    return true;
+  });
+  arr.sort(function(a,b){ return a.dist-b.dist; });
+  return arr;
+}
+function cardHtml(p){
+  var c=CATS[p.cat]||CATS.restaurant;
+  var sub=[catLabel(p.cat).replace(/s$/,'')]; if(p.cuisine) sub.push(prettyCuisine(p.cuisine));
+  return '<div class="card" data-id="'+esc(p.id)+'">'
+    +'<button class="like'+(saved.has(p.id)?' on':'')+'" data-fav="'+esc(p.id)+'" aria-label="Save"><svg viewBox="0 0 24 24"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg></button>'
+    +'<div class="ic" style="background:'+c.color+'"><svg viewBox="0 0 24 24">'+c.icon+'</svg></div>'
+    +'<div class="body"><h3>'+esc(p.name)+'</h3><div class="meta">'+esc(sub.join(' \u00b7 '))+'</div>'
+    +'<div class="row"><span class="dist" style="background:'+c.color+'">'+fmtDist(p.dist)+' from us</span>'
+    +'<a class="act" href="'+gmaps(p)+'" target="_blank" rel="noopener" data-stop="1"><svg viewBox="0 0 24 24"><path d="M9 20l-5.5 2.5V6L9 3.5m0 16.5l6-2.5m-6 2.5V3.5m6 14l5.5 2.5V4l-5.5-2.5m0 16V1.5m0 16l-6-2.5"/></svg>Map &amp; details</a>'
+    +'<a class="act" href="'+dirLink(p)+'" target="_blank" rel="noopener" data-stop="1"><svg viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>Directions</a>'
+    +(p.website?'<a class="act" href="'+esc(p.website)+'" target="_blank" rel="noopener" data-stop="1"><svg viewBox="0 0 24 24"><path d="M14 3h7v7"/><path d="M21 3l-9 9"/></svg>Website</a>':'')
+    +'</div></div></div>';
+}
+function render(){
+  if(!PLACES.length){ return; }
+  var items=visible();
+  document.getElementById('countHead').textContent='Places ('+items.length+')';
+  if(!items.length){ listEl.innerHTML='<div class="state">'+(showSaved?'No saved places yet \u2014 tap the heart on a place to save it.':'Nothing matches your search.')+'</div>'; rebuildMarkers([]); return; }
+  listEl.innerHTML=items.map(cardHtml).join('');
+  rebuildMarkers(items);
+}
+function renderCats(){
+  var counts={}; CATORDER.forEach(function(c){counts[c]=0;}); PLACES.forEach(function(p){ counts[p.cat]=(counts[p.cat]||0)+1; });
+  var bar=document.getElementById('catbar');
+  var html='<button class="cchip '+(activeCat==='All'&&!showSaved?'on':'')+'" data-c="All">All <span class="c">'+PLACES.length+'</span></button>';
+  html+=CATORDER.filter(function(c){return counts[c]>0;}).map(function(c){ return '<button class="cchip '+(activeCat===c&&!showSaved?'on':'')+'" data-c="'+c+'"><span class="sw" style="background:'+CATS[c].color+'"></span>'+esc(CATS[c].label)+' <span class="c">'+counts[c]+'</span></button>'; }).join('');
+  bar.innerHTML=html;
+  bar.querySelectorAll('.cchip').forEach(function(b){ b.addEventListener('click',function(){ activeCat=this.dataset.c; showSaved=false; updateSaved(); renderCats(); render(); if(window.updateCatNav) window.updateCatNav(); }); });
+}
+function updateSaved(){ var b=document.getElementById('savedToggle'); var n=PLACES.filter(function(p){return saved.has(p.id);}).length; document.getElementById('savedTxt').textContent='Saved'+(n?' ('+n+')':''); b.classList.toggle('on',showSaved); b.setAttribute('aria-pressed',showSaved?'true':'false'); }
+
+document.getElementById('savedToggle').addEventListener('click',function(){ showSaved=!showSaved; if(showSaved) activeCat='All'; updateSaved(); renderCats(); render(); });
+document.getElementById('q').addEventListener('input',function(){ query=this.value.trim(); render(); });
+
+listEl.addEventListener('click',function(e){
+  var fav=e.target.closest('[data-fav]');
+  if(fav){ var id=fav.getAttribute('data-fav'); if(saved.has(id)) saved.delete(id); else saved.add(id); saveFav(); fav.classList.toggle('on',saved.has(id)); updateSaved(); if(showSaved) render(); return; }
+  if(e.target.closest('[data-stop]')) return;
+  var card=e.target.closest('.card'); if(!card) return;
+  var id=card.getAttribute('data-id'); var p=PLACES.find(function(x){return x.id===id;}); if(!p) return;
+  map.flyTo([p.lat,p.lng],16,{duration:.6});
+  setTimeout(function(){ if(markers[id]) markers[id].openPopup(); },650);
+  if(window.innerWidth<=860){ document.getElementById('map').scrollIntoView({behavior:'smooth',block:'center'}); }
+});
+
+function fitAll(){ var pts=PLACES.map(function(p){return [p.lat,p.lng];}); pts.push([HOST.lat,HOST.lng]); if(pts.length>1){ try{ map.fitBounds(pts,{padding:[34,34],maxZoom:14}); }catch(e){} } }
+
+/* ---- OpenStreetMap (Overpass) ---- */
+var MIRRORS=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://maps.mail.ru/osm/tools/overpass/api/interpreter'];
+function buildQuery(){
+  return '[out:json][timeout:25];('
+    +'node["amenity"~"^(restaurant|cafe|fast_food|pub)$"](around:'+RADIUS_M+','+HOST.lat+','+HOST.lng+');'
+    +'way["amenity"~"^(restaurant|cafe|fast_food|pub)$"](around:'+RADIUS_M+','+HOST.lat+','+HOST.lng+');'
+    +');out center tags;';
+}
+function normalize(elements){
+  var out=[], seen={};
+  (elements||[]).forEach(function(el){
+    var t=el.tags||{}; if(!t.name) return;
+    var lat=el.lat||(el.center&&el.center.lat), lng=el.lon||(el.center&&el.center.lon);
+    if(lat==null||lng==null) return;
+    var am=t.amenity; if(['restaurant','cafe','fast_food','pub'].indexOf(am)<0) return;
+    var id=el.type+'/'+el.id;
+    var key=(t.name+'|'+lat.toFixed(4)+'|'+lng.toFixed(4)).toLowerCase(); if(seen[key]) return; seen[key]=1;
+    out.push({ id:id, name:t.name, cat:am, cuisine:t.cuisine||'', lat:lat, lng:lng,
+      town:t['addr:city']||t['addr:town']||'', website:t.website||t['contact:website']||'', hours:t.opening_hours||'',
+      dist:miBetween(HOST.lat,HOST.lng,lat,lng) });
+  });
+  return out;
+}
+function apply(places){
+  PLACES=places; renderCats(); render(); updateSaved();
+  if(!didFit){ didFit=true; fitAll(); }
+  setTimeout(function(){ map.invalidateSize(); },150);
+}
+function fetchOSM(){
+  var Q=buildQuery(), ctrl=new AbortController(), to=setTimeout(function(){ctrl.abort();},25000);
+  return Promise.any(MIRRORS.map(function(u){
+    return fetch(u,{method:'POST',body:'data='+encodeURIComponent(Q),signal:ctrl.signal}).then(function(r){ return r.ok?r.json():Promise.reject(); });
+  })).then(function(j){ clearTimeout(to); var arr=normalize(j&&j.elements); 
+    try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(), data:arr})); }catch(e){}
+    return arr;
+  });
+}
+function load(){
+  var cached=null; try{ cached=JSON.parse(localStorage.getItem(CACHE_KEY)||'null'); }catch(e){}
+  if(cached && cached.data && cached.data.length){
+    cached.data.forEach(function(p){ p.dist=miBetween(HOST.lat,HOST.lng,p.lat,p.lng); });
+    apply(cached.data);
+    if(Date.now()-(cached.ts||0) > CACHE_DAYS*864e5){ fetchOSM().then(function(a){ if(a&&a.length) apply(a); }).catch(function(){}); }
+    return;
+  }
+  fetchOSM().then(function(a){
+    if(a&&a.length){ apply(a); }
+    else { listEl.innerHTML='<div class="state">No places found right now. Please try again later.</div>'; }
+  }).catch(function(){
+    listEl.innerHTML='<div class="state">We couldn\u2019t load places just now. Please check your connection and try again later.</div>';
+  });
+}
+
+renderCats(); updateSaved();
+setTimeout(function(){ map.invalidateSize(); load(); }, 150);
+
+/* category nav arrows */
+(function(){ var bar=document.getElementById('catbar'), prev=document.getElementById('catPrev'), next=document.getElementById('catNext');
+  window.updateCatNav=function(){ var max=bar.scrollWidth-bar.clientWidth-2, over=max>4; prev.classList.toggle('show', over&&bar.scrollLeft>4); next.classList.toggle('show', over&&bar.scrollLeft<max-4); };
+  prev.onclick=function(){ bar.scrollBy({left:-bar.clientWidth*0.7,behavior:'smooth'}); };
+  next.onclick=function(){ bar.scrollBy({left:bar.clientWidth*0.7,behavior:'smooth'}); };
+  bar.addEventListener('scroll',function(){window.updateCatNav();},{passive:true}); window.addEventListener('resize',function(){window.updateCatNav();}); setTimeout(function(){window.updateCatNav();},400);
+})();
+
+/* pin the map below the sticky hostbar on mobile */
+function setMapTop(){ var hb=document.getElementById('hostbar'), m=document.querySelector('.mapcol'); if(!hb||!m) return; if(window.matchMedia('(max-width:860px)').matches){ m.style.top=hb.offsetHeight+'px'; } else { m.style.top=''; } try{ map.invalidateSize(); }catch(e){} }
+window.addEventListener('resize', setMapTop); setMapTop(); setTimeout(setMapTop,400);
+window.addEventListener('load', function(){ setTimeout(setMapTop,120); });
+
+/* back to top */
+(function(){ var b=document.getElementById('toTop'); if(!b) return; function u(){ b.classList.toggle('show',(window.scrollY||0)>300); } window.addEventListener('scroll',u,{passive:true}); window.addEventListener('resize',u); b.addEventListener('click',function(){ window.scrollTo({top:0,behavior:'smooth'}); }); u(); })();
+</script>
+<script>/*moremenu*/(function(){var b=document.getElementById("moreBtn"),d=document.getElementById("moreDrop");if(!b||!d)return;b.addEventListener("click",function(e){e.stopPropagation();var o=d.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});document.addEventListener("click",function(e){if(d.classList.contains("open")&&!d.contains(e.target)&&e.target!==b){d.classList.remove("open");b.setAttribute("aria-expanded","false");}});document.addEventListener("keydown",function(e){if(e.key==="Escape"){d.classList.remove("open");b.setAttribute("aria-expanded","false");}});})();</script>
+</body>
+</html>
