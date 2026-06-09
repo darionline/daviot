@@ -56,6 +56,9 @@ a{color:inherit}
 .catnav{position:absolute; top:50%; transform:translateY(-50%); z-index:6; width:28px; height:28px; border-radius:50%; border:1px solid var(--line); background:#fff; color:var(--azure); font-size:1.1rem; line-height:1; cursor:pointer; display:none; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(18,59,79,.18)}
 .catnav.prev{left:.3rem} .catnav.next{right:.3rem}
 .catnav.show{display:inline-flex}
+.cuiwrap{margin-top:.34rem}
+.cuiwrap::before{content:"Cuisine";position:absolute;left:1.35rem;top:-.55rem;font-size:.62rem;font-weight:700;letter-spacing:0;text-transform:uppercase;color:var(--muted);opacity:.8}
+.cuibar .cchip{padding:.32rem .62rem;font-size:.77rem;font-weight:500}
 
 .layout{display:flex; flex-direction:row-reverse; gap:1rem; max-width:1240px; margin:.8rem auto 0; padding:0 1.1rem 2.2rem; align-items:flex-start; flex:1}
 .listcol{flex:1 1 auto; min-width:0}
@@ -151,6 +154,12 @@ footer a{color:var(--azure); text-decoration:none; font-weight:600}
   <button type="button" class="catnav next" id="catNext" aria-label="Scroll right">&rsaquo;</button>
 </div>
 
+<div class="catwrap cuiwrap" id="cuiwrap" hidden>
+  <button type="button" class="catnav prev" id="cuiPrev" aria-label="Scroll left">&lsaquo;</button>
+  <div class="catbar cuibar" id="cuibar"></div>
+  <button type="button" class="catnav next" id="cuiNext" aria-label="Scroll right">&rsaquo;</button>
+</div>
+
 <div class="layout">
   <div class="mapcol">
     <div id="map"></div>
@@ -193,6 +202,7 @@ var CATORDER=['restaurant','cafe','fast_food','pub'];
 function catColor(c){ return (CATS[c]||CATS.restaurant).color; }
 function catLabel(c){ return (CATS[c]||{label:'Place'}).label; }
 function prettyCuisine(c){ if(!c) return ''; return c.split(';').map(function(x){ x=x.replace(/_/g,' ').trim(); return x.replace(/\b\w/g,function(m){return m.toUpperCase();}); }).join(', '); }
+function cuTokens(p){ return (p.cuisine||'').split(';').map(function(x){return x.trim().toLowerCase();}).filter(Boolean); }
 
 function miBetween(a,b,c,d){ var R=3958.8,t=Math.PI/180; var dLat=(c-a)*t,dLng=(d-b)*t; var s=Math.sin(dLat/2)**2+Math.cos(a*t)*Math.cos(c*t)*Math.sin(dLng/2)**2; return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s)); }
 function fmtDist(mi){ if(mi<0.19){ return Math.round(mi*1760/10)*10+' yd'; } return (mi<10?mi.toFixed(1):Math.round(mi))+' mi'; }
@@ -201,7 +211,7 @@ var FAV_KEY='eat_fav_v1';
 var saved=new Set(); try{ saved=new Set(JSON.parse(localStorage.getItem(FAV_KEY)||'[]')); }catch(e){}
 function saveFav(){ try{ localStorage.setItem(FAV_KEY, JSON.stringify(Array.from(saved))); }catch(e){} }
 
-var PLACES=[], activeCat='All', showSaved=false, query='', didFit=false;
+var PLACES=[], activeCat='All', activeCuisine='All', showSaved=false, query='', didFit=false;
 
 var map=L.map('map',{zoomControl:false}).setView([HOST.lat,HOST.lng],12);
 L.control.zoom({position:'topright'}).addTo(map);
@@ -243,6 +253,7 @@ function visible(){
   var arr=PLACES.filter(function(p){
     if(showSaved && !saved.has(p.id)) return false;
     if(!showSaved && activeCat!=='All' && p.cat!==activeCat) return false;
+    if(!showSaved && activeCuisine!=='All' && cuTokens(p).indexOf(activeCuisine)<0) return false;
     if(query){ var q=query.toLowerCase(); if((p.name+' '+(p.cuisine||'')+' '+catLabel(p.cat)).toLowerCase().indexOf(q)<0) return false; }
     return true;
   });
@@ -276,11 +287,27 @@ function renderCats(){
   var html='<button class="cchip '+(activeCat==='All'&&!showSaved?'on':'')+'" data-c="All">All <span class="c">'+PLACES.length+'</span></button>';
   html+=CATORDER.filter(function(c){return counts[c]>0;}).map(function(c){ return '<button class="cchip '+(activeCat===c&&!showSaved?'on':'')+'" data-c="'+c+'"><span class="sw" style="background:'+CATS[c].color+'"></span>'+esc(CATS[c].label)+' <span class="c">'+counts[c]+'</span></button>'; }).join('');
   bar.innerHTML=html;
-  bar.querySelectorAll('.cchip').forEach(function(b){ b.addEventListener('click',function(){ activeCat=this.dataset.c; showSaved=false; updateSaved(); renderCats(); render(); if(window.updateCatNav) window.updateCatNav(); }); });
+  bar.querySelectorAll('.cchip').forEach(function(b){ b.addEventListener('click',function(){ activeCat=this.dataset.c; activeCuisine='All'; showSaved=false; updateSaved(); renderCats(); renderCuisines(); render(); fitVisible(); if(window.updateCatNav) window.updateCatNav(); if(window.updateCuiNav) window.updateCuiNav(); }); });
 }
+function renderCuisines(){
+  var wrap=document.getElementById('cuiwrap'), bar=document.getElementById('cuibar');
+  if(showSaved){ wrap.hidden=true; bar.innerHTML=''; return; }
+  var base=PLACES.filter(function(p){ return activeCat==='All'||p.cat===activeCat; });
+  var counts={};
+  base.forEach(function(p){ cuTokens(p).forEach(function(t){ counts[t]=(counts[t]||0)+1; }); });
+  var keys=Object.keys(counts).sort(function(a,b){ return counts[b]-counts[a] || a.localeCompare(b); });
+  if(!keys.length){ wrap.hidden=true; bar.innerHTML=''; return; }
+  wrap.hidden=false;
+  var withCu=base.filter(function(p){return cuTokens(p).length;}).length;
+  var html='<button class="cchip '+(activeCuisine==='All'?'on':'')+'" data-cu="All">All cuisines <span class="c">'+withCu+'</span></button>';
+  html+=keys.map(function(k){ return '<button class="cchip '+(activeCuisine===k?'on':'')+'" data-cu="'+esc(k)+'">'+esc(prettyCuisine(k))+' <span class="c">'+counts[k]+'</span></button>'; }).join('');
+  bar.innerHTML=html;
+  bar.querySelectorAll('.cchip').forEach(function(b){ b.addEventListener('click',function(){ activeCuisine=this.dataset.cu; renderCuisines(); render(); fitVisible(); if(window.updateCuiNav) window.updateCuiNav(); }); });
+}
+function fitVisible(items){ items=items||visible(); if(!items.length) return; var pts=items.map(function(p){return [p.lat,p.lng];}); try{ map.fitBounds(pts,{padding:[40,40],maxZoom:15,animate:true}); }catch(e){} }
 function updateSaved(){ var b=document.getElementById('savedToggle'); var n=PLACES.filter(function(p){return saved.has(p.id);}).length; document.getElementById('savedTxt').textContent='Saved'+(n?' ('+n+')':''); b.classList.toggle('on',showSaved); b.setAttribute('aria-pressed',showSaved?'true':'false'); }
 
-document.getElementById('savedToggle').addEventListener('click',function(){ showSaved=!showSaved; if(showSaved) activeCat='All'; updateSaved(); renderCats(); render(); });
+document.getElementById('savedToggle').addEventListener('click',function(){ showSaved=!showSaved; if(showSaved){ activeCat='All'; activeCuisine='All'; } updateSaved(); renderCats(); renderCuisines(); render(); fitVisible(); });
 document.getElementById('q').addEventListener('input',function(){ query=this.value.trim(); render(); });
 
 listEl.addEventListener('click',function(e){
@@ -320,7 +347,7 @@ function normalize(elements){
   return out;
 }
 function apply(places){
-  PLACES=places; renderCats(); render(); updateSaved();
+  PLACES=places; renderCats(); renderCuisines(); render(); updateSaved();
   if(!didFit){ didFit=true; fitAll(); }
   setTimeout(function(){ map.invalidateSize(); },150);
 }
@@ -351,7 +378,7 @@ function load(){
   });
 }
 
-renderCats(); updateSaved();
+renderCats(); renderCuisines(); updateSaved();
 setTimeout(function(){ map.invalidateSize(); load(); }, 150);
 
 /* category nav arrows */
@@ -360,6 +387,12 @@ setTimeout(function(){ map.invalidateSize(); load(); }, 150);
   prev.onclick=function(){ bar.scrollBy({left:-bar.clientWidth*0.7,behavior:'smooth'}); };
   next.onclick=function(){ bar.scrollBy({left:bar.clientWidth*0.7,behavior:'smooth'}); };
   bar.addEventListener('scroll',function(){window.updateCatNav();},{passive:true}); window.addEventListener('resize',function(){window.updateCatNav();}); setTimeout(function(){window.updateCatNav();},400);
+})();
+(function(){ var bar=document.getElementById('cuibar'), prev=document.getElementById('cuiPrev'), next=document.getElementById('cuiNext');
+  window.updateCuiNav=function(){ var max=bar.scrollWidth-bar.clientWidth-2, over=max>4; prev.classList.toggle('show', over&&bar.scrollLeft>4); next.classList.toggle('show', over&&bar.scrollLeft<max-4); };
+  prev.onclick=function(){ bar.scrollBy({left:-bar.clientWidth*0.7,behavior:'smooth'}); };
+  next.onclick=function(){ bar.scrollBy({left:bar.clientWidth*0.7,behavior:'smooth'}); };
+  bar.addEventListener('scroll',function(){window.updateCuiNav();},{passive:true}); window.addEventListener('resize',function(){window.updateCuiNav();}); setTimeout(function(){window.updateCuiNav();},500);
 })();
 
 /* pin the map below the sticky hostbar on mobile */
