@@ -45,7 +45,7 @@ svg.ico{width:1em;height:1em;display:inline-block;vertical-align:-.14em;fill:non
 .intro p{margin:.55rem auto 0; max-width:54ch; color:var(--muted); font-size:1rem; font-weight:400; line-height:1.5}
 
 .filters{position:sticky; top:54px; z-index:20; display:flex; justify-content:center; padding:.55rem 0 .7rem; background:linear-gradient(var(--paper) 72%, rgba(238,242,250,0))}
-.fwrap{display:inline-flex; gap:.35rem; max-width:100%; overflow-x:auto; scrollbar-width:none; padding:.1rem}
+.fwrap{display:inline-flex; gap:.35rem; max-width:100%; min-width:0; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding:.1rem}
 .fwrap::-webkit-scrollbar{display:none}
 .fchip{flex:0 0 auto; font-family:inherit; font-size:.82rem; font-weight:600; color:#33454e; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.42rem .85rem; white-space:nowrap; cursor:pointer; transition:.15s; display:inline-flex; align-items:center; gap:.35rem}
 .fchip:hover{border-color:var(--azure); color:var(--azure)}
@@ -105,12 +105,17 @@ footer a:hover{text-decoration:underline}
 .gnbar .gn:hover{color:#2b7cc4;background:rgba(43,124,196,.08)}
 .gnbar .gn.active{background:#123b4f;color:#fff;cursor:default;box-shadow:0 3px 10px rgba(18,59,79,.22)}
 .gnbar .morebtn .mca{font-size:.62rem;opacity:.85}
-.moredrop{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(4px);min-width:208px;background:#fff;border:1px solid #e2e8f1;border-radius:14px;box-shadow:0 16px 40px rgba(40,70,120,.20);padding:.36rem;z-index:40;opacity:0;visibility:hidden;transition:opacity .16s,transform .16s}
+.moredrop{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(4px);min-width:208px;background:#fff;border:1px solid #e2e8f1;border-radius:14px;box-shadow:0 16px 40px rgba(40,70,120,.20);padding:.36rem;z-index:4000;opacity:0;visibility:hidden;transition:opacity .16s,transform .16s}
 .moredrop.open{opacity:1;visibility:visible;transform:translateX(-50%) translateY(8px)}
 .moredrop .mdi{display:block;padding:.52rem .72rem;border-radius:10px;text-decoration:none;color:#123b4f;font-size:.86rem;font-weight:500;white-space:nowrap;transition:.13s}
 .moredrop .mdi:hover{background:rgba(43,124,196,.09);color:#2b7cc4}
 .moredrop .mdi.active{background:#123b4f;color:#fff;cursor:default}
 @media(max-width:560px){.gnbar .gn{font-size:.78rem;padding:.38rem .62rem}.gnbar{gap:.12rem}}
+</style>
+<style id="fbar-css">
+.gnshell{position:relative;display:inline-flex;max-width:100%;min-width:0}
+.gnar{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:27px;height:27px;border-radius:50%;border:1px solid #dbe3ef;background:#fff;color:#123b4f;display:none;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 9px rgba(40,70,120,.22);font-size:1.05rem;line-height:1;padding:0}
+.gnar-l{left:0}.gnar-r{right:0}.gnar.show{display:flex}
 </style>
 </head>
 <body>
