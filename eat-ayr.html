@@ -132,7 +132,7 @@ footer a{color:var(--azure); text-decoration:none; font-weight:600}
 <body>
 
 <div class="hostbar" id="hostbar"></div>
-<nav class="guidenav"><div class="gnbar"><a class="gn" href="near-ayr.html">Nearby</a><a class="gn" href="ayr-and-ayrshire.html">Ayr &amp; Ayrshire</a><a class="gn" href="trains-from-ayr.html">Trains</a><button type="button" class="gn morebtn active" id="moreBtn" aria-haspopup="true" aria-expanded="false">More <span class="mca" aria-hidden="true">&#9662;</span></button></div><div class="moredrop" id="moreDrop" role="menu" aria-label="More pages"><a class="mdi active" aria-current="page">Eat &amp; drink</a><a class="mdi" href="useful-info.html" role="menuitem">Useful info</a><a class="mdi" href="gallery.html" role="menuitem">Photos</a><a class="mdi" href="lighthouses-of-scotland.html" role="menuitem">Lighthouses</a></div></nav>
+<nav class="guidenav"><div class="gnbar"><a class="gn" href="near-ayr.html">Nearby</a><a class="gn" href="ayr-and-ayrshire.html">Ayr &amp; Ayrshire</a><a class="gn" href="trains-from-ayr.html">Trains</a><a class="gn active" aria-current="page">Eat &amp; drink</a><button type="button" class="gn morebtn" id="moreBtn" aria-haspopup="true" aria-expanded="false">More <span class="mca" aria-hidden="true">&#9662;</span></button></div><div class="moredrop" id="moreDrop" role="menu" aria-label="More pages"><a class="mdi" href="useful-info.html" role="menuitem">Useful info</a><a class="mdi" href="gallery.html" role="menuitem">Photos</a><a class="mdi" href="lighthouses-of-scotland.html" role="menuitem">Lighthouses</a></div></nav>
 
 <div class="intro">
   <div class="kick">Eat &amp; drink</div>
@@ -297,12 +297,12 @@ listEl.addEventListener('click',function(e){
 function fitAll(){ var pts=PLACES.map(function(p){return [p.lat,p.lng];}); pts.push([HOST.lat,HOST.lng]); if(pts.length>1){ try{ map.fitBounds(pts,{padding:[34,34],maxZoom:14}); }catch(e){} } }
 
 /* ---- OpenStreetMap (Overpass) ---- */
-var MIRRORS=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://maps.mail.ru/osm/tools/overpass/api/interpreter'];
+var MIRRORS=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://overpass.openstreetmap.fr/api/interpreter'];
 function buildQuery(){
   return '[out:json][timeout:25];('
     +'node["amenity"~"^(restaurant|cafe|fast_food|pub)$"](around:'+RADIUS_M+','+HOST.lat+','+HOST.lng+');'
     +'way["amenity"~"^(restaurant|cafe|fast_food|pub)$"](around:'+RADIUS_M+','+HOST.lat+','+HOST.lng+');'
-    +');out center tags;';
+    +');out center;';
 }
 function normalize(elements){
   var out=[], seen={};
@@ -326,11 +326,13 @@ function apply(places){
 }
 function fetchOSM(){
   var Q=buildQuery(), ctrl=new AbortController(), to=setTimeout(function(){ctrl.abort();},25000);
-  return Promise.any(MIRRORS.map(function(u){
-    return fetch(u,{method:'POST',body:'data='+encodeURIComponent(Q),signal:ctrl.signal}).then(function(r){ return r.ok?r.json():Promise.reject(); });
-  })).then(function(j){ clearTimeout(to); var arr=normalize(j&&j.elements); 
+  function ok(j){ clearTimeout(to); var arr=normalize(j&&j.elements);
     try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(), data:arr})); }catch(e){}
-    return arr;
+    return arr; }
+  return Promise.any(MIRRORS.map(function(u){
+    return fetch(u,{method:'POST',headers:{'Content-Type':'text/plain'},body:Q,signal:ctrl.signal}).then(function(r){ return r.ok?r.json():Promise.reject(); });
+  })).then(ok).catch(function(){
+    return fetch('https://overpass-api.de/api/interpreter?data='+encodeURIComponent(Q)).then(function(r){ return r.ok?r.json():Promise.reject(); }).then(ok);
   });
 }
 function load(){
