@@ -66,7 +66,7 @@ a{color:inherit}
 .catnav.prev{left:.3rem} .catnav.next{right:.3rem}
 .catnav.show{display:inline-flex}
 
-.layout{display:flex; gap:1rem; max-width:1240px; margin:.8rem auto 0; padding:0 1.1rem 2.2rem; align-items:flex-start; flex:1}
+.layout{display:flex; flex-direction:row-reverse; gap:1rem; max-width:1240px; margin:.8rem auto 0; padding:0 1.1rem 2.2rem; align-items:flex-start; flex:1}
 .listcol{flex:1 1 auto; min-width:0}
 .listhead{display:flex; align-items:center; gap:.6rem; margin:0 .2rem .55rem}
 .listhead h2{font-size:.82rem; font-weight:700; text-transform:uppercase; letter-spacing:0; color:var(--muted)}
@@ -101,9 +101,10 @@ a{color:inherit}
 .pop a{color:var(--azure); text-decoration:none; font-weight:600; font-size:.82rem; display:inline-block; margin-right:.7rem}
 
 @media(max-width:860px){
-  .layout{flex-direction:column-reverse}
-  .mapcol{position:static; width:100%; flex-basis:auto}
-  #map{height:42vh}
+  .layout{display:block}
+  .mapcol{position:sticky; top:64px; width:100%; z-index:5; margin-bottom:.7rem}
+  #map{height:42vh; border-radius:14px}
+  .maphint{display:none}
 }
 
 footer{max-width:1240px; width:100%; margin:0 auto; padding:0 1.7rem 2rem; text-align:center; color:var(--muted); font-size:.76rem; line-height:1.5; font-weight:400}
@@ -152,16 +153,16 @@ footer a{color:var(--azure); text-decoration:none; font-weight:600}
 </div>
 
 <div class="layout">
+  <div class="mapcol">
+    <div id="map"></div>
+    <p class="maphint">Tap any place to see exactly where it is on the map</p>
+  </div>
   <div class="listcol">
     <div class="listhead">
       <h2>Places</h2>
       <button class="savedtoggle" id="savedToggle" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg><span id="savedTxt">Saved</span></button>
     </div>
     <div id="list"></div>
-  </div>
-  <div class="mapcol">
-    <div id="map"></div>
-    <p class="maphint">Tap any place to see exactly where it is on the map</p>
   </div>
 </div>
 
@@ -298,6 +299,9 @@ listEl.addEventListener('click',function(e){
 
 renderCats(); render(); updateSaved();
 setTimeout(function(){ map.invalidateSize(); }, 200);
+function setMapTop(){ var hb=document.getElementById("hostbar"), m=document.querySelector(".mapcol"); if(!hb||!m) return; if(window.matchMedia("(max-width:860px)").matches){ m.style.top=hb.offsetHeight+"px"; } else { m.style.top=""; } try{ map.invalidateSize(); }catch(e){} }
+window.addEventListener("resize", setMapTop); setMapTop(); setTimeout(setMapTop,400);
+window.addEventListener("load", function(){ setTimeout(setMapTop,120); });
 
 /* category nav arrows */
 (function(){ var bar=document.getElementById('catbar'), prev=document.getElementById('catPrev'), next=document.getElementById('catNext');
