@@ -209,7 +209,7 @@ var FAV_KEY='eat_fav_v1';
 var saved=new Set(); try{ saved=new Set(JSON.parse(localStorage.getItem(FAV_KEY)||'[]')); }catch(e){}
 function saveFav(){ try{ localStorage.setItem(FAV_KEY, JSON.stringify(Array.from(saved))); }catch(e){} }
 
-var PLACES=[], activeCat='All', activeCuisine='All', showSaved=false, query='', didFit=false;
+var PLACES=[], activeCat='All', activeCuisine='All', showSaved=false, query='', didFit=false, selectedId=null, openPopupId=null;
 
 var map=L.map('map',{zoomControl:false}).setView([HOST.lat,HOST.lng],12);
 L.control.zoom({position:'topright'}).addTo(map);
@@ -219,6 +219,14 @@ map.addLayer(cluster);
 
 function pin(color){ return L.divIcon({className:'', iconSize:[22,28], iconAnchor:[11,26], popupAnchor:[0,-24],
   html:'<svg width="22" height="28" viewBox="0 0 26 34" xmlns="http://www.w3.org/2000/svg"><path d="M13 1C6.4 1 1 6 1 12c0 8 12 21 12 21s12-13 12-21C25 6 19.6 1 13 1z" fill="'+color+'" stroke="#fff" stroke-width="1.5"/><circle cx="13" cy="12" r="4" fill="#fff"/></svg>'}); }
+function selPin(){ return L.divIcon({className:'', iconSize:[30,38], iconAnchor:[15,36], popupAnchor:[0,-32],
+  html:'<svg width="30" height="38" viewBox="0 0 26 34" xmlns="http://www.w3.org/2000/svg"><path d="M13 1C6.4 1 1 6 1 12c0 8 12 21 12 21s12-13 12-21C25 6 19.6 1 13 1z" fill="#123b4f" stroke="#fff" stroke-width="1.5"/><circle cx="13" cy="12" r="4.4" fill="#fff"/></svg>'}); }
+function selectMarker(id){
+  if(selectedId===id) return;
+  if(selectedId && markers[selectedId]){ var pp=PLACES.find(function(x){return x.id===selectedId;}); markers[selectedId].setIcon(pin(catColor(pp?pp.cat:'restaurant'))); markers[selectedId].setZIndexOffset(0); }
+  selectedId=id;
+  if(markers[id]){ markers[id].setIcon(selPin()); markers[id].setZIndexOffset(1000); }
+}
 var housePin=L.divIcon({className:'', iconSize:[34,42], iconAnchor:[17,40], popupAnchor:[0,-36],
   html:'<svg width="34" height="42" viewBox="0 0 34 42" xmlns="http://www.w3.org/2000/svg"><path d="M17 1C9 1 2.5 7.2 2.5 15 2.5 24.5 17 41 17 41S31.5 24.5 31.5 15C31.5 7.2 25 1 17 1z" fill="#7189ed" stroke="#fff" stroke-width="1.6"/><g stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(17,15.5) scale(0.62) translate(-12,-12)"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></g></svg>'});
 L.marker([HOST.lat,HOST.lng],{icon:housePin,zIndexOffset:1200}).addTo(map)
@@ -238,12 +246,16 @@ function popHtml(p){
 }
 
 function rebuildMarkers(items){
+  var keepOpen=openPopupId;
   cluster.clearLayers(); markers={};
   var batch=items.map(function(p){
-    var m=L.marker([p.lat,p.lng],{icon:pin(catColor(p.cat))}).bindPopup(popHtml(p)).bindTooltip(p.name,{direction:'top'});
+    var m=L.marker([p.lat,p.lng],{icon:(p.id===selectedId?selPin():pin(catColor(p.cat))), zIndexOffset:(p.id===selectedId?1000:0)}).bindPopup(popHtml(p)).bindTooltip(p.name,{direction:'top'});
+    m.on('popupopen',function(){ openPopupId=p.id; selectMarker(p.id); });
+    m.on('popupclose',function(){ if(openPopupId===p.id) openPopupId=null; });
     markers[p.id]=m; return m;
   });
   cluster.addLayers(batch);
+  if(keepOpen && markers[keepOpen]){ setTimeout(function(){ try{ markers[keepOpen].openPopup(); }catch(e){} }, 30); }
 }
 
 var listEl=document.getElementById('list');
@@ -318,8 +330,10 @@ listEl.addEventListener('click',function(e){
   if(e.target.closest('[data-stop]')) return;
   var card=e.target.closest('.card'); if(!card) return;
   var id=card.getAttribute('data-id'); var p=PLACES.find(function(x){return x.id===id;}); if(!p) return;
-  map.flyTo([p.lat,p.lng],16,{duration:.6});
-  setTimeout(function(){ if(markers[id]) markers[id].openPopup(); },650);
+  selectMarker(id);
+  var mk=markers[id];
+  if(mk){ try{ cluster.zoomToShowLayer(mk, function(){ try{ mk.openPopup(); }catch(e){} }); }catch(e){ map.flyTo([p.lat,p.lng],16,{duration:.6}); setTimeout(function(){ try{ mk.openPopup(); }catch(e){} },650); } }
+  else { map.flyTo([p.lat,p.lng],16,{duration:.6}); }
   if(window.innerWidth<=860){ document.getElementById('map').scrollIntoView({behavior:'smooth',block:'center'}); }
 });
 
