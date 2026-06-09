@@ -199,7 +199,7 @@ var CATS={
 var CATORDER=['restaurant','cafe','fast_food','pub'];
 function catColor(c){ return (CATS[c]||CATS.restaurant).color; }
 function catLabel(c){ return (CATS[c]||{label:'Place'}).label; }
-function prettyCuisine(c){ if(!c) return ''; return c.split(';').map(function(x){ x=x.replace(/_/g,' ').trim(); return x.replace(/\b\w/g,function(m){return m.toUpperCase();}); }).join(', '); }
+function prettyCuisine(c){ if(!c) return ''; return c.split(';').map(function(x){ x=x.replace(/_/g,' ').trim(); x=x.replace(/\b\w/g,function(m){return m.toUpperCase();}); return x.replace(/\bAnd\b/g,'&'); }).join(', '); }
 function cuTokens(p){ return (p.cuisine||'').split(';').map(function(x){return x.trim().toLowerCase();}).filter(Boolean); }
 
 function miBetween(a,b,c,d){ var R=3958.8,t=Math.PI/180; var dLat=(c-a)*t,dLng=(d-b)*t; var s=Math.sin(dLat/2)**2+Math.cos(a*t)*Math.cos(c*t)*Math.sin(dLng/2)**2; return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s)); }
@@ -247,12 +247,13 @@ function rebuildMarkers(items){
 }
 
 var listEl=document.getElementById('list');
+function passSearch(p){ if(!query) return true; var q=query.toLowerCase(); return (p.name+' '+(p.cuisine||'')+' '+catLabel(p.cat)).toLowerCase().indexOf(q)>=0; }
 function visible(){
   var arr=PLACES.filter(function(p){
     if(showSaved && !saved.has(p.id)) return false;
     if(!showSaved && activeCat!=='All' && p.cat!==activeCat) return false;
     if(!showSaved && activeCuisine!=='All'){ var tk=cuTokens(p); if(activeCuisine==='__none__'){ if(tk.length) return false; } else if(tk.indexOf(activeCuisine)<0) return false; }
-    if(query){ var q=query.toLowerCase(); if((p.name+' '+(p.cuisine||'')+' '+catLabel(p.cat)).toLowerCase().indexOf(q)<0) return false; }
+    if(!passSearch(p)) return false;
     return true;
   });
   arr.sort(function(a,b){ return a.dist-b.dist; });
@@ -280,34 +281,36 @@ function render(){
   rebuildMarkers(items);
 }
 function renderCats(){
-  var counts={}; CATORDER.forEach(function(c){counts[c]=0;}); PLACES.forEach(function(p){ counts[p.cat]=(counts[p.cat]||0)+1; });
-  var bar=document.getElementById('catbar');
-  var html='<button class="cchip '+(activeCat==='All'&&!showSaved?'on':'')+'" data-c="All">All <span class="c">'+PLACES.length+'</span></button>';
-  html+=CATORDER.filter(function(c){return counts[c]>0;}).map(function(c){ return '<button class="cchip '+(activeCat===c&&!showSaved?'on':'')+'" data-c="'+c+'"><span class="sw" style="background:'+CATS[c].color+'"></span>'+esc(CATS[c].label)+' <span class="c">'+counts[c]+'</span></button>'; }).join('');
-  bar.innerHTML=html;
+  var exist={}, disp={}, allDisp=0; CATORDER.forEach(function(c){exist[c]=0;disp[c]=0;});
+  PLACES.forEach(function(p){ exist[p.cat]=(exist[p.cat]||0)+1; if(passSearch(p)){ disp[p.cat]=(disp[p.cat]||0)+1; allDisp++; } });
+  var bar=document.getElementById('catbar'), sl=bar.scrollLeft;
+  var html='<button class="cchip '+(activeCat==='All'&&!showSaved?'on':'')+'" data-c="All">All <span class="c">'+allDisp+'</span></button>';
+  html+=CATORDER.filter(function(c){return exist[c]>0;}).map(function(c){ return '<button class="cchip '+(activeCat===c&&!showSaved?'on':'')+'" data-c="'+c+'"><span class="sw" style="background:'+CATS[c].color+'"></span>'+esc(CATS[c].label)+' <span class="c">'+disp[c]+'</span></button>'; }).join('');
+  bar.innerHTML=html; bar.scrollLeft=sl;
   bar.querySelectorAll('.cchip').forEach(function(b){ b.addEventListener('click',function(){ activeCat=this.dataset.c; activeCuisine='All'; showSaved=false; updateSaved(); renderCats(); renderCuisines(); render(); fitVisible(); if(window.updateCatNav) window.updateCatNav(); if(window.updateCuiNav) window.updateCuiNav(); }); });
 }
 function renderCuisines(){
   var wrap=document.getElementById('cuiwrap'), bar=document.getElementById('cuibar');
   if(showSaved){ wrap.hidden=true; bar.innerHTML=''; return; }
-  var base=PLACES.filter(function(p){ return activeCat==='All'||p.cat===activeCat; });
+  var base=PLACES.filter(function(p){ return (activeCat==='All'||p.cat===activeCat) && passSearch(p); });
   var counts={};
   base.forEach(function(p){ cuTokens(p).forEach(function(t){ counts[t]=(counts[t]||0)+1; }); });
   var keys=Object.keys(counts).sort(function(a,b){ return counts[b]-counts[a] || a.localeCompare(b); });
   if(!keys.length){ wrap.hidden=true; bar.innerHTML=''; return; }
   wrap.hidden=false;
+  var sl=bar.scrollLeft;
   var noCu=base.filter(function(p){return !cuTokens(p).length;}).length;
   var html='<button class="cchip '+(activeCuisine==='All'?'on':'')+'" data-cu="All">All cuisines <span class="c">'+base.length+'</span></button>';
   html+=keys.map(function(k){ return '<button class="cchip '+(activeCuisine===k?'on':'')+'" data-cu="'+esc(k)+'">'+esc(prettyCuisine(k))+' <span class="c">'+counts[k]+'</span></button>'; }).join('');
   if(noCu) html+='<button class="cchip '+(activeCuisine==='__none__'?'on':'')+'" data-cu="__none__">Cuisine not listed <span class="c">'+noCu+'</span></button>';
-  bar.innerHTML=html;
+  bar.innerHTML=html; bar.scrollLeft=sl;
   bar.querySelectorAll('.cchip').forEach(function(b){ b.addEventListener('click',function(){ activeCuisine=this.dataset.cu; renderCuisines(); render(); fitVisible(); if(window.updateCuiNav) window.updateCuiNav(); }); });
 }
 function fitVisible(items){ items=items||visible(); if(!items.length) return; var pts=items.map(function(p){return [p.lat,p.lng];}); try{ map.fitBounds(pts,{padding:[40,40],maxZoom:15,animate:true}); }catch(e){} }
 function updateSaved(){ var b=document.getElementById('savedToggle'); var n=PLACES.filter(function(p){return saved.has(p.id);}).length; document.getElementById('savedTxt').textContent='Saved'+(n?' ('+n+')':''); b.classList.toggle('on',showSaved); b.setAttribute('aria-pressed',showSaved?'true':'false'); }
 
 document.getElementById('savedToggle').addEventListener('click',function(){ showSaved=!showSaved; if(showSaved){ activeCat='All'; activeCuisine='All'; } updateSaved(); renderCats(); renderCuisines(); render(); fitVisible(); });
-document.getElementById('q').addEventListener('input',function(){ query=this.value.trim(); render(); });
+document.getElementById('q').addEventListener('input',function(){ query=this.value.trim(); renderCats(); renderCuisines(); render(); if(window.updateCatNav) window.updateCatNav(); if(window.updateCuiNav) window.updateCuiNav(); });
 
 listEl.addEventListener('click',function(e){
   var fav=e.target.closest('[data-fav]');
