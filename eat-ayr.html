@@ -253,7 +253,7 @@ function visible(){
   var arr=PLACES.filter(function(p){
     if(showSaved && !saved.has(p.id)) return false;
     if(!showSaved && activeCat!=='All' && p.cat!==activeCat) return false;
-    if(!showSaved && activeCuisine!=='All' && cuTokens(p).indexOf(activeCuisine)<0) return false;
+    if(!showSaved && activeCuisine!=='All'){ var tk=cuTokens(p); if(activeCuisine==='__none__'){ if(tk.length) return false; } else if(tk.indexOf(activeCuisine)<0) return false; }
     if(query){ var q=query.toLowerCase(); if((p.name+' '+(p.cuisine||'')+' '+catLabel(p.cat)).toLowerCase().indexOf(q)<0) return false; }
     return true;
   });
@@ -298,9 +298,10 @@ function renderCuisines(){
   var keys=Object.keys(counts).sort(function(a,b){ return counts[b]-counts[a] || a.localeCompare(b); });
   if(!keys.length){ wrap.hidden=true; bar.innerHTML=''; return; }
   wrap.hidden=false;
-  var withCu=base.filter(function(p){return cuTokens(p).length;}).length;
-  var html='<button class="cchip '+(activeCuisine==='All'?'on':'')+'" data-cu="All">All cuisines <span class="c">'+withCu+'</span></button>';
+  var noCu=base.filter(function(p){return !cuTokens(p).length;}).length;
+  var html='<button class="cchip '+(activeCuisine==='All'?'on':'')+'" data-cu="All">All cuisines <span class="c">'+base.length+'</span></button>';
   html+=keys.map(function(k){ return '<button class="cchip '+(activeCuisine===k?'on':'')+'" data-cu="'+esc(k)+'">'+esc(prettyCuisine(k))+' <span class="c">'+counts[k]+'</span></button>'; }).join('');
+  if(noCu) html+='<button class="cchip '+(activeCuisine==='__none__'?'on':'')+'" data-cu="__none__">Cuisine not listed <span class="c">'+noCu+'</span></button>';
   bar.innerHTML=html;
   bar.querySelectorAll('.cchip').forEach(function(b){ b.addEventListener('click',function(){ activeCuisine=this.dataset.cu; renderCuisines(); render(); fitVisible(); if(window.updateCuiNav) window.updateCuiNav(); }); });
 }
