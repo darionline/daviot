@@ -228,11 +228,26 @@ path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
 .gnwrap .gn.active{background:var(--loch); color:#fff; cursor:default; box-shadow:0 3px 10px rgba(18,59,79,.22)}
 @media(max-width:560px){.gnwrap .gn{font-size:.78rem;padding:.38rem .62rem}.gnwrap{gap:.12rem}}
 </style>
+<style id="gnmenu-css">
+.guidenav{position:relative}
+.gnbar{display:inline-flex;gap:.2rem;max-width:100%;overflow-x:auto;scrollbar-width:none;background:#fff;border:1px solid #e2e8f1;border-radius:999px;padding:.24rem;box-shadow:0 4px 14px rgba(40,70,120,.10)}
+.gnbar::-webkit-scrollbar{display:none}
+.gnbar .gn{flex:0 0 auto;font-size:.82rem;font-weight:600;font-family:inherit;text-decoration:none;color:#123b4f;background:transparent;border:none;border-radius:999px;padding:.4rem .85rem;white-space:nowrap;cursor:pointer;transition:.16s;display:inline-flex;align-items:center;gap:.28rem}
+.gnbar .gn:hover{color:#2b7cc4;background:rgba(43,124,196,.08)}
+.gnbar .gn.active{background:#123b4f;color:#fff;cursor:default;box-shadow:0 3px 10px rgba(18,59,79,.22)}
+.gnbar .morebtn .mca{font-size:.62rem;opacity:.85}
+.moredrop{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(4px);min-width:208px;background:#fff;border:1px solid #e2e8f1;border-radius:14px;box-shadow:0 16px 40px rgba(40,70,120,.20);padding:.36rem;z-index:40;opacity:0;visibility:hidden;transition:opacity .16s,transform .16s}
+.moredrop.open{opacity:1;visibility:visible;transform:translateX(-50%) translateY(8px)}
+.moredrop .mdi{display:block;padding:.52rem .72rem;border-radius:10px;text-decoration:none;color:#123b4f;font-size:.86rem;font-weight:500;white-space:nowrap;transition:.13s}
+.moredrop .mdi:hover{background:rgba(43,124,196,.09);color:#2b7cc4}
+.moredrop .mdi.active{background:#123b4f;color:#fff;cursor:default}
+@media(max-width:560px){.gnbar .gn{font-size:.78rem;padding:.38rem .62rem}.gnbar{gap:.12rem}}
+</style>
 </head>
 <body data-view="list">
 
 <div class="hostbar" id="hostbar"></div>
-<nav class="guidenav"><div class="gnwrap"><a class="gn" href="near-ayr.html">Nearby</a><a class="gn" href="ayr-and-ayrshire.html">Ayr &amp; Ayrshire</a><a class="gn active" aria-current="page">Lighthouses</a><a class="gn" href="trains-from-ayr.html">Trains</a><a class="gn" href="gallery.html">Photos</a><a class="gn" href="useful-info.html">Useful info</a></div></nav>
+<nav class="guidenav"><div class="gnbar"><a class="gn" href="near-ayr.html">Nearby</a><a class="gn" href="ayr-and-ayrshire.html">Ayr &amp; Ayrshire</a><a class="gn" href="trains-from-ayr.html">Trains</a><button type="button" class="gn morebtn active" id="moreBtn" aria-haspopup="true" aria-expanded="false">More <span class="mca" aria-hidden="true">▾</span></button></div><div class="moredrop" id="moreDrop" role="menu" aria-label="More pages"><a class="mdi" href="useful-info.html" role="menuitem">Useful info</a><a class="mdi" href="gallery.html" role="menuitem">Photos</a><a class="mdi active" aria-current="page">Lighthouses</a></div></nav>
 
 <div class="toolbar">
   <div class="search">
@@ -744,5 +759,6 @@ addHostMarker();
 <div class="lh-toast" id="toast"></div>
 
 <script>/*gnwrap-center*/(function(){var w=document.querySelector(".gnwrap");if(!w)return;if(!document.getElementById("gnar-css")){var st=document.createElement("style");st.id="gnar-css";st.textContent=".gnshell{position:relative;display:inline-flex;max-width:100%}.gnar{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:27px;height:27px;border-radius:50%;border:1px solid #dbe3ef;background:#fff;color:#123b4f;display:none;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 9px rgba(40,70,120,.22);font-size:1.05rem;line-height:1;padding:0}.gnar-l{left:1px}.gnar-r{right:1px}.gnar.show{display:flex}";document.head.appendChild(st);}var shell=document.createElement("div");shell.className="gnshell";w.parentNode.insertBefore(shell,w);shell.appendChild(w);var L=document.createElement("button");L.type="button";L.className="gnar gnar-l";L.setAttribute("aria-label","Scroll left");L.innerHTML="\u2039";var R=document.createElement("button");R.type="button";R.className="gnar gnar-r";R.setAttribute("aria-label","Scroll right");R.innerHTML="\u203a";shell.appendChild(L);shell.appendChild(R);function center(){var a=w.querySelector(".gn.active");if(a)w.scrollLeft=Math.max(0,a.offsetLeft-(w.clientWidth-a.offsetWidth)/2);}function upd(){var sc=w.scrollLeft,max=w.scrollWidth-w.clientWidth,ov=max>4;L.classList.toggle("show",ov&&sc>4);R.classList.toggle("show",ov&&sc<max-4);}L.onclick=function(){w.scrollBy({left:-w.clientWidth*0.7,behavior:"smooth"});};R.onclick=function(){w.scrollBy({left:w.clientWidth*0.7,behavior:"smooth"});};w.addEventListener("scroll",upd,{passive:true});window.addEventListener("resize",function(){center();upd();});center();upd();setTimeout(upd,300);})();</script>
+<script>/*moremenu*/(function(){var b=document.getElementById("moreBtn"),d=document.getElementById("moreDrop");if(!b||!d)return;b.addEventListener("click",function(e){e.stopPropagation();var o=d.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});document.addEventListener("click",function(e){if(d.classList.contains("open")&&!d.contains(e.target)&&e.target!==b){d.classList.remove("open");b.setAttribute("aria-expanded","false");}});document.addEventListener("keydown",function(e){if(e.key==="Escape"){d.classList.remove("open");b.setAttribute("aria-expanded","false");}});})();</script>
 </body>
 </html>
