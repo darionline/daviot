@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Useful info — services around Ayr</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%237189ed'/%3E%3Cpath d='M12 5.5a4 4 0 0 0-4 4c0 3 4 8.5 4 8.5s4-5.5 4-8.5a4 4 0 0 0-4-4z' fill='%23fff'/%3E%3Ccircle cx='12' cy='9.5' r='1.6' fill='%237189ed'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{
+  --paper:#eef2fa; --card:#ffffff; --ink:#1e2a30; --muted:#65727b; --azure:#2b7cc4;
+  --loch:#123b4f; --line:#e2e8f1; --header:#7189ed;
+}
+*{box-sizing:border-box}
+html{overflow-y:scroll}
+html,body{margin:0}
+body{background:radial-gradient(1100px 520px at 88% -8%, rgba(108,133,236,.13), transparent 60%), var(--paper); color:var(--ink); font-family:"Jost",system-ui,sans-serif; -webkit-font-smoothing:antialiased; min-height:100vh; display:flex; flex-direction:column}
+h1,h2,h3{font-family:"Jost",system-ui,sans-serif; font-weight:600; margin:0}
+a{color:inherit}
+
+.hostbar{background:var(--header); border-bottom:1px solid rgba(255,255,255,.35); box-shadow:0 3px 12px rgba(40,70,120,.12); position:sticky; top:0; z-index:30}
+.hb-inner{max-width:1240px; margin:0 auto; padding:.55rem 1.7rem; display:flex; align-items:center; gap:.7rem; flex-wrap:wrap}
+.hb-logo{height:42px; width:auto; max-width:190px; flex:0 0 auto; display:block}
+.hb-name{display:flex; flex-direction:column; line-height:1.12}
+.hb-name b{font-weight:600; color:#fff; font-size:1rem}
+.hb-name span{font-size:.72rem; color:rgba(255,255,255,.85)}
+.hb-tag{margin-left:auto; font-size:.7rem; font-weight:700; color:#fff; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.4); padding:.22rem .6rem; border-radius:999px; white-space:nowrap}
+
+.guidenav{display:flex; justify-content:center; padding:.6rem .7rem; background:var(--paper); border-bottom:1px solid var(--line)}
+.gnwrap{display:inline-flex; gap:.2rem; max-width:100%; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; scroll-behavior:smooth; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.24rem; box-shadow:0 4px 14px rgba(40,70,120,.10)}
+.gnwrap::-webkit-scrollbar{display:none}
+.gnwrap .gn{flex:0 0 auto; font-size:.82rem; font-weight:600; text-decoration:none; color:var(--loch); background:transparent; border:none; border-radius:999px; padding:.4rem .85rem; white-space:nowrap; cursor:pointer; transition:.16s}
+.gnwrap .gn:hover{color:var(--azure); background:rgba(43,124,196,.08)}
+.gnwrap .gn.active{background:var(--loch); color:#fff; cursor:default; box-shadow:0 3px 10px rgba(18,59,79,.22)}
+@media(max-width:560px){.gnwrap .gn{font-size:.78rem;padding:.38rem .62rem}.gnwrap{gap:.12rem}}
+
+.intro{max-width:1240px; margin:0 auto; padding:1.2rem 1.7rem .2rem; text-align:center}
+.intro .kick{font-size:.72rem; font-weight:700; text-transform:uppercase; color:var(--azure); margin-bottom:.35rem}
+.intro h1{font-size:clamp(1.6rem,4.6vw,2.15rem); color:var(--loch); line-height:1.08}
+.intro p{margin:.5rem auto 0; max-width:60ch; color:var(--muted); font-size:.98rem; font-weight:400; line-height:1.5}
+.emerg{max-width:1240px; margin:.8rem auto 0; padding:0 1.7rem}
+.emerg div{background:#fff; border:1px solid var(--line); border-left:4px solid #d9534f; border-radius:12px; padding:.6rem .85rem; font-size:.86rem; color:#3f4d54; line-height:1.45}
+.emerg b{color:#c0392b}
+
+.toolbar{max-width:1240px; margin:.7rem auto 0; padding:0 1.7rem; display:flex; justify-content:center}
+.search{position:relative; width:100%; max-width:360px}
+.search input{width:100%; border:1px solid var(--line); background:var(--card); border-radius:11px; padding:.5rem .8rem .5rem 2.1rem; font:inherit; font-size:.9rem; color:var(--ink); outline:none}
+.search input:focus{border-color:var(--azure); box-shadow:0 0 0 3px rgba(43,124,196,.13)}
+.search svg{position:absolute; left:.65rem; top:50%; transform:translateY(-50%); width:16px; height:16px; fill:none; stroke:var(--muted); stroke-width:2}
+
+.catwrap{position:relative; max-width:1240px; margin:.6rem auto 0; padding:0 1.2rem}
+.catbar{display:flex; gap:.35rem; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding:.2rem .5rem}
+.catbar::-webkit-scrollbar{display:none}
+.cchip{white-space:nowrap; border:1px solid var(--line); background:var(--card); color:#3f4d54; padding:.44rem .78rem; border-radius:999px; font-size:.83rem; font-weight:500; font-family:inherit; cursor:pointer; display:inline-flex; gap:.38rem; align-items:center; transition:.15s; flex:0 0 auto}
+.cchip:hover{border-color:var(--loch); color:var(--loch)}
+.cchip .sw{width:7px; height:7px; border-radius:50%; flex:0 0 auto}
+.cchip .c{color:var(--muted); font-weight:500}
+.cchip.on{border-color:var(--loch); background:var(--loch); color:#fff; box-shadow:0 6px 16px rgba(18,59,79,.22)}
+.cchip.on .c{color:#bcd9e4}
+.catnav{position:absolute; top:50%; transform:translateY(-50%); z-index:6; width:28px; height:28px; border-radius:50%; border:1px solid var(--line); background:#fff; color:var(--azure); font-size:1.1rem; line-height:1; cursor:pointer; display:none; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(18,59,79,.18)}
+.catnav.prev{left:.3rem} .catnav.next{right:.3rem}
+.catnav.show{display:inline-flex}
+
+.layout{display:flex; gap:1rem; max-width:1240px; margin:.8rem auto 0; padding:0 1.1rem 2.2rem; align-items:flex-start; flex:1}
+.listcol{flex:1 1 auto; min-width:0}
+.listhead{display:flex; align-items:center; gap:.6rem; margin:0 .2rem .55rem}
+.listhead h2{font-size:.82rem; font-weight:700; text-transform:uppercase; letter-spacing:0; color:var(--muted)}
+.savedtoggle{margin-left:auto; font-family:inherit; font-size:.8rem; font-weight:600; color:#b23b5e; background:#fff; border:1px solid var(--line); border-radius:999px; padding:.32rem .7rem; cursor:pointer; display:inline-flex; align-items:center; gap:.35rem; transition:.15s}
+.savedtoggle svg{width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2}
+.savedtoggle.on{background:#fbe9ef; border-color:#f0b8c8; color:#b23b5e}
+.savedtoggle.on svg{fill:#d9536f; stroke:#d9536f}
+
+.card{position:relative; display:flex; gap:.75rem; padding:.7rem .8rem; border:1px solid var(--line); border-radius:14px; background:var(--card); margin-bottom:.5rem; cursor:pointer; transition:.15s; box-shadow:0 3px 10px rgba(40,70,120,.05)}
+.card:hover{border-color:var(--azure); box-shadow:0 8px 22px rgba(40,70,120,.12); transform:translateY(-1px)}
+.card .ic{flex:0 0 auto; width:38px; height:38px; border-radius:10px; display:grid; place-items:center}
+.card .ic svg{width:20px; height:20px; fill:none; stroke:#fff; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
+.card .body{flex:1; min-width:0}
+.card h3{font-size:.98rem; color:var(--loch); line-height:1.2; margin-bottom:.12rem; padding-right:1.7rem}
+.card .meta{font-size:.83rem; color:var(--muted); line-height:1.35}
+.card .row{display:flex; align-items:center; gap:.5rem; margin-top:.4rem; flex-wrap:wrap}
+.card .dist{font-size:.74rem; font-weight:700; color:#fff; border-radius:999px; padding:.12rem .5rem}
+.card a.act{font-size:.78rem; font-weight:600; text-decoration:none; color:var(--azure); display:inline-flex; align-items:center; gap:.25rem}
+.card a.act:hover{text-decoration:underline}
+.card a.act svg{width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:2}
+.like{position:absolute; top:.55rem; right:.55rem; width:26px; height:26px; border:none; background:transparent; cursor:pointer; padding:0; display:grid; place-items:center}
+.like svg{width:18px; height:18px; fill:none; stroke:#b8c2cc; stroke-width:1.8; transition:.15s}
+.like.on svg{fill:#e0566f; stroke:#e0566f}
+.empty{text-align:center; color:var(--muted); padding:2rem 1rem; font-weight:400}
+
+.mapcol{flex:0 0 452px; position:sticky; top:64px}
+#map{height:560px; border-radius:16px; border:1px solid var(--line); box-shadow:0 10px 30px rgba(40,70,120,.12); z-index:1}
+.maphint{font-size:.76rem; color:var(--azure); font-weight:600; text-align:center; margin:.5rem 0 0}
+.leaflet-popup-content{margin:.7rem .8rem; font-family:"Jost",sans-serif}
+.pop b{color:var(--loch); font-size:.98rem}
+.pop .pm{color:var(--muted); font-size:.82rem; margin:.2rem 0 .4rem; line-height:1.35}
+.pop a{color:var(--azure); text-decoration:none; font-weight:600; font-size:.82rem; display:inline-block; margin-right:.7rem}
+
+@media(max-width:860px){
+  .layout{flex-direction:column-reverse}
+  .mapcol{position:static; width:100%; flex-basis:auto}
+  #map{height:42vh}
+}
+
+footer{max-width:1240px; width:100%; margin:0 auto; padding:0 1.7rem 2rem; text-align:center; color:var(--muted); font-size:.76rem; line-height:1.5; font-weight:400}
+footer a{color:var(--azure); text-decoration:none; font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="hostbar" id="hostbar"></div>
+<nav class="guidenav"><div class="gnwrap">
+  <a class="gn" href="near-ayr.html">Nearby</a>
+  <a class="gn" href="ayr-and-ayrshire.html">Ayr &amp; Ayrshire</a>
+  <a class="gn" href="lighthouses-of-scotland.html">Lighthouses</a>
+  <a class="gn" href="trains-from-ayr.html">Trains</a>
+  <a class="gn" href="gallery.html">Photos</a>
+  <a class="gn active" aria-current="page">Useful info</a>
+</div></nav>
+
+<div class="intro">
+  <div class="kick">Practical help</div>
+  <h1>Useful info around Ayr</h1>
+  <p>The everyday essentials near us — pharmacies, shops, the hospital, a doctor, cash machines, the post office and fuel. Tap any place to see it on the map or get directions.</p>
+</div>
+<div class="emerg"><div><b>In an emergency, call 999.</b> For urgent medical help that isn't an emergency, call NHS 24 free on <b>111</b>. The nearest A&amp;E is University Hospital Ayr (open 24 hours), listed below under Health.</div></div>
+
+<div class="toolbar"><div class="search">
+  <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+  <input id="q" type="search" placeholder="Search (e.g. pharmacy, 24 hours, ATM)…" autocomplete="off">
+</div></div>
+
+<div class="catwrap">
+  <button type="button" class="catnav prev" id="catPrev" aria-label="Scroll left">&lsaquo;</button>
+  <div class="catbar" id="catbar"></div>
+  <button type="button" class="catnav next" id="catNext" aria-label="Scroll right">&rsaquo;</button>
+</div>
+
+<div class="layout">
+  <div class="listcol">
+    <div class="listhead">
+      <h2>Places</h2>
+      <button class="savedtoggle" id="savedToggle" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg><span id="savedTxt">Saved</span></button>
+    </div>
+    <div id="list"></div>
+  </div>
+  <div class="mapcol">
+    <div id="map"></div>
+    <p class="maphint">Tap any place to see exactly where it is on the map</p>
+  </div>
+</div>
+
+<footer>
+  Locations verified and curated · Map &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors (ODbL), tiles &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a> · Google links are external references only · A guest companion prepared for visitors of Daviot Guest House.
+</footer>
+
+<script>
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+var HOST={ name:"Daviot Guest House", tagline:"Useful info \u00b7 services around Ayr", lat:55.46204, lng:-4.64034 };
+(function(){
+  var ico='<img class="hb-logo" src="https://www.daviothouse.co.uk/wp-content/uploads/2019/01/daviot-house-logo-4.png" alt="'+esc(HOST.name)+'" onerror="this.style.display=\'none\'">';
+  document.getElementById('hostbar').innerHTML='<div class="hb-inner">'+ico
+    +'<div class="hb-name"><b>'+esc(HOST.name)+'</b><span>'+esc(HOST.tagline)+'</span></div>'
+    +'<span class="hb-tag">Useful info</span></div>';
+})();
+
+var CATS={
+  pharmacy:{label:'Pharmacy', color:'#3a9d5d', icon:'<path d="M9 3h6v3H9z"/><path d="M7 6h10v13a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2z"/><path d="M12 10v6M9 13h6"/>'},
+  food:{label:'Food & shops', color:'#2b7cc4', icon:'<path d="M6 7h12l-1 13H7z"/><path d="M9 7a3 3 0 0 1 6 0"/>'},
+  health:{label:'Health', color:'#d9534f', icon:'<path d="M3 12h4l2-5 3 10 2-5h7"/>'},
+  money:{label:'Money / ATM', color:'#c79a3a', icon:'<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.4"/>'},
+  post:{label:'Post', color:'#7c5c9e', icon:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>'},
+  fuel:{label:'Fuel', color:'#5c6b7a', icon:'<path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M4 21h12"/><path d="M15 9h2.5a2 2 0 0 1 2 2v6a1.5 1.5 0 0 0 3 0V9l-3-3"/>'}
+};
+var CATORDER=['pharmacy','food','health','money','post','fuel'];
+
+var DATA=[
+  {cat:'pharmacy', name:'Well Pharmacy', lat:55.4639817, lng:-4.6329126, note:'Sandgate, central \u2014 closest to us. Mon\u2013Sat.', phone:'+441292285576'},
+  {cat:'pharmacy', name:'Boots Pharmacy', lat:55.4717141, lng:-4.6265757, note:'New Road branch. Mon\u2013Sat.', phone:'+441292262486'},
+  {cat:'food', name:'Morrisons', lat:55.455263, lng:-4.624814, note:'Large supermarket (~1 mile). In-store pharmacy open 7 days.', phone:''},
+  {cat:'food', name:'Tesco Extra', lat:55.4677554, lng:-4.6081447, note:'Open until midnight, every day.', phone:''},
+  {cat:'food', name:'Asda Ayr', lat:55.4801749, lng:-4.5962629, note:'Open 24 hours.', phone:''},
+  {cat:'food', name:'AYLA Convenience', lat:55.4617148, lng:-4.6347246, note:'Handy local shop near the seafront.', phone:''},
+  {cat:'health', name:'University Hospital Ayr', lat:55.4305957, lng:-4.5937708, note:'A&E and hospital \u2014 open 24 hours.', phone:'+441292610555'},
+  {cat:'health', name:'Barns Medical Practice (GP)', lat:55.4590979, lng:-4.6318953, note:"Doctor's surgery, Dalblair Road.", phone:'+441292281439'},
+  {cat:'health', name:'The Dental Clinic Ayr', lat:55.4578757, lng:-4.6311544, note:'Dentist, Miller Road.', phone:'+441292432463'},
+  {cat:'money', name:'Bank of Scotland (ATM)', lat:55.4624327, lng:-4.6302418, note:'High Street \u2014 cash machine & branch.', phone:''},
+  {cat:'money', name:'TSB (ATM)', lat:55.462279, lng:-4.6296827, note:'High Street \u2014 cash machine & branch.', phone:''},
+  {cat:'post', name:'Ayr Post Office', lat:55.4613832, lng:-4.6288517, note:'198 High Street. Mon\u2013Sat.', phone:''},
+  {cat:'fuel', name:'BP (Station Bridge)', lat:55.4572883, lng:-4.6269981, note:'Fuel \u2014 open 24 hours, central.', phone:''}
+];
+DATA.forEach(function(p,i){ p.id='svc_'+i; });
+
+/* distance */
+function miBetween(a,b,c,d){ var R=3958.8, t=Math.PI/180; var dLat=(c-a)*t, dLng=(d-b)*t; var s=Math.sin(dLat/2)**2+Math.cos(a*t)*Math.cos(c*t)*Math.sin(dLng/2)**2; return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s)); }
+function fmtDist(mi){ if(mi<0.19){ var y=Math.round(mi*1760/10)*10; return y+' yd'; } return (mi<10?mi.toFixed(1):Math.round(mi))+' mi'; }
+DATA.forEach(function(p){ p.dist=miBetween(HOST.lat,HOST.lng,p.lat,p.lng); });
+
+/* favourites */
+var FAV_KEY='info_fav_v1';
+var saved=new Set(); try{ saved=new Set(JSON.parse(localStorage.getItem(FAV_KEY)||'[]')); }catch(e){}
+function saveFav(){ try{ localStorage.setItem(FAV_KEY, JSON.stringify([].concat(Array.from(saved)))); }catch(e){} }
+
+var activeCat='All', showSaved=false, query='';
+
+/* map */
+var map=L.map('map',{zoomControl:false}).setView([HOST.lat,HOST.lng],13);
+L.control.zoom({position:'topright'}).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19, subdomains:'abcd', attribution:'&copy; OpenStreetMap contributors &copy; CARTO'}).addTo(map);
+
+function pin(color){ return L.divIcon({className:'', iconSize:[26,33], iconAnchor:[13,31], popupAnchor:[0,-28],
+  html:'<svg width="26" height="33" viewBox="0 0 26 34" xmlns="http://www.w3.org/2000/svg"><path d="M13 1C6.4 1 1 6 1 12c0 8 12 21 12 21s12-13 12-21C25 6 19.6 1 13 1z" fill="'+color+'" stroke="#fff" stroke-width="1.5"/><circle cx="13" cy="12" r="4" fill="#fff"/></svg>'}); }
+var housePin=L.divIcon({className:'', iconSize:[34,42], iconAnchor:[17,40], popupAnchor:[0,-36],
+  html:'<svg width="34" height="42" viewBox="0 0 34 42" xmlns="http://www.w3.org/2000/svg"><path d="M17 1C9 1 2.5 7.2 2.5 15 2.5 24.5 17 41 17 41S31.5 24.5 31.5 15C31.5 7.2 25 1 17 1z" fill="#7189ed" stroke="#fff" stroke-width="1.6"/><g stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(17,15.5) scale(0.62) translate(-12,-12)"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></g></svg>'});
+
+var gmHouse='https://www.google.com/maps/search/?api=1&query='+HOST.lat+','+HOST.lng;
+L.marker([HOST.lat,HOST.lng],{icon:housePin,zIndexOffset:1200}).addTo(map)
+  .bindPopup('<div class="pop"><b>'+esc(HOST.name)+'</b><div class="pm">Your base.</div><a href="'+gmHouse+'" target="_blank" rel="noopener">Open in Google Maps</a></div>')
+  .bindTooltip(HOST.name,{direction:'top'});
+
+var markers={};
+DATA.forEach(function(p){
+  var dir='https://www.google.com/maps/dir/?api=1&destination='+p.lat+','+p.lng;
+  var html='<div class="pop"><b>'+esc(p.name)+'</b><div class="pm">'+esc(p.note)+'</div>'
+    +'<a href="'+dir+'" target="_blank" rel="noopener">Directions</a>'
+    +(p.phone?'<a href="tel:'+esc(p.phone)+'">Call</a>':'')+'</div>';
+  var m=L.marker([p.lat,p.lng],{icon:pin(CATS[p.cat].color)}).bindPopup(html).bindTooltip(p.name,{direction:'top'});
+  markers[p.id]=m; m.addTo(map);
+});
+
+/* rendering */
+var listEl=document.getElementById('list');
+function visible(){
+  return DATA.filter(function(p){
+    if(showSaved && !saved.has(p.id)) return false;
+    if(!showSaved && activeCat!=='All' && p.cat!==activeCat) return false;
+    if(query){ var q=query.toLowerCase(); if((p.name+' '+p.note+' '+CATS[p.cat].label).toLowerCase().indexOf(q)<0) return false; }
+    return true;
+  }).sort(function(a,b){ return a.dist-b.dist; });
+}
+function cardHtml(p){
+  var c=CATS[p.cat];
+  var dir='https://www.google.com/maps/dir/?api=1&destination='+p.lat+','+p.lng;
+  return '<div class="card" data-id="'+p.id+'">'
+    +'<button class="like'+(saved.has(p.id)?' on':'')+'" data-fav="'+p.id+'" aria-label="Save"><svg viewBox="0 0 24 24"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg></button>'
+    +'<div class="ic" style="background:'+c.color+'"><svg viewBox="0 0 24 24">'+c.icon+'</svg></div>'
+    +'<div class="body"><h3>'+esc(p.name)+'</h3><div class="meta">'+esc(p.note)+'</div>'
+    +'<div class="row"><span class="dist" style="background:'+c.color+'">'+fmtDist(p.dist)+' from us</span>'
+    +'<a class="act" href="'+dir+'" target="_blank" rel="noopener" data-stop="1"><svg viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>Directions</a>'
+    +(p.phone?'<a class="act" href="tel:'+esc(p.phone)+'" data-stop="1"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/></svg>Call</a>':'')
+    +'</div></div></div>';
+}
+function render(){
+  var items=visible();
+  if(!items.length){ listEl.innerHTML='<div class="empty">'+(showSaved?'No saved places yet \u2014 tap the heart on a card to save it.':'Nothing matches your search.')+'</div>'; return; }
+  listEl.innerHTML=items.map(cardHtml).join('');
+}
+function renderCats(){
+  var counts={}; CATORDER.forEach(function(c){counts[c]=0;}); DATA.forEach(function(p){counts[p.cat]++;});
+  var bar=document.getElementById('catbar');
+  var html='<button class="cchip '+(activeCat==='All'&&!showSaved?'on':'')+'" data-c="All">All <span class="c">'+DATA.length+'</span></button>';
+  html+=CATORDER.map(function(c){ return '<button class="cchip '+(activeCat===c&&!showSaved?'on':'')+'" data-c="'+c+'"><span class="sw" style="background:'+CATS[c].color+'"></span>'+esc(CATS[c].label)+' <span class="c">'+counts[c]+'</span></button>'; }).join('');
+  bar.innerHTML=html;
+  bar.querySelectorAll('.cchip').forEach(function(b){ b.addEventListener('click',function(){ activeCat=this.dataset.c; showSaved=false; updateSaved(); renderCats(); render(); if(window.updateCatNav) window.updateCatNav(); }); });
+}
+function updateSaved(){ var b=document.getElementById('savedToggle'); var n=DATA.filter(function(p){return saved.has(p.id);}).length; document.getElementById('savedTxt').textContent='Saved'+(n?' ('+n+')':''); b.classList.toggle('on',showSaved); b.setAttribute('aria-pressed',showSaved?'true':'false'); }
+
+document.getElementById('savedToggle').addEventListener('click',function(){ showSaved=!showSaved; if(showSaved) activeCat='All'; updateSaved(); renderCats(); render(); });
+document.getElementById('q').addEventListener('input',function(){ query=this.value.trim(); render(); });
+
+listEl.addEventListener('click',function(e){
+  var fav=e.target.closest('[data-fav]');
+  if(fav){ var id=fav.getAttribute('data-fav'); if(saved.has(id)) saved.delete(id); else saved.add(id); saveFav(); fav.classList.toggle('on',saved.has(id)); updateSaved(); if(showSaved) render(); return; }
+  if(e.target.closest('[data-stop]')) return;
+  var card=e.target.closest('.card'); if(!card) return;
+  var id=card.getAttribute('data-id'); var p=DATA.find(function(x){return x.id===id;}); if(!p) return;
+  map.flyTo([p.lat,p.lng], 16, {duration:.6});
+  setTimeout(function(){ if(markers[id]) markers[id].openPopup(); }, 650);
+  if(window.innerWidth<=860){ document.getElementById('map').scrollIntoView({behavior:'smooth', block:'center'}); }
+});
+
+renderCats(); render(); updateSaved();
+setTimeout(function(){ map.invalidateSize(); }, 200);
+
+/* category nav arrows */
+(function(){ var bar=document.getElementById('catbar'), prev=document.getElementById('catPrev'), next=document.getElementById('catNext');
+  window.updateCatNav=function(){ var max=bar.scrollWidth-bar.clientWidth-2, over=max>4; prev.classList.toggle('show', over && bar.scrollLeft>4); next.classList.toggle('show', over && bar.scrollLeft<max-4); };
+  prev.onclick=function(){ bar.scrollBy({left:-bar.clientWidth*0.7,behavior:'smooth'}); };
+  next.onclick=function(){ bar.scrollBy({left:bar.clientWidth*0.7,behavior:'smooth'}); };
+  bar.addEventListener('scroll',function(){window.updateCatNav();},{passive:true}); window.addEventListener('resize',function(){window.updateCatNav();}); setTimeout(function(){window.updateCatNav();},300);
+})();
+</script>
+<script>/*gnwrap-center*/(function(){var w=document.querySelector(".gnwrap");if(!w)return;if(!document.getElementById("gnar-css")){var st=document.createElement("style");st.id="gnar-css";st.textContent=".gnshell{position:relative;display:inline-flex;max-width:100%}.gnar{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:27px;height:27px;border-radius:50%;border:1px solid #dbe3ef;background:#fff;color:#123b4f;display:none;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 9px rgba(40,70,120,.22);font-size:1.05rem;line-height:1;padding:0}.gnar-l{left:1px}.gnar-r{right:1px}.gnar.show{display:flex}";document.head.appendChild(st);}var shell=document.createElement("div");shell.className="gnshell";w.parentNode.insertBefore(shell,w);shell.appendChild(w);var L=document.createElement("button");L.type="button";L.className="gnar gnar-l";L.setAttribute("aria-label","Scroll left");L.innerHTML="\u2039";var R=document.createElement("button");R.type="button";R.className="gnar gnar-r";R.setAttribute("aria-label","Scroll right");R.innerHTML="\u203a";shell.appendChild(L);shell.appendChild(R);function center(){var a=w.querySelector(".gn.active");if(a)w.scrollLeft=Math.max(0,a.offsetLeft-(w.clientWidth-a.offsetWidth)/2);}function upd(){var sc=w.scrollLeft,max=w.scrollWidth-w.clientWidth,ov=max>4;L.classList.toggle("show",ov&&sc>4);R.classList.toggle("show",ov&&sc<max-4);}L.onclick=function(){w.scrollBy({left:-w.clientWidth*0.7,behavior:"smooth"});};R.onclick=function(){w.scrollBy({left:w.clientWidth*0.7,behavior:"smooth"});};w.addEventListener("scroll",upd,{passive:true});window.addEventListener("resize",function(){center();upd();});center();upd();setTimeout(upd,300);})();</script>
+</body>
+</html>
