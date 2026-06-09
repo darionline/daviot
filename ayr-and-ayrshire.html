@@ -168,6 +168,7 @@ aside .head .sort:hover{border-color:var(--loch); color:var(--loch)}
 .acts .more:hover{background:rgba(43,124,196,.08)}
 .acts .more:active{transform:scale(.97)}
 .wm-overlay{position:fixed; inset:0; z-index:6000; background:rgba(18,40,55,.55); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); display:flex; align-items:center; justify-content:center; padding:1.1rem; opacity:0; transition:opacity .18s}
+.wm-overlay[hidden]{display:none !important}
 .wm-overlay.show{opacity:1}
 .wm-modal{position:relative; max-width:560px; width:100%; max-height:86vh; overflow:auto; background:var(--card); border-radius:18px; box-shadow:0 30px 70px rgba(8,28,38,.42); transform:translateY(10px) scale(.985); transition:transform .18s}
 .wm-overlay.show .wm-modal{transform:none}
