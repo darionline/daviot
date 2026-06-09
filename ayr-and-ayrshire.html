@@ -392,9 +392,9 @@ let _savedHinted=false;
 function updateSavedToggle(){ var b=document.getElementById('savedToggle'); if(!b) return; var n=lighthouses.filter(function(l){return saved.has(l.id);}).length; var t=document.getElementById('savedToggleTxt'); if(t) t.textContent='Saved'+(n?' ('+n+')':''); var on=(activeZone==='__saved'); b.classList.toggle('on',on); b.setAttribute('aria-pressed', on?'true':'false'); }
 function selectMarker(id){
   if(selectedId===id) return;
-  if(selectedId && markers[selectedId]){ const pl=lighthouses.find(x=>x.id===selectedId); markers[selectedId].setIcon(iconFor(pl?pl.zone:null)); }
+  if(selectedId && markers[selectedId]){ const pl=lighthouses.find(x=>x.id===selectedId); markers[selectedId].setIcon(iconFor(pl?pl.zone:null)); markers[selectedId].setZIndexOffset(0); }
   selectedId=id;
-  if(markers[id]) markers[id].setIcon(lhIconSel);
+  if(markers[id]){ markers[id].setIcon(lhIconSel); markers[id].setZIndexOffset(1000); }
 }
 
 let lighthouses = [], markers = {}, sortAZ = true;
@@ -679,7 +679,7 @@ function draw(){
   if(activeZone==='__saved') items=items.filter(l=>saved.has(l.id));
 
   const overview = (activeZone==='All' && !filter);
-  items.forEach(l=>{ const m=L.marker([l.lat,l.lng],{icon:(l.id===selectedId?lhIconSel:iconFor(l.zone))}).bindPopup(popupHtml(l)); m.on('popupopen',()=>{ openPopupId=l.id; selectMarker(l.id); }); m.on('popupclose',()=>{ if(openPopupId===l.id) openPopupId=null; }); markers[l.id]=m; cluster.addLayer(m); });
+  items.forEach(l=>{ const m=L.marker([l.lat,l.lng],{icon:(l.id===selectedId?lhIconSel:iconFor(l.zone)), zIndexOffset:(l.id===selectedId?1000:0)}).bindPopup(popupHtml(l)); m.on('popupopen',()=>{ openPopupId=l.id; selectMarker(l.id); }); m.on('popupclose',()=>{ if(openPopupId===l.id) openPopupId=null; }); markers[l.id]=m; cluster.addLayer(m); });
 
   const list=$('#list');
   if(!items.length){ list.innerHTML='<div class="state">'+(activeZone==='__saved'?'No saved places yet \u2014 tap the \u2665 heart on any card to keep it for your trip.':'No place matches your filters.')+'</div>'; return; }
