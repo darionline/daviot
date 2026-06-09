@@ -381,7 +381,7 @@ map.addLayer(cluster);
 function pinHtml(fill,w,hh){ return '<svg width="'+w+'" height="'+hh+'" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg"><path d="M16 1C8.3 1 2 7 2 14.3 2 23.5 16 39 16 39s14-15.5 14-24.7C30 7 23.7 1 16 1z" fill="'+fill+'" stroke="#fff" stroke-width="1.6"/><circle cx="16" cy="15" r="5.2" fill="#fff"/></svg>'; }
 function iconFor(cat){ return L.divIcon({className:'', html:pinHtml(ZONE_COLORS[cat]||'#2b7cc4',30,38), iconSize:[30,38], iconAnchor:[15,36], popupAnchor:[0,-32]}); }
 const lhIconSel = L.divIcon({className:'lhsel', html:pinHtml('#123b4f',40,50), iconSize:[40,50], iconAnchor:[20,48], popupAnchor:[0,-44]});
-let selectedId=null;
+let selectedId=null, openPopupId=null;
 
 /* Favourites */
 const FAV_KEY='ayr_fav_v1';
@@ -671,6 +671,7 @@ function fitInitial(){ if(initialFitDone) return; initialFitDone=true; fitAyr();
 map.on('dragstart', ()=>{ userInteracted=true; });
 
 function draw(){
+  const keepOpen=openPopupId;
   cluster.clearLayers(); markers={}; zoneLayer.clearLayers();
   const filter=$('#q').value.trim().toLowerCase();
   const cmp=(a,b)=> sortAZ ? a.name.localeCompare(b.name,'en') : b.name.localeCompare(a.name,'en');
@@ -678,7 +679,7 @@ function draw(){
   if(activeZone==='__saved') items=items.filter(l=>saved.has(l.id));
 
   const overview = (activeZone==='All' && !filter);
-  items.forEach(l=>{ const m=L.marker([l.lat,l.lng],{icon:(l.id===selectedId?lhIconSel:iconFor(l.zone))}).bindPopup(popupHtml(l)); m.on('popupopen',()=>selectMarker(l.id)); markers[l.id]=m; cluster.addLayer(m); });
+  items.forEach(l=>{ const m=L.marker([l.lat,l.lng],{icon:(l.id===selectedId?lhIconSel:iconFor(l.zone))}).bindPopup(popupHtml(l)); m.on('popupopen',()=>{ openPopupId=l.id; selectMarker(l.id); }); m.on('popupclose',()=>{ if(openPopupId===l.id) openPopupId=null; }); markers[l.id]=m; cluster.addLayer(m); });
 
   const list=$('#list');
   if(!items.length){ list.innerHTML='<div class="state">'+(activeZone==='__saved'?'No saved places yet \u2014 tap the \u2665 heart on any card to keep it for your trip.':'No place matches your filters.')+'</div>'; return; }
@@ -704,6 +705,8 @@ function draw(){
     map.flyTo([l.lat,l.lng], z, {duration:.7});
     if(mk) setTimeout(()=>{ try{ mk.openPopup(); }catch(e){} }, 760);
   }));
+  if(selectedId){ list.querySelectorAll('.card').forEach(function(c){ if(c.getAttribute('data-id')===selectedId) c.classList.add('sel'); }); }
+  if(keepOpen && markers[keepOpen]){ setTimeout(function(){ try{ markers[keepOpen].openPopup(); }catch(e){} }, 30); }
 }
 
 let showZonePill=false;
