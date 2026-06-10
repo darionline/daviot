@@ -60,7 +60,7 @@ a{color:inherit}
 .cuibar .cchip{padding:.32rem .62rem;font-size:.77rem;font-weight:500}
 
 .layout{display:flex; flex-direction:row-reverse; gap:1rem; width:100%; max-width:1240px; margin:.8rem auto 0; padding:0 1.1rem 2.2rem; align-items:flex-start; flex:1}
-.listcol{flex:1 1 auto; min-width:0}
+.listcol{flex:0 0 440px; min-width:0}
 .listhead{display:flex; align-items:center; gap:.6rem; margin:0 .2rem .55rem}
 .listhead h2{font-size:.82rem; font-weight:700; text-transform:uppercase; color:var(--muted)}
 .savedtoggle{margin-left:auto; font-family:inherit; font-size:.8rem; font-weight:600; color:#b23b5e; background:#fff; border:1px solid var(--line); border-radius:999px; padding:.32rem .7rem; cursor:pointer; display:inline-flex; align-items:center; gap:.35rem; transition:.15s}
@@ -89,8 +89,8 @@ a{color:inherit}
 .scrollcue{display:none}
 @keyframes cuebob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(4px)}}
 
-.mapcol{flex:0 0 452px; position:sticky; top:64px}
-#map{height:560px; border-radius:16px; border:1px solid var(--line); box-shadow:0 10px 30px rgba(40,70,120,.12); z-index:1}
+.mapcol{flex:1 1 auto; position:sticky; top:64px}
+#map{height:600px; border-radius:16px; border:1px solid var(--line); box-shadow:0 10px 30px rgba(40,70,120,.12); z-index:1}
 .maphint{font-size:.76rem; color:var(--azure); font-weight:600; text-align:center; margin:.5rem 0 0}
 .marker-cluster{background:rgba(43,124,196,.28)}
 .marker-cluster div{background:#2b7cc4; color:#fff; font-family:"Jost",sans-serif; font-weight:600}
