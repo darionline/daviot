@@ -808,8 +808,7 @@ window.addEventListener('resize', setMapTop); setMapTop(); setTimeout(setMapTop,
 window.addEventListener('load', ()=>{ setTimeout(()=>{ try{ setMapTop(); map.invalidateSize(); if(!userInteracted) fitAyr(); }catch(e){} }, 120); });
 (function(){ const btn=document.getElementById('toTop'); if(!btn) return; const list=document.getElementById('list');
   const isMobile=()=>window.matchMedia('(max-width:880px)').matches;
-  const upd=()=>{ const sc=(window.scrollY||0)>300 || (list && list.scrollTop>300); btn.classList.toggle('show', !!sc);
-    if(isMobile()){ try{ map.closePopup(); }catch(e){} } };
+  const upd=()=>{ const sc=(window.scrollY||0)>300 || (list && list.scrollTop>300); btn.classList.toggle('show', !!sc); };
   window.addEventListener('scroll',upd,{passive:true});
   if(list) list.addEventListener('scroll',upd,{passive:true});
   btn.addEventListener('click',()=>{ window.scrollTo({top:0,behavior:'smooth'}); if(list) list.scrollTo({top:0,behavior:'smooth'}); });
