@@ -469,7 +469,7 @@ const CURATED = [
 
 const map = L.map('map',{zoomControl:false}).setView([HOST.lat,HOST.lng], 9);
 L.control.zoom({position:'topright'}).addTo(map);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd',attribution:'&copy; OpenStreetMap contributors &copy; CARTO'}).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd',attribution:'&copy; OpenStreetMap contributors &copy; CARTO'}).addTo(map);
 const cluster = L.markerClusterGroup({maxClusterRadius:46, showCoverageOnHover:false});
 map.addLayer(cluster);
 

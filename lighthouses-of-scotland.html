@@ -337,7 +337,7 @@ const I = {
 
 const map = L.map('map', {zoomControl:false}).setView([57.5,-4.6], 6);
 L.control.zoom({position:'topright'}).addTo(map);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
   maxZoom:19, subdomains:'abcd',
   attribution:'&copy; OpenStreetMap contributors &copy; CARTO'
 }).addTo(map);
