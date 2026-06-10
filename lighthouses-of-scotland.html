@@ -509,11 +509,11 @@ async function enrichImages(){
   lighthouses.forEach(l=>{ l.checked=true; });
   refreshPopups();
 }
-function refreshPopups(){ Object.keys(markers).forEach(id=>{ const l=lighthouses.find(x=>x.id===id); if(l&&markers[id]) markers[id].setPopupContent(popupHtml(l)); }); }
+function refreshPopups(){ if(openPopupId){ const l=lighthouses.find(x=>x.id===openPopupId); if(l) placePopup.setContent(popupHtml(l)); } }
 function updateThumb(id,url){
   const m0=document.querySelector('.media[data-id="'+id+'"]');
   if(m0){ m0.classList.remove('noimg'); m0.innerHTML='<img loading="lazy" src="'+esc(url)+'" alt="" onerror="phFail(this)"><span class="locbadge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>'+likeBtn(id); }
-  const m=markers[id]; if(m) m.setPopupContent(popupHtml(lighthouses.find(l=>l.id===id)));
+  if(openPopupId===id){ const l=lighthouses.find(x=>x.id===id); if(l) placePopup.setContent(popupHtml(l)); }
 }
 
 const ZONE_ORDER=['Shetland','Orkney','North Highlands & Coast','Outer Hebrides','West Coast & Inner Hebrides','North-East & Moray Firth','East Coast & Forth','Clyde & South-West'];
@@ -612,6 +612,11 @@ let initialFitDone=false, userInteracted=false;
 function fitInitial(){ if(initialFitDone) return; initialFitDone=true; fitAyr(); }
 map.on('dragstart', ()=>{ userInteracted=true; });
 
+/* Robust place popups: live on the MAP, never on clusterable markers, so re-rendering/panning can't close them. */
+let openPopupId=null;
+const placePopup=L.popup({maxWidth:300, autoPanPadding:[26,26], keepInView:true});
+placePopup.on('remove',()=>{ openPopupId=null; });
+function showPopup(l, content){ if(!l) return; openPopupId=l.id; try{ selectMarker(l.id); }catch(e){} placePopup.setLatLng([l.lat,l.lng]).setContent(content||popupHtml(l)).openOn(map); }
 function draw(){
   cluster.clearLayers(); markers={}; zoneLayer.clearLayers();
   const filter=$('#q').value.trim().toLowerCase();
@@ -620,7 +625,7 @@ function draw(){
   if(activeZone==='__saved') items=items.filter(l=>saved.has(l.id));
 
   const overview = (activeZone==='All' && !filter);
-  items.forEach(l=>{ const m=L.marker([l.lat,l.lng],{icon:(l.id===selectedId?lhIconSel:lhIcon)}).bindPopup(popupHtml(l)); m.on('popupopen',()=>selectMarker(l.id)); markers[l.id]=m; cluster.addLayer(m); });
+  items.forEach(l=>{ const m=L.marker([l.lat,l.lng],{icon:(l.id===selectedId?lhIconSel:lhIcon)}); m.on('click',()=>showPopup(l)); markers[l.id]=m; cluster.addLayer(m); });
 
   const list=$('#list');
   if(!items.length){ list.innerHTML='<div class="state">'+(activeZone==='__saved'?'No saved lighthouses yet \u2014 tap the \u2665 heart on any card to keep it for your trip.':'No lighthouse matches your filters.')+'</div>'; return; }
@@ -643,10 +648,10 @@ function draw(){
     list.querySelectorAll('.card.sel').forEach(c=>c.classList.remove('sel')); el.classList.add('sel');
     selectMarker(l.id);
     const mk=markers[l.id]; const z=Math.max(map.getZoom(), 9);
-    if(mk){ const _open=()=>{ try{ mk.openPopup(); }catch(e){} };
-      try{ cluster.zoomToShowLayer(mk, _open); }
+    const _open=()=>showPopup(l);
+    if(mk){ try{ cluster.zoomToShowLayer(mk, _open); }
       catch(e){ map.flyTo([l.lat,l.lng], z, {duration:.7}); let _o=false; const _f=()=>{ if(_o) return; _o=true; _open(); }; map.once('moveend', _f); setTimeout(_f, 1000); } }
-    else { map.flyTo([l.lat,l.lng], z, {duration:.7}); }
+    else { map.flyTo([l.lat,l.lng], z, {duration:.7}); let _o=false; const _f=()=>{ if(_o) return; _o=true; _open(); }; map.once('moveend', _f); setTimeout(_f, 1000); }
   }));
 }
 
@@ -710,7 +715,7 @@ function revealNearest(latlng, fromLabel){
   if(lastNearId && lastNearId!==best.id && markers[lastNearId]){ const pl=lighthouses.find(x=>x.id===lastNearId); if(pl) markers[lastNearId].setPopupContent(popupHtml(pl)); }
   lastNearId=best.id;
   const dist=fmtKm(bd);
-  const open=()=>{ const mk=markers[best.id]; if(mk){ mk.setPopupContent(popupHtml(best).replace('</b>','</b><div class="meta nearnote">\u2248 '+dist+' '+fromLabel+'</div>')); mk.openPopup(); } };
+  const open=()=>{ showPopup(best, popupHtml(best).replace('</b>','</b><div class="meta nearnote">\u2248 '+dist+' '+fromLabel+'</div>')); };
   cluster.zoomToShowLayer(markers[best.id], open);
 }
 
