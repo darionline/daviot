@@ -644,7 +644,7 @@ function draw(){
     selectMarker(l.id);
     const mk=markers[l.id]; const z=Math.max(map.getZoom(), 9);
     map.flyTo([l.lat,l.lng], z, {duration:.7});
-    if(mk) setTimeout(()=>{ try{ mk.openPopup(); }catch(e){} }, 760);
+    if(mk){ let _o=false; const _open=()=>{ if(_o) return; _o=true; try{ mk.openPopup(); }catch(e){} }; map.once('moveend', _open); setTimeout(_open, 950); }
   }));
 }
 
