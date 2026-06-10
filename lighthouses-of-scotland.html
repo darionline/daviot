@@ -643,8 +643,10 @@ function draw(){
     list.querySelectorAll('.card.sel').forEach(c=>c.classList.remove('sel')); el.classList.add('sel');
     selectMarker(l.id);
     const mk=markers[l.id]; const z=Math.max(map.getZoom(), 9);
-    map.flyTo([l.lat,l.lng], z, {duration:.7});
-    if(mk){ let _o=false; const _open=()=>{ if(_o) return; _o=true; try{ mk.openPopup(); }catch(e){} }; map.once('moveend', _open); setTimeout(_open, 950); }
+    if(mk){ const _open=()=>{ try{ mk.openPopup(); }catch(e){} };
+      try{ cluster.zoomToShowLayer(mk, _open); }
+      catch(e){ map.flyTo([l.lat,l.lng], z, {duration:.7}); let _o=false; const _f=()=>{ if(_o) return; _o=true; _open(); }; map.once('moveend', _f); setTimeout(_f, 1000); } }
+    else { map.flyTo([l.lat,l.lng], z, {duration:.7}); }
   }));
 }
 
