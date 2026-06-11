@@ -133,6 +133,7 @@ aside .head .sort:hover{border-color:var(--loch); color:var(--loch)}
 .media img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block}
 .media.noimg{background:color-mix(in srgb, var(--azure) 14%, #eef2fa)}
 .blurb{font-size:.82rem; color:var(--muted); line-height:1.42; margin:.18rem 0 .12rem; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+.bsrc{display:block; font-size:.64rem; font-style:normal; color:var(--muted); opacity:.85; margin:0 0 .12rem}
 .media svg{width:40px;height:40px; fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .locbadge{position:absolute; bottom:5px; left:5px; z-index:3; width:31px; height:31px; border-radius:50%;
   background:rgba(255,255,255,.94); color:var(--azure); display:grid; place-items:center;
@@ -348,7 +349,7 @@ html{scrollbar-width:thin;scrollbar-color:rgba(43,124,196,.45) transparent}
 
 <button class="totop" id="toTop" aria-label="Back to top"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></button>
 
-<div class="attr">Sample prepared for Daviot Guest House &middot; Data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> (ODbL) &middot; Photography via <a href="https://commons.wikimedia.org" target="_blank" rel="noopener">Wikimedia Commons</a> (see each file for its licence) &middot; Map tiles &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a> &middot; Google links are external references only</div>
+<div class="attr">Sample prepared for Daviot Guest House &middot; Data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> (ODbL) &middot; Photography via <a href="https://commons.wikimedia.org" target="_blank" rel="noopener">Wikimedia Commons</a> (see each file for its licence) &middot; Descriptions via <a href="https://en.wikipedia.org/" target="_blank" rel="noopener">Wikipedia</a> (CC BY-SA 4.0) &middot; Map tiles &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a> &middot; Google links are external references only</div>
 
 <script>
 const $ = s => document.querySelector(s);
@@ -485,7 +486,7 @@ var MANUAL_BLURB={
   "Pirate Pete's":"An indoor soft-play centre on the Ayr seafront."
 };
 function shortBlurb(txt){ if(!txt) return ''; txt=String(txt).replace(/\s+/g,' ').trim(); var m=txt.match(/^(.*?[.!?])(\s|$)/); var s=m?m[1]:txt; if(s.length>150){ s=s.slice(0,140).replace(/\s+\S*$/,'')+'\u2026'; } return s; }
-function updateBlurb(id,txt){ if(!txt) return; document.querySelectorAll('.card').forEach(function(card){ if(card.getAttribute('data-id')!==id) return; var body=card.querySelector('.cbody'); if(!body) return; var b=body.querySelector('.blurb'); if(!b){ b=document.createElement('div'); b.className='blurb'; var acts=body.querySelector('.acts'); body.insertBefore(b, acts||null); } b.textContent=txt; }); }
+function updateBlurb(id,txt){ if(!txt) return; document.querySelectorAll('.card').forEach(function(card){ if(card.getAttribute('data-id')!==id) return; var body=card.querySelector('.cbody'); if(!body) return; var b=body.querySelector('.blurb'); if(!b){ b=document.createElement('div'); b.className='blurb'; var acts=body.querySelector('.acts'); body.insertBefore(b, acts||null); } b.textContent=txt; var c=body.querySelector('.bsrc'); if(!c){ c=document.createElement('cite'); c.className='bsrc'; b.insertAdjacentElement('afterend', c); } c.textContent='Source: Wikipedia (CC BY-SA)'; }); }
 function ensureMoreBtn(l){ if(!l.extract) return; document.querySelectorAll('.card').forEach(function(card){ if(card.getAttribute('data-id')!==l.id) return; var acts=card.querySelector('.acts'); if(!acts||acts.querySelector('.more')) return; var btn=document.createElement('button'); btn.type='button'; btn.className='more'; btn.setAttribute('data-more',l.id); btn.textContent='Read more'; acts.appendChild(btn); }); }
 var wmOverlay=null;
 function buildModal(){ if(wmOverlay) return wmOverlay; wmOverlay=document.createElement('div'); wmOverlay.className='wm-overlay'; wmOverlay.hidden=true; wmOverlay.innerHTML='<div class="wm-modal" role="dialog" aria-modal="true" aria-labelledby="wmTitle"><button class="wm-close" type="button" aria-label="Close">\u00d7</button><div class="wm-imgwrap"></div><div class="wm-pad"><h3 class="wm-title" id="wmTitle"></h3><div class="wm-text"></div></div><div class="wm-attr"></div></div>'; document.body.appendChild(wmOverlay); wmOverlay.addEventListener('click',function(e){ if(e.target===wmOverlay) closeModal(); }); wmOverlay.querySelector('.wm-close').addEventListener('click',closeModal); return wmOverlay; }
@@ -662,6 +663,7 @@ function itemHtml(l){
     + '<div class="cbody"><div class="ttl"><h3>'+esc(l.name)+'</h3>'+pill+'</div>'
     + (l.place?'<div class="sub2">'+esc(l.place)+'</div>':'')
     + (l.blurb?'<div class="blurb">'+esc(l.blurb)+'</div>':'')
+    + (l.blurbSrc==='wikipedia'?'<cite class="bsrc">Source: Wikipedia (CC BY-SA)</cite>':'')
     + '<div class="acts"><a href="'+gm+'" target="_blank" rel="noopener">'+I.pin+'Open in Maps</a>'
     + (l.extract?'<button type="button" class="more" data-more="'+l.id+'">Read more</button>':'')
     + '</div>'
@@ -858,7 +860,7 @@ function loadWikiPhotos(){
       .then(r=>r.ok?r.json():null)
       .then(d=>{ if(!d) return;
         if(!l.img){ const src=(d.thumbnail&&d.thumbnail.source)||(d.originalimage&&d.originalimage.source); if(src){ l.img=src; updateThumb(l.id,src); } }
-        if(d.extract){ l.extract=d.extract; l.wikiurl=(d.content_urls&&d.content_urls.desktop&&d.content_urls.desktop.page)||''; l.wikititle=d.title||l.wiki; if(!l.blurb){ l.blurb=shortBlurb(d.extract); updateBlurb(l.id,l.blurb); } ensureMoreBtn(l); }
+        if(d.extract){ l.extract=d.extract; l.wikiurl=(d.content_urls&&d.content_urls.desktop&&d.content_urls.desktop.page)||''; l.wikititle=d.title||l.wiki; if(!l.blurb){ l.blurb=shortBlurb(d.extract); l.blurbSrc='wikipedia'; updateBlurb(l.id,l.blurb); } ensureMoreBtn(l); }
       })
       .catch(function(){});
   });
