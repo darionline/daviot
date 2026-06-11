@@ -99,6 +99,15 @@ a{color:inherit}
 
 .mapcol{flex:1 1 auto; position:sticky; top:64px}
 #map{height:600px; border-radius:16px; border:1px solid var(--line); box-shadow:0 10px 30px rgba(40,70,120,.12); z-index:1}
+.leaflet-control-zoom{border:none!important; box-shadow:0 2px 10px rgba(18,59,79,.16)!important; border-radius:11px!important; overflow:hidden; margin:10px 10px 0 0!important}
+.leaflet-control-zoom a{width:30px!important; height:30px!important; line-height:30px!important; font-size:17px!important; font-weight:400!important; color:#2b7cc4!important; background:rgba(255,255,255,.9)!important; border:none!important}
+.leaflet-control-zoom a:hover{background:#fff!important; color:#123b4f!important}
+.leaflet-control-zoom a:first-child{border-bottom:1px solid #e7edf5!important}
+.recenter-wrap{border:none!important; background:transparent!important; box-shadow:none!important; margin-top:8px!important}
+.recenter-ctrl{width:34px; height:34px; border-radius:9px; background:#fff; border:1px solid rgba(43,124,196,.28); box-shadow:0 2px 8px rgba(18,59,79,.2); display:grid; place-items:center; cursor:pointer; color:var(--azure); padding:0; -webkit-appearance:none; appearance:none}
+.recenter-ctrl:hover{background:rgba(43,124,196,.08); border-color:var(--azure)}
+.recenter-ctrl:active{transform:scale(.94)}
+.recenter-ctrl svg{width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
 .maphint{font-size:.76rem; color:var(--azure); font-weight:600; text-align:center; margin:.5rem 0 0}
 .leaflet-popup-content{margin:.7rem .8rem; font-family:"Jost",sans-serif}
 .pop b{color:var(--loch); font-size:.98rem}
@@ -111,6 +120,7 @@ a{color:inherit}
   .layout{display:block}
   .mapcol{position:sticky; top:64px; width:100%; z-index:5; margin-bottom:.7rem}
   #map{height:30vh; border-radius:14px}
+  .leaflet-control-zoom{display:none!important}
   .maphint{display:none}
 }
 
@@ -250,6 +260,22 @@ var activeCat='All', showSaved=false, query='';
 /* map */
 var map=L.map('map',{zoomControl:false}).setView([HOST.lat,HOST.lng],13);
 L.control.zoom({position:'topright'}).addTo(map);
+(function(){
+  var RecenterCtrl=L.Control.extend({ options:{position:'topright'},
+    onAdd:function(){
+      var c=L.DomUtil.create('div','leaflet-control recenter-wrap');
+      var b=L.DomUtil.create('button','recenter-ctrl', c);
+      b.type='button'; b.title='Show all points'; b.setAttribute('aria-label','Show all points');
+      b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H5a1 1 0 0 0-1 1v3"/><path d="M16 4h3a1 1 0 0 1 1 1v3"/><path d="M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M16 20h3a1 1 0 0 0 1-1v-3"/></svg>';
+      L.DomEvent.disableClickPropagation(c);
+      L.DomEvent.on(b,'click',function(e){ L.DomEvent.stop(e);
+        try{ var pts=visible().map(function(p){return [p.lat,p.lng];}); pts.push([HOST.lat,HOST.lng]); if(pts.length>1){ map.fitBounds(pts,{padding:[40,40],maxZoom:15}); } else { map.setView([HOST.lat,HOST.lng],13); } }catch(_){}
+        try{ map.invalidateSize(); }catch(_){}
+      });
+      return c;
+    }});
+  map.addControl(new RecenterCtrl());
+})();
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:19, subdomains:'abcd', attribution:'&copy; OpenStreetMap contributors &copy; CARTO'}).addTo(map);
 
 function pin(color){ return L.divIcon({className:'', iconSize:[26,33], iconAnchor:[13,31], popupAnchor:[0,-28],

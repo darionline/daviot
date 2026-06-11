@@ -112,7 +112,7 @@ header p{margin:.35rem 0 0; color:rgba(255,255,255,.92); font-size:.94rem; max-w
 
 .layout{flex:1; min-height:0; max-width:1240px; width:100%; margin:0 auto; display:grid; grid-template-columns:1fr 472px}
 #map{min-height:0; height:100%; background:#e8eef0; position:relative; z-index:0}
-.recenter-wrap{border:none!important; background:transparent!important; box-shadow:none!important}
+.recenter-wrap{border:none!important; background:transparent!important; box-shadow:none!important; margin-top:8px!important}
 .recenter-ctrl{width:34px; height:34px; border-radius:9px; background:#fff; border:1px solid rgba(43,124,196,.28); box-shadow:0 2px 8px rgba(18,59,79,.2); display:grid; place-items:center; cursor:pointer; color:var(--azure); padding:0; -webkit-appearance:none; appearance:none}
 .recenter-ctrl:hover{background:rgba(43,124,196,.08); border-color:var(--azure)}
 .recenter-ctrl:active{transform:scale(.94)}
@@ -488,7 +488,7 @@ const CURATED = [
 const map = L.map('map',{zoomControl:false}).setView([HOST.lat,HOST.lng], 9);
 L.control.zoom({position:'topright'}).addTo(map);
 (function(){
-  var RecenterCtrl=L.Control.extend({ options:{position:'topleft'},
+  var RecenterCtrl=L.Control.extend({ options:{position:'topright'},
     onAdd:function(){
       var c=L.DomUtil.create('div','leaflet-control recenter-wrap');
       var b=L.DomUtil.create('button','recenter-ctrl', c);
