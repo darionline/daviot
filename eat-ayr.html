@@ -87,7 +87,7 @@ a{color:inherit}
 .pinbtn svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
 .like{position:static; width:30px; height:30px; border:1px solid var(--line); background:#fff; border-radius:50%; cursor:pointer; padding:0; display:grid; place-items:center; box-shadow:0 2px 7px rgba(8,28,38,.14)}
 .like svg{width:18px; height:18px; fill:none; stroke:#b8c2cc; stroke-width:1.8; transition:.15s}
-.like.on svg{fill:#e0566f; stroke:#e0566f}
+.like.on svg{fill:#c0648a; stroke:#c0648a}
 .state{text-align:center; color:var(--muted); padding:2rem 1rem; font-weight:400; line-height:1.5}
 .spin{width:26px;height:26px;border:3px solid var(--line);border-top-color:var(--azure);border-radius:50%;animation:sp 1s linear infinite;margin:0 auto .7rem}
 @keyframes sp{to{transform:rotate(360deg)}}
@@ -223,8 +223,8 @@ var RADIUS_M=12000, CACHE_KEY='eat_osm_v1', CACHE_DAYS=7;
 
 var CATS={
   restaurant:{label:'Restaurants', color:'#4d8cc0', icon:'<path d="M8 3v8M6 3v4a2 2 0 0 0 4 0V3"/><path d="M16 3c-1.2 0-2.2 1.6-2.2 4.5S15 11 16 11v10"/>'},
-  cafe:{label:'Cafés', color:'#cf9b76', icon:'<path d="M5 8h11v4a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5z"/><path d="M16 9h2a2 2 0 0 1 0 4h-2"/><path d="M8 3v2M11 3v2"/>'},
-  fast_food:{label:'Takeaways', color:'#c2a25c', icon:'<path d="M6 9h12l-1 11H7z"/><path d="M9 9a3 3 0 0 1 6 0"/>'},
+  cafe:{label:'Cafés', color:'#bf8a86', icon:'<path d="M5 8h11v4a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5z"/><path d="M16 9h2a2 2 0 0 1 0 4h-2"/><path d="M8 3v2M11 3v2"/>'},
+  fast_food:{label:'Takeaways', color:'#3f9a93', icon:'<path d="M6 9h12l-1 11H7z"/><path d="M9 9a3 3 0 0 1 6 0"/>'},
   pub:{label:'Pubs', color:'#8a7bb0', icon:'<path d="M6 6h9v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M15 8h2a2 2 0 0 1 0 5h-2"/>'}
 };
 var CATORDER=['restaurant','cafe','fast_food','pub'];

@@ -25,7 +25,7 @@
 <style>
 :root{
   --paper:#eef2fa; --paper-2:#e6ecf6; --card:#ffffff; --ink:#1e2a30; --muted:#65727b;
-  --loch:#123b4f; --loch-2:#0d2c3c; --azure:#2b7cc4; --heather:#7c5c9e; --amber:#c5872e; --moss:#5e6b3b;
+  --loch:#123b4f; --loch-2:#0d2c3c; --azure:#2b7cc4; --heather:#7c5c9e; --amber:#6c7fd6; --moss:#5e6b3b;
   --line:#e2e8f1; --shadow:0 14px 40px rgba(40,70,120,.12);
   --r:18px;
 }
@@ -135,8 +135,8 @@ aside{border-left:1px solid var(--line); background:transparent; display:flex; f
 aside .head{padding:.9rem 1.35rem .35rem; display:flex; align-items:center; gap:.5rem}
 .savedtoggle{margin-left:auto; display:inline-flex; align-items:center; gap:.35rem; background:var(--card); border:1px solid var(--line); color:#5a666c; border-radius:9px; padding:.42rem .7rem; font-size:.8rem; font-family:inherit; font-weight:600; cursor:pointer; transition:.15s}
 .savedtoggle svg{width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
-.savedtoggle:hover{border-color:#e0556b; color:#e0556b}
-.savedtoggle.on{background:#e0556b; border-color:#e0556b; color:#fff}
+.savedtoggle:hover{border-color:#c0648a; color:#c0648a}
+.savedtoggle.on{background:#c0648a; border-color:#c0648a; color:#fff}
 .savedtoggle.on svg{fill:#fff; stroke:#fff}
 aside .head h2{font-size:1.25rem; color:var(--loch)}
 aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
@@ -171,10 +171,10 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
   background:#fff; color:#5a666c; display:grid; place-items:center; cursor:pointer;
   box-shadow:0 2px 7px rgba(8,28,38,.14); transition:transform .12s, color .12s, border-color .12s}
 .like svg{width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
-.like:hover{color:#e0556b}
+.like:hover{color:#c0648a}
 .like:active{transform:scale(.88)}
-.like.on{color:#e0556b}
-.like.on svg{fill:#e0556b; stroke:#e0556b}
+.like.on{color:#c0648a}
+.like.on svg{fill:#c0648a; stroke:#c0648a}
 .locate{position:absolute; bottom:5px; left:5px; z-index:3; width:31px; height:31px; border-radius:50%;
   background:rgba(255,255,255,.94); color:#2b7cc4; display:grid; place-items:center;
   box-shadow:0 2px 7px rgba(8,28,38,.28); border:1px solid transparent; transition:background .14s, color .14s, border-color .14s; pointer-events:none}
@@ -389,7 +389,7 @@ const RADIUS_KM = 80;   // search radius from the house
 const CATS = {
   beach:    {label:'Beaches',      color:'#4f9aa0'},
   walk:     {label:'Walks',        color:'#6f8f7a'},
-  cycle:    {label:'Cycle routes', color:'#cf7f5e'},
+  cycle:    {label:'Cycle routes', color:'#6c7fd6'},
   viewpoint:{label:'Viewpoints',   color:'#356a8a'},
   peak:     {label:'Hills',        color:'#7d9a63'},
   castle:   {label:'Castles',      color:'#7c89a3'},

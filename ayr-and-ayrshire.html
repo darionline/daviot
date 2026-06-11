@@ -24,7 +24,7 @@
 <style>
 :root{
   --paper:#eef2fa; --card:#ffffff; --ink:#1e2a30; --muted:#65727b; --azure:#2b7cc4;
-  --loch:#123b4f; --loch-2:#0d2c3c; --heather:#7c5c9e; --amber:#c5872e; --moss:#5e6b3b;
+  --loch:#123b4f; --loch-2:#0d2c3c; --heather:#7c5c9e; --amber:#6c7fd6; --moss:#5e6b3b;
   --line:#e2e8f1; --line-d:#22414f;
   --shadow:0 14px 40px rgba(40,70,120,.12);
 }
@@ -88,8 +88,8 @@ aside .head h2{font-size:1.25rem; color:var(--loch)}
 aside .head .sort{margin-left:.45rem; display:inline-flex; align-items:center; gap:.35rem; background:var(--card); border:1px solid var(--line); color:var(--muted); border-radius:9px; padding:.42rem .7rem; font-size:.8rem; font-family:inherit; cursor:pointer}
 .savedtoggle{margin-left:auto; display:inline-flex; align-items:center; gap:.35rem; background:var(--card); border:1px solid var(--line); color:#5a666c; border-radius:9px; padding:.42rem .7rem; font-size:.8rem; font-family:inherit; font-weight:600; cursor:pointer; transition:.15s}
 .savedtoggle svg{width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
-.savedtoggle:hover{border-color:#e0556b; color:#e0556b}
-.savedtoggle.on{background:#e0556b; border-color:#e0556b; color:#fff}
+.savedtoggle:hover{border-color:#c0648a; color:#c0648a}
+.savedtoggle.on{background:#c0648a; border-color:#c0648a; color:#fff}
 .savedtoggle.on svg{fill:#fff; stroke:#fff}
 aside .head .sort:hover{border-color:var(--loch); color:var(--loch)}
 .list{overflow:auto; padding:.7rem 1.1rem 1.4rem; flex:1}
@@ -146,10 +146,10 @@ aside .head .sort:hover{border-color:var(--loch); color:var(--loch)}
 .pinbtn:active{transform:scale(.9)}
 .pinbtn svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
 .like svg{width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
-.like:hover{color:#e0556b}
+.like:hover{color:#c0648a}
 .like:active{transform:scale(.88)}
-.like.on{color:#e0556b}
-.like.on svg{fill:#e0556b; stroke:#e0556b}
+.like.on{color:#c0648a}
+.like.on svg{fill:#c0648a; stroke:#c0648a}
 .maphint{display:flex; align-items:center; gap:.4rem; font-size:.8rem; color:var(--azure);
   background:rgba(43,124,196,.08); border:1px solid rgba(43,124,196,.18); border-radius:10px;
   padding:.5rem .65rem; margin:.7rem 1.1rem 0; font-weight:600}
@@ -344,7 +344,7 @@ html{scrollbar-width:thin;scrollbar-color:rgba(43,124,196,.45) transparent}
       <span><i style="background:#5f7f96"></i>Castles</span>
       <span><i style="background:#5e9a5e"></i>Golf</span>
       <span><i style="background:#2b9fb3"></i>Coast</span>
-      <span><i style="background:#c5872e"></i>Family</span>
+      <span><i style="background:#6c7fd6"></i>Family</span>
     </div>
     <div class="list" id="list">
       <div class="state"><div class="spin"></div>Loading places&hellip;</div>
@@ -600,7 +600,7 @@ function updateThumb(id,url){
 
 const ZONE_ORDER=['Robert Burns','Castles & Houses','Golf','Coast & Islands','Family & Culture'];
 const ZONE_SHORT={'Robert Burns':'Burns','Castles & Houses':'Castles','Golf':'Golf','Coast & Islands':'Coast','Family & Culture':'Family'};
-const ZONE_COLORS={'Robert Burns':'#9a5bb0','Castles & Houses':'#5f7f96','Golf':'#5e9a5e','Coast & Islands':'#2b9fb3','Family & Culture':'#c5872e'};
+const ZONE_COLORS={'Robert Burns':'#9a5bb0','Castles & Houses':'#5f7f96','Golf':'#5e9a5e','Coast & Islands':'#2b9fb3','Family & Culture':'#6c7fd6'};
 let activeZone='All';
 const zoneLayer=L.layerGroup().addTo(map);
 const ZONE_SHAPES={};
@@ -800,7 +800,7 @@ function revealNearest(latlng, fromLabel){
   ids.forEach(id=>{ const l=lighthouses.find(x=>x.id===id); if(!l) return; const d=haversineKm(latlng,l); if(d<bd){ bd=d; best=l; } });
   if(!best) return;
   if(clickLine) map.removeLayer(clickLine);
-  clickLine=L.polyline([latlng,[best.lat,best.lng]],{color:'#c5872e',weight:2,dashArray:'2 7',opacity:.9}).addTo(map);
+  clickLine=L.polyline([latlng,[best.lat,best.lng]],{color:'#6c7fd6',weight:2,dashArray:'2 7',opacity:.9}).addTo(map);
   if(lastNearId && lastNearId!==best.id && markers[lastNearId]){ const pl=lighthouses.find(x=>x.id===lastNearId); if(pl) markers[lastNearId].setPopupContent(popupHtml(pl)); }
   lastNearId=best.id;
   const dist=fmtKm(bd);
