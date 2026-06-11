@@ -331,7 +331,7 @@ function renderHostBar(){
   const ico='<img class="hb-logo" src="https://www.daviothouse.co.uk/wp-content/uploads/2019/01/daviot-house-logo-4.png" alt="'+esc(HOST.name)+'" onerror="this.style.display=\'none\'">';
   document.getElementById('hostbar').innerHTML='<div class="hb-inner">'+ico
     +'<div class="hb-name"><b>'+esc(HOST.name)+'</b><span>'+esc(HOST.tagline)+'</span></div>'
-    +'<span class="hb-tag">Lighthouses</span></div>';
+    +'</div>';
 }
 function addHostMarker(){
   if(HOST.lat==null) return;
