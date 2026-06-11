@@ -60,7 +60,7 @@ h1,h2,h3{font-family:"Jost",system-ui,sans-serif; font-weight:600; margin:0}
 header{position:relative; overflow:hidden; background:linear-gradient(165deg,#7d93ef,#6c85ec); color:#fff; border-bottom:3px solid #ffffff}
 header .wrap{position:relative; max-width:1240px; margin:0 auto; padding:1.25rem 1.7rem 1.15rem}
 header .kicker{font-weight:700; text-transform:uppercase; font-size:.7rem; color:rgba(255,255,255,.85); margin-bottom:.3rem}
-header h1{font-size:clamp(1.6rem,3.4vw,2.3rem); line-height:1.06; color:#fff}
+header h1{font-size:clamp(1.4rem,3vw,1.95rem); line-height:1.06; color:#fff}
 header p{margin:.35rem 0 0; color:rgba(255,255,255,.92); font-size:.94rem; max-width:66ch; font-weight:400}
 
 .toolbar{max-width:1240px; width:100%; margin:0 auto; padding:.75rem 1.7rem; display:flex; gap:.8rem; align-items:center; flex-wrap:wrap}
@@ -183,7 +183,7 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
   background:#eef3fa; color:#3d566a; border-radius:999px; padding:.22rem .55rem; font-size:.72rem; font-weight:700}
 .tag i{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
 .note{margin:.5rem 0 0; font-size:.87rem; color:#46535a; line-height:1.5}
-.acts{display:flex; align-items:stretch; gap:.4rem; margin-top:.7rem; flex-wrap:wrap}
+.acts{display:flex; align-items:stretch; gap:.4rem; margin-top:.55rem; padding-top:.55rem; border-top:1px solid var(--line); flex-wrap:wrap}
 .acts a{display:inline-flex; align-items:center; justify-content:center; gap:.34rem; text-decoration:none;
   font-weight:600; font-size:.76rem; line-height:1; border-radius:9px; padding:.42rem .7rem; min-height:32px; transition:.14s}
 .acts a:first-child{background:var(--loch); color:#fff}
@@ -346,7 +346,6 @@ html{scrollbar-width:thin;scrollbar-color:rgba(43,124,196,.45) transparent}
   <div id="map"></div>
   <aside>
     <div class="head"><h2>Nearby</h2><small id="headNote"></small><button class="savedtoggle" id="savedToggle" type="button" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg><span id="savedToggleTxt">Saved</span></button></div>
-    <div class="maphint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Tap any place to see exactly where it is on the map.</div>
     <div class="list" id="list"><div class="state"><div class="spin"></div>Finding places around you&hellip;</div></div>
   </aside>
 </div>
