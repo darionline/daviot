@@ -143,7 +143,7 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
 .list{overflow:auto; padding:.7rem 1.25rem 1.5rem; flex:1; display:flex; flex-direction:column; gap:.7rem}
 
 /* place card — horizontal compact (works with or without a photo) */
-.card{display:flex; gap:.8rem; align-items:flex-start; background:#fff; border:1px solid var(--line);
+.card{position:relative; display:flex; gap:.8rem; align-items:flex-start; background:#fff; border:1px solid var(--line);
   border-radius:14px; padding:.75rem; box-shadow:0 4px 16px rgba(18,59,79,.06); cursor:pointer;
   transition:transform .16s, box-shadow .16s; opacity:0; transform:translateY(8px); animation:rise .45s ease forwards}
 @keyframes rise{to{opacity:1; transform:none}}
@@ -158,13 +158,18 @@ aside .head small{margin-left:auto;color:var(--muted);font-size:.76rem}
 .media .ci{width:36px;height:36px; color:var(--tint,#123b4f); opacity:.95;
   fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .cbody{flex:1; min-width:0; display:flex; flex-direction:column}
-.ttl{display:flex; align-items:flex-start; gap:.6rem}
+.ttl{display:flex; align-items:flex-start; gap:.6rem; padding-right:3.7rem}
 .ttl h3{flex:1; min-width:0; font-size:1.05rem; color:var(--loch); line-height:1.18}
 .pill{flex:0 0 auto; margin-top:.12rem; background:var(--azure); color:#fff; border-radius:999px;
   padding:.2rem .55rem; font-size:.72rem; font-weight:800; white-space:nowrap}
-.like{position:absolute; top:5px; right:5px; z-index:3; width:31px; height:31px; padding:0; border:none; border-radius:50%;
-  background:rgba(255,255,255,.94); color:#5a666c; display:grid; place-items:center; cursor:pointer;
-  box-shadow:0 2px 7px rgba(8,28,38,.28); transition:transform .12s, color .12s}
+.cardtools{position:absolute; top:.5rem; right:.5rem; z-index:4; display:flex; gap:.3rem}
+.pinbtn{width:30px; height:30px; padding:0; border:1px solid var(--line); border-radius:50%; background:#fff; color:var(--azure); display:grid; place-items:center; cursor:pointer; box-shadow:0 2px 7px rgba(8,28,38,.14); transition:background .14s, color .14s, transform .12s}
+.pinbtn:hover{background:var(--azure); color:#fff; border-color:var(--azure)}
+.pinbtn:active{transform:scale(.9)}
+.pinbtn svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.like{position:static; width:30px; height:30px; padding:0; border:1px solid var(--line); border-radius:50%;
+  background:#fff; color:#5a666c; display:grid; place-items:center; cursor:pointer;
+  box-shadow:0 2px 7px rgba(8,28,38,.14); transition:transform .12s, color .12s, border-color .12s}
 .like svg{width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
 .like:hover{color:#e0556b}
 .like:active{transform:scale(.88)}
@@ -637,7 +642,7 @@ function thumbHtml(p){
 }
 function updateThumb(id,url){
   const card=document.querySelector('.card[data-id="'+id+'"]');
-  if(card){ const m=card.querySelector('.media'); if(m){ m.classList.remove('noimg'); m.innerHTML='<img loading="lazy" src="'+esc(url)+'" alt="" onerror="phFail(this)">'+likeBtn(id); } }
+  if(card){ const m=card.querySelector('.media'); if(m){ m.classList.remove('noimg'); m.innerHTML='<img loading="lazy" src="'+esc(url)+'" alt="" onerror="phFail(this)">'; } }
   const p=places.find(x=>x.id===id), mk=markers[id]; if(p&&mk) mk.setPopupContent(popupHtml(p));
 }
 const IMG_KEY='nearAyr_img_v2';
@@ -715,10 +720,9 @@ function draw(){
     const tint=CATS[p.cat].color, delay=Math.min(i*40,400);
     const media = '<div class="media'+(p.img?'':' noimg')+'" data-cat="'+p.cat+'" style="--tint:'+tint+'">'
       + (p.img ? '<img loading="lazy" src="'+esc(p.img)+'" alt="" onerror="phFail(this)">' : diIcon(p.cat))
-      + likeBtn(p.id)
-      + '<span class="locate" aria-hidden="true">'+I.pin+'</span>'
       + '</div>';
     return '<article class="card" data-id="'+p.id+'" style="animation-delay:'+delay+'ms">'
+      + '<div class="cardtools"><button class="pinbtn" type="button" aria-label="Show on map" title="Show on map">'+I.pin+'</button>'+likeBtn(p.id)+'</div>'
       + media
       + '<div class="cbody">'
       +   '<div class="ttl"><h3>'+esc(p.name)+'</h3><span class="pill">'+fmtKm(p.dist)+'</span></div>'
