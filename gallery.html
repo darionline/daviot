@@ -105,6 +105,11 @@ footer{max-width:1180px; width:100%; margin:0 auto; padding:0 1.1rem 2rem; text-
 footer a{color:var(--azure); text-decoration:none; font-weight:600}
 footer a:hover{text-decoration:underline}
 @media(max-width:560px){.gnwrap .gn{font-size:.78rem;padding:.38rem .62rem}.gnwrap{gap:.12rem}}
+/* Torna su */
+.toTop{position:fixed; right:14px; bottom:calc(14px + env(safe-area-inset-bottom,0px)); z-index:90; width:42px; height:42px; border-radius:50%; border:1px solid var(--line); background:#fff; color:var(--loch); display:grid; place-items:center; box-shadow:0 6px 18px rgba(18,59,79,.24); cursor:pointer; padding:0; opacity:0; visibility:hidden; transform:translateY(8px); transition:opacity .2s, transform .2s, visibility .2s}
+.toTop.show{opacity:1; visibility:visible; transform:none}
+.toTop svg{width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+body.mapx .toTop{opacity:0!important; visibility:hidden!important}
 </style>
 <style id="gnmenu-css">
 .guidenav{position:relative}
@@ -358,6 +363,15 @@ function enhanceChipBar(bar){
   upd();
 }
 enhanceChipBar(document.getElementById('filters'));
+
+(function(){
+  var b=document.createElement('button'); b.type='button'; b.className='toTop'; b.setAttribute('aria-label','Back to top');
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(b);
+  function upd(){ b.classList.toggle('show', window.scrollY>420); }
+  window.addEventListener('scroll', upd, {passive:true}); upd();
+  b.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+})();
 </script>
 </body>
 </html>

@@ -281,6 +281,21 @@ path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
 .gnwrap .gn.active{background:var(--loch); color:#fff; cursor:default; box-shadow:0 3px 10px rgba(18,59,79,.22)}
 @media(max-width:560px){.gnwrap .gn{font-size:.78rem;padding:.38rem .62rem}.gnwrap{gap:.12rem}}
 .credit a{color:inherit;text-decoration:underline}
+/* Popup: pulsante di chiusura grande, rotondo, mai coperto */
+.leaflet-container a.leaflet-popup-close-button{width:30px; height:30px; top:-12px; right:-12px; background:#fff; border:1px solid var(--line); border-radius:50%; box-shadow:0 2px 8px rgba(8,28,38,.25); color:#3f4d54; font:400 19px/28px sans-serif; text-align:center; padding:0}
+.leaflet-container a.leaflet-popup-close-button:hover{color:var(--loch); border-color:var(--azure)}
+/* Espansione mappa su mobile */
+.mapx-ctrl{width:34px; height:34px; border-radius:9px; background:#fff; border:1px solid rgba(43,124,196,.28); box-shadow:0 2px 8px rgba(18,59,79,.2); display:grid; place-items:center; cursor:pointer; color:var(--azure); padding:0; -webkit-appearance:none; appearance:none}
+.mapx-ctrl svg{width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+@media(max-width:880px){
+  #map{transition:height .25s ease}
+  body.mapx #map{height:76vh!important; min-height:0!important}
+}
+/* Torna su */
+.toTop{position:fixed; right:14px; bottom:calc(14px + env(safe-area-inset-bottom,0px)); z-index:90; width:42px; height:42px; border-radius:50%; border:1px solid var(--line); background:#fff; color:var(--loch); display:grid; place-items:center; box-shadow:0 6px 18px rgba(18,59,79,.24); cursor:pointer; padding:0; opacity:0; visibility:hidden; transform:translateY(8px); transition:opacity .2s, transform .2s, visibility .2s}
+.toTop.show{opacity:1; visibility:visible; transform:none}
+.toTop svg{width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+body.mapx .toTop{opacity:0!important; visibility:hidden!important}
 </style>
 <style id="gnmenu-css">
 .guidenav{position:relative}
@@ -396,7 +411,7 @@ const I = {
 const map = L.map('map', {zoomControl:false}).setView([57.5,-4.6], 6);
 L.control.zoom({position:'topright'}).addTo(map);
 (function(){
-  var RecenterCtrl=L.Control.extend({ options:{position:'topright'},
+  var RecenterCtrl=L.Control.extend({ options:{position:(window.matchMedia&&window.matchMedia('(max-width:880px)').matches)?'bottomleft':'topright'},
     onAdd:function(){
       var c=L.DomUtil.create('div','leaflet-control recenter-wrap');
       var b=L.DomUtil.create('button','recenter-ctrl', c);
@@ -908,6 +923,34 @@ function enhanceChipBar(bar){
   upd();
 }
 enhanceChipBar(document.getElementById('zonebar'));
+
+(function(){
+  if(!(window.matchMedia&&window.matchMedia('(max-width:880px)').matches)) return;
+  if(typeof map==='undefined'||!window.L) return;
+  var IC_MAX='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>';
+  var IC_MIN='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v6H3"/><path d="M15 21v-6h6"/><path d="M3 9l7-7"/><path d="M21 15l-7 7"/></svg>';
+  var X=L.Control.extend({options:{position:'bottomright'}, onAdd:function(){
+    var c=L.DomUtil.create('div','leaflet-control mapx-wrap');
+    var b=L.DomUtil.create('button','mapx-ctrl',c); b.type='button';
+    function set(on){ b.innerHTML=on?IC_MIN:IC_MAX; var t=on?'Shrink map':'Expand map'; b.title=t; b.setAttribute('aria-label',t); b.setAttribute('aria-pressed',on?'true':'false'); }
+    L.DomEvent.disableClickPropagation(c);
+    L.DomEvent.on(b,'click',function(e){ L.DomEvent.stop(e);
+      var on=document.body.classList.toggle('mapx'); set(on);
+      try{ document.getElementById('map').scrollIntoView({behavior:'smooth', block:'start'}); }catch(_){}
+      setTimeout(function(){ try{ map.invalidateSize(); }catch(_){} },300);
+    });
+    set(false); return c;
+  }});
+  map.addControl(new X());
+})();
+(function(){
+  var b=document.createElement('button'); b.type='button'; b.className='toTop'; b.setAttribute('aria-label','Back to top');
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(b);
+  function upd(){ b.classList.toggle('show', window.scrollY>420); }
+  window.addEventListener('scroll', upd, {passive:true}); upd();
+  b.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+})();
 </script>
 </body>
 </html>
