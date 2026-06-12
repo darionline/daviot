@@ -304,14 +304,19 @@ body.mapx .toTop{opacity:0!important; visibility:hidden!important}
 .zrail .lbl{position:absolute; right:calc(100% + 12px); top:50%; transform:translateY(-50%) translateX(5px); white-space:nowrap; font:600 .72rem "Jost",system-ui,sans-serif; color:#fff; background:var(--loch); padding:.24rem .6rem; border-radius:999px; opacity:0; pointer-events:none; transition:opacity .16s, transform .16s; box-shadow:0 3px 10px rgba(18,59,79,.25)}
 .zrail button.on .lbl{opacity:1; transform:translateY(-50%)}
 body.mapx .zrail{opacity:0!important; visibility:hidden!important}
-@media(max-width:880px){
-  .zrail{right:6px; gap:9px; padding:9px 6px; transition:opacity .2s, visibility .2s, padding .25s, background .25s, border-color .25s, box-shadow .25s}
-  .zrail button{transition:transform .18s, opacity .18s, width .25s, height .25s, border-radius .25s}
-  .zrail.min{background:transparent; border-color:transparent; box-shadow:none; padding:6px 3px; gap:7px}
-  .zrail.min button{width:4px; height:16px; border-radius:99px; opacity:.35; transform:none; box-shadow:none}
-  .zrail.min button.on{opacity:.9}
-  .zrail.min .lbl{display:none}
-}
+@media(max-width:880px){.zrail{display:none!important}}
+/* Mobile: striscia zone fissa in alto — solo indicativa, non intercetta tocchi */
+.ztop{position:fixed; left:0; right:0; z-index:75; pointer-events:none; display:none}
+@media(max-width:880px){.ztop.show{display:block}}
+.ztop .seg{display:flex; height:4px}
+.ztop .seg i{flex:1; height:4px; background:var(--zc,#5f7f96); opacity:.22; transition:opacity .25s, height .25s}
+.ztop .seg i.on{opacity:1; height:6px; border-radius:0 0 3px 3px; box-shadow:0 1px 6px rgba(18,59,79,.3)}
+.ztop .zlbl{position:absolute; top:11px; left:50%; transform:translateX(-50%) translateY(-4px); display:inline-flex; align-items:center; gap:.4rem; font:600 .72rem "Jost",system-ui,sans-serif; color:#fff; background:var(--loch); padding:.26rem .7rem; border-radius:999px; box-shadow:0 4px 12px rgba(18,59,79,.28); opacity:0; transition:opacity .18s, transform .18s; white-space:nowrap}
+.ztop .zlbl i{width:8px; height:8px; border-radius:50%; display:inline-block}
+.ztop .zlbl b{font-weight:600}
+.ztop.wake .zlbl{opacity:1; transform:translateX(-50%) translateY(0)}
+body.mapx .ztop{display:none!important}
+@media (prefers-reduced-motion:reduce){.ztop .seg i,.ztop .zlbl{transition:none}}
 @media (prefers-reduced-motion:reduce){.zrail,.zrail button,.zrail .lbl{transition:none}}
 </style>
 <style id="gnmenu-css">
@@ -974,15 +979,22 @@ enhanceChipBar(document.getElementById('zonebar'));
   var list=document.getElementById('list'); if(!list) return;
   var rail=document.createElement('nav'); rail.className='zrail'; rail.setAttribute('aria-label','Zones in this list');
   document.body.appendChild(rail);
+  var ztop=document.createElement('nav'); ztop.className='ztop'; ztop.setAttribute('aria-hidden','true');
+  ztop.innerHTML='<div class="seg"></div><span class="zlbl"><i></i><b></b></span>';
+  document.body.appendChild(ztop);
+  var zseg=ztop.querySelector('.seg'), zld=ztop.querySelector('.zlbl i'), zlt=ztop.querySelector('.zlbl b');
+  var segs=[], zmeta=[];
+  function placeTop(){ var hb=document.querySelector('.hostbar'); ztop.style.top=(hb?hb.offsetHeight:0)+'px'; }
   var isMob=window.matchMedia('(max-width:880px)'), idleT=null;
-  function initMin(){ if(isMob.matches) rail.classList.add('min'); else rail.classList.remove('min'); }
-  function wake(ms){ if(!isMob.matches) return; rail.classList.remove('min'); clearTimeout(idleT); idleT=setTimeout(function(){ rail.classList.add('min'); }, ms||1400); }
+  function initMin(){ placeTop(); }
+  function wake(ms){ if(!isMob.matches) return; ztop.classList.add('wake'); clearTimeout(idleT); idleT=setTimeout(function(){ ztop.classList.remove('wake'); }, ms||1400); }
   var heads=[], btns=[];
   function escH(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
   function build(){
     heads=Array.prototype.slice.call(list.querySelectorAll('[data-zone]'));
     rail.innerHTML=''; btns=[];
-    if(heads.length<2){ rail.classList.remove('show'); return; }
+    zseg.innerHTML=''; segs=[]; zmeta=[];
+    if(heads.length<2){ rail.classList.remove('show'); ztop.classList.remove('show'); return; }
     heads.forEach(function(h){
       var z=h.getAttribute('data-zone');
       var col=(typeof ZONE_COLORS!=='undefined'&&ZONE_COLORS[z])||'#5f7f96';
@@ -990,16 +1002,18 @@ enhanceChipBar(document.getElementById('zonebar'));
       b.style.setProperty('--zc',col);
       b.innerHTML='<i class="lbl">'+escH(z)+'</i>';
       b.addEventListener('click',function(){
-        if(rail.classList.contains('min')){ wake(2600); return; }
         wake(2200);
         h.scrollIntoView({behavior:'smooth', block:(isMob.matches?'center':'start')});
       });
       rail.appendChild(b); btns.push(b);
+      var sg=document.createElement('i'); sg.style.setProperty('--zc',col); zseg.appendChild(sg); segs.push(sg); zmeta.push({z:z,c:col});
     });
-    rail.classList.add('show'); initMin(); spy();
+    rail.classList.add('show'); ztop.classList.add('show'); initMin(); spy();
   }
   function setActive(cur){
     btns.forEach(function(b,i){ b.classList.toggle('on',i===cur); if(i===cur) b.setAttribute('aria-current','true'); else b.removeAttribute('aria-current'); });
+    segs.forEach(function(sg,i){ sg.classList.toggle('on',i===cur); });
+    if(zmeta[cur]){ zld.style.background=zmeta[cur].c; zlt.textContent=zmeta[cur].z; }
   }
   var pinUntil=0;
   function spy(){
