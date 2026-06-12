@@ -336,7 +336,7 @@ function rebuildMarkers(items){
   var keepOpen=openPopupId;
   cluster.clearLayers(); markers={};
   var batch=items.map(function(p){
-    var m=L.marker([p.lat,p.lng],{icon:(p.id===selectedId?selPin():pin(catColor(p.cat))), zIndexOffset:(p.id===selectedId?1000:0)}).bindPopup(popHtml(p)).bindTooltip(p.name,{direction:'top'});
+    var m=L.marker([p.lat,p.lng],{icon:(p.id===selectedId?selPin():pin(catColor(p.cat))), zIndexOffset:(p.id===selectedId?1000:0)}).bindPopup(popHtml(p));
     m.on('popupopen',function(){ openPopupId=p.id; selectMarker(p.id); });
     m.on('popupclose',function(){ if(openPopupId===p.id) openPopupId=null; });
     markers[p.id]=m; return m;

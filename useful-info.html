@@ -321,7 +321,7 @@ DATA.forEach(function(p){
   var html='<div class="pop"><b>'+esc(p.name)+'</b><div class="pm">'+esc(p.note)+'</div>'
     +'<a href="'+dir+'" target="_blank" rel="noopener">Directions</a>'
     +(p.phone?'<a href="tel:'+esc(p.phone)+'">Call</a>':'')+'</div>';
-  var m=L.marker([p.lat,p.lng],{icon:pin(CATS[p.cat].color)}).bindPopup(html).bindTooltip(p.name,{direction:'top'});
+  var m=L.marker([p.lat,p.lng],{icon:pin(CATS[p.cat].color)}).bindPopup(html);
   m.on('click',function(){ selectMarker(p.id); });
   markers[p.id]=m; m.addTo(map);
 });
