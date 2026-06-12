@@ -121,13 +121,14 @@ aside .head .sort:hover{border-color:var(--loch); color:var(--loch)}
 .zone-h span{margin-left:auto; font-family:"Jost"; font-size:.72rem; color:var(--muted); font-weight:700; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.05rem .5rem}
 /* place card — horizontal compact, consistent with the "near us" page */
 .card{display:flex; gap:.8rem; align-items:flex-start; background:var(--card); border:1px solid var(--line); position:relative; isolation:isolate;
-  border-radius:14px; padding:.75rem; margin:.45rem 0; box-shadow:0 4px 16px rgba(18,59,79,.06); cursor:pointer;
+  border-radius:14px; padding:.75rem; margin:.45rem 0; box-shadow:0 4px 16px rgba(18,59,79,.06); cursor:pointer; -webkit-tap-highlight-color:transparent;
   transition:transform .16s, box-shadow .16s; opacity:0; transform:translateY(8px); animation:rise .45s ease forwards}
 @keyframes rise{to{opacity:1; transform:none}}
-.card:hover{box-shadow:0 16px 34px rgba(43,124,196,.18); transform:translateY(-2px); border-color:var(--azure)}
-.card.sel{border-color:var(--loch); box-shadow:0 10px 26px rgba(18,59,79,.22)}
-.card.sel:before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--loch); border-radius:14px 0 0 14px}
-.card:hover .locbadge{background:var(--azure); color:#fff; border-color:var(--azure)}
+@media(hover:hover) and (pointer:fine){
+  .card:hover{box-shadow:0 16px 34px rgba(43,124,196,.18); transform:translateY(-2px); border-color:var(--azure)}
+  .card:hover .locbadge{background:var(--azure); color:#fff; border-color:var(--azure)}
+}
+.card.sel{border-color:var(--loch); box-shadow:0 0 0 1.5px var(--loch), 0 10px 26px rgba(18,59,79,.22)}
 .card:active{transform:scale(.994)}
 .media{position:relative; width:88px; height:88px; flex:0 0 auto; border-radius:13px; overflow:hidden;
   background:#eef2fa; display:grid; place-items:center; color:var(--azure)}
@@ -405,6 +406,12 @@ function selectMarker(id){
   if(selectedId && markers[selectedId]) markers[selectedId].setIcon(lhIcon);
   selectedId=id;
   if(markers[id]) markers[id].setIcon(lhIconSel);
+  var _lst=document.getElementById('list');
+  if(_lst){
+    _lst.querySelectorAll('.card.sel').forEach(function(c){ if(c.getAttribute('data-id')!==id) c.classList.remove('sel'); });
+    var _card=_lst.querySelector('.card[data-id="'+id+'"]');
+    if(_card){ _card.classList.add('sel'); if(_card.scrollIntoView) _card.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+  }
 }
 
 let lighthouses = [], markers = {}, sortAZ = true;
