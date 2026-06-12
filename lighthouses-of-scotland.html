@@ -276,6 +276,17 @@ path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
 .toTop.show{opacity:1; visibility:visible; transform:none}
 .toTop svg{width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
 body.mapx .toTop{opacity:0!important; visibility:hidden!important}
+/* Zone rail: indicatore di zona fisso a destra durante lo scroll */
+.zrail{position:fixed; right:8px; top:50%; transform:translateY(-50%); z-index:70; display:flex; flex-direction:column; gap:10px; padding:10px 7px; background:rgba(255,255,255,.8); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); border:1px solid var(--line); border-radius:999px; box-shadow:0 6px 18px rgba(18,59,79,.14); opacity:0; visibility:hidden; transition:opacity .2s, visibility .2s}
+.zrail.show{opacity:1; visibility:visible}
+.zrail button{position:relative; width:12px; height:12px; border-radius:50%; border:none; padding:0; cursor:pointer; background:var(--zc,#5f7f96); opacity:.45; transform:scale(.8); transition:transform .18s, opacity .18s; -webkit-tap-highlight-color:transparent}
+.zrail button.on{opacity:1; transform:scale(1.12); box-shadow:0 0 0 3px #fff, 0 0 0 4.5px var(--zc,#5f7f96)}
+.zrail button:focus-visible{outline:2px solid var(--azure); outline-offset:3px}
+.zrail .lbl{position:absolute; right:calc(100% + 12px); top:50%; transform:translateY(-50%) translateX(5px); white-space:nowrap; font:600 .72rem "Jost",system-ui,sans-serif; color:#fff; background:var(--loch); padding:.24rem .6rem; border-radius:999px; opacity:0; pointer-events:none; transition:opacity .16s, transform .16s; box-shadow:0 3px 10px rgba(18,59,79,.25)}
+.zrail button.on .lbl{opacity:1; transform:translateY(-50%)}
+body.mapx .zrail{opacity:0!important; visibility:hidden!important}
+@media(max-width:880px){.zrail{right:6px; gap:9px; padding:9px 6px}}
+@media (prefers-reduced-motion:reduce){.zrail,.zrail button,.zrail .lbl{transition:none}}
 </style>
 <style id="gnmenu-css">
 .guidenav{position:relative}
@@ -712,7 +723,7 @@ function draw(){
   ZONE_ORDER.forEach(z=>{
     if(!groups[z]) return;
     const arr=groups[z].sort(cmp);
-    if(activeZone==='All'){ var _zc=ZONE_COLORS[z]||'#5f7f96'; html+='<div class="zone-h"><i class="zdot" style="background:'+_zc+'"></i>'+esc(z)+'<i class="zrule" style="background:linear-gradient(90deg,'+_zc+'59,transparent)"></i><span>'+arr.length+'</span></div>'; }
+    if(activeZone==='All'){ var _zc=ZONE_COLORS[z]||'#5f7f96'; html+='<div class="zone-h" data-zone="'+esc(z)+'"><i class="zdot" style="background:'+_zc+'"></i>'+esc(z)+'<i class="zrule" style="background:linear-gradient(90deg,'+_zc+'59,transparent)"></i><span>'+arr.length+'</span></div>'; }
     html+=arr.map(itemHtml).join('');
   });
   list.innerHTML=html;
@@ -898,6 +909,42 @@ enhanceChipBar(document.getElementById('zonebar'));
   function upd(){ b.classList.toggle('show', window.scrollY>420); }
   window.addEventListener('scroll', upd, {passive:true}); upd();
   b.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+})();
+
+(function(){
+  var list=document.getElementById('list'); if(!list) return;
+  var rail=document.createElement('nav'); rail.className='zrail'; rail.setAttribute('aria-label','Zones in this list');
+  document.body.appendChild(rail);
+  var heads=[], btns=[];
+  function escH(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  function build(){
+    heads=Array.prototype.slice.call(list.querySelectorAll('.zone-h[data-zone]'));
+    rail.innerHTML=''; btns=[];
+    if(heads.length<2){ rail.classList.remove('show'); return; }
+    heads.forEach(function(h){
+      var z=h.getAttribute('data-zone');
+      var col=(typeof ZONE_COLORS!=='undefined'&&ZONE_COLORS[z])||'#5f7f96';
+      var b=document.createElement('button'); b.type='button'; b.setAttribute('aria-label',z);
+      b.style.setProperty('--zc',col);
+      b.innerHTML='<i class="lbl">'+escH(z)+'</i>';
+      b.addEventListener('click',function(){
+        h.scrollIntoView({behavior:'smooth', block:(window.matchMedia('(max-width:880px)').matches?'center':'start')});
+      });
+      rail.appendChild(b); btns.push(b);
+    });
+    rail.classList.add('show'); spy();
+  }
+  function spy(){
+    if(!heads.length) return;
+    var aY=window.innerHeight*0.4, cur=0;
+    for(var i=0;i<heads.length;i++){ if(heads[i].getBoundingClientRect().top<=aY) cur=i; }
+    btns.forEach(function(b,i){ b.classList.toggle('on',i===cur); if(i===cur) b.setAttribute('aria-current','true'); else b.removeAttribute('aria-current'); });
+  }
+  window.addEventListener('scroll',spy,{passive:true});
+  list.addEventListener('scroll',spy,{passive:true});
+  window.addEventListener('resize',spy);
+  if(window.MutationObserver) new MutationObserver(build).observe(list,{childList:true});
+  build();
 })();
 </script>
 </body>
