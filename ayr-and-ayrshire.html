@@ -651,11 +651,11 @@ async function enrichImages(){
   lighthouses.forEach(l=>{ l.checked=true; });
   refreshPopups();
 }
-function refreshPopups(){ if(openPopupId){ const l=lighthouses.find(x=>x.id===openPopupId); if(l) placePopup.setContent(popupHtml(l)); } }
+function refreshPopups(){ if(openPopupId){ const l=lighthouses.find(x=>x.id===openPopupId); if(l) quietSetContent(popupHtml(l)); } }
 function updateThumb(id,url){
   const m0=document.querySelector('.media[data-id="'+id+'"]');
   if(m0){ m0.classList.remove('noimg'); m0.innerHTML='<img loading="lazy" src="'+esc(url)+'" alt="" onerror="phFail(this)">'; }
-  if(openPopupId===id){ const l=lighthouses.find(x=>x.id===id); if(l) placePopup.setContent(popupHtml(l)); }
+  if(openPopupId===id){ const l=lighthouses.find(x=>x.id===id); if(l) quietSetContent(popupHtml(l)); }
 }
 
 const ZONE_ORDER=['Robert Burns','Castles & Houses','Golf','Coast & Islands','Family & Culture'];
@@ -760,7 +760,8 @@ function fitInitial(){ if(initialFitDone) return; initialFitDone=true; fitAyr();
 map.on('dragstart', ()=>{ userInteracted=true; });
 
 /* Robust place popups: live on the MAP, never on clusterable markers, so re-rendering/panning can't close them. */
-const placePopup=L.popup({maxWidth:300, autoPanPadding:[26,26], keepInView:true, offset:[0,-54]});
+const placePopup=L.popup({maxWidth:300, autoPanPadding:[26,26], offset:[0,-54]});
+function quietSetContent(c){ var _ap=placePopup.options.autoPan; placePopup.options.autoPan=false; try{ placePopup.setContent(c); }finally{ placePopup.options.autoPan=_ap; } }
 placePopup.on('remove',()=>{ openPopupId=null; });
 function showPopup(l, content){ if(!l) return; openPopupId=l.id; try{ selectMarker(l.id); }catch(e){} placePopup.setLatLng([l.lat,l.lng]).setContent(content||popupHtml(l)).openOn(map); }
 function draw(){
