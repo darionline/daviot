@@ -46,12 +46,21 @@ a{color:inherit}
 .catwrap{position:relative; max-width:1240px; margin:.6rem auto 0; padding:0 1.2rem}
 .catbar{display:flex; gap:.35rem; min-width:0; max-width:100%; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding:.2rem .5rem}
 .catbar::-webkit-scrollbar{display:none}
-.cchip{white-space:nowrap; border:1px solid var(--line); background:var(--card); color:#3f4d54; padding:.44rem .78rem; border-radius:999px; font-size:.83rem; font-weight:500; font-family:inherit; cursor:pointer; display:inline-flex; gap:.38rem; align-items:center; transition:.15s; flex:0 0 auto}
-.cchip:hover{border-color:var(--loch); color:var(--loch)}
-.cchip .sw{width:7px; height:7px; border-radius:50%; flex:0 0 auto}
-.cchip .c{color:var(--muted); font-weight:500}
-.cchip.on{border-color:var(--loch); background:var(--loch); color:#fff; box-shadow:0 6px 16px rgba(18,59,79,.22)}
-.cchip.on .c{color:#bcd9e4}
+.catbar{--fL:0px; --fR:0px; -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 var(--fL),#000 calc(100% - var(--fR)),transparent 100%); mask-image:linear-gradient(90deg,transparent 0,#000 var(--fL),#000 calc(100% - var(--fR)),transparent 100%)}
+.catbar.fadeL{--fL:30px}
+.catbar.fadeR{--fR:30px}
+.cchip{white-space:nowrap; min-height:36px; border:1px solid var(--line); background:var(--card); color:#3f4d54; padding:.42rem .8rem; border-radius:999px; font-size:.83rem; font-weight:500; font-family:inherit; cursor:pointer; display:inline-flex; gap:.42rem; align-items:center; flex:0 0 auto; -webkit-tap-highlight-color:transparent; transition:background .16s,border-color .16s,color .16s,box-shadow .16s,transform .12s}
+.cchip:hover{border-color:var(--azure); color:var(--loch); background:#f3f8fd; box-shadow:0 2px 8px rgba(43,124,196,.14)}
+.cchip:active{transform:scale(.96)}
+.cchip:focus-visible{outline:2px solid var(--azure); outline-offset:2px}
+.cchip .sw{width:8px; height:8px; border-radius:50%; flex:0 0 auto}
+.cchip .c{color:#5b6b75; font-weight:600; font-size:.7rem; font-variant-numeric:tabular-nums; background:rgba(18,59,79,.07); border-radius:99px; padding:.12rem .42rem}
+.cchip::after{content:"\2713"; width:0; margin-left:-.42rem; overflow:hidden; font-size:.78rem; transition:width .18s cubic-bezier(.2,.8,.2,1), margin-left .18s cubic-bezier(.2,.8,.2,1)}
+.cchip.on{border-color:var(--loch); background:linear-gradient(180deg,#1c567a,var(--loch)); color:#fff; box-shadow:0 6px 16px rgba(18,59,79,.28)}
+.cchip.on::after{width:.95em; margin-left:0}
+.cchip.on .c{color:#eaf4fa; background:rgba(255,255,255,.18)}
+.cchip.on .sw{box-shadow:0 0 0 2px rgba(255,255,255,.5)}
+@media (prefers-reduced-motion:reduce){.cchip,.cchip::after{transition:none}}
 .catnav{position:absolute; top:50%; transform:translateY(-50%); z-index:6; width:28px; height:28px; border-radius:50%; border:1px solid var(--line); background:#fff; color:var(--azure); font-size:1.1rem; line-height:1; cursor:pointer; display:none; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(18,59,79,.18)}
 .catnav.prev{left:.3rem} .catnav.next{right:.3rem}
 .catnav.show{display:inline-flex}
@@ -476,6 +485,31 @@ window.addEventListener('load', function(){ setTimeout(setMapTop,120); });
 </script>
 <script>/*moremenu*/(function(){var b=document.getElementById("moreBtn"),d=document.getElementById("moreDrop");if(!b||!d)return;b.addEventListener("click",function(e){e.stopPropagation();var o=d.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});document.addEventListener("click",function(e){if(d.classList.contains("open")&&!d.contains(e.target)&&e.target!==b){d.classList.remove("open");b.setAttribute("aria-expanded","false");}});document.addEventListener("keydown",function(e){if(e.key==="Escape"){d.classList.remove("open");b.setAttribute("aria-expanded","false");}});})();</script>
 <script>/* pin nav menu under the sticky brand bar (desktop only) */
-(function(){function pin(){var hb=document.querySelector('.hostbar'),nav=document.querySelector('.guidenav');if(!hb||!nav)return;if(window.matchMedia('(min-width:881px)').matches){nav.style.position='sticky';nav.style.top=hb.offsetHeight+'px';nav.style.zIndex='20';}else{nav.style.position='';nav.style.top='';nav.style.zIndex='';}}window.addEventListener('load',pin);window.addEventListener('resize',pin);if(document.readyState!=='loading')pin();else document.addEventListener('DOMContentLoaded',pin);})();</script>
+(function(){function pin(){var hb=document.querySelector('.hostbar'),nav=document.querySelector('.guidenav');if(!hb||!nav)return;if(window.matchMedia('(min-width:881px)').matches){nav.style.position='sticky';nav.style.top=hb.offsetHeight+'px';nav.style.zIndex='20';}else{nav.style.position='';nav.style.top='';nav.style.zIndex='';}}window.addEventListener('load',pin);window.addEventListener('resize',pin);if(document.readyState!=='loading')pin();else document.addEventListener('DOMContentLoaded',pin);})();
+/* Chip bar: dissolvenza ai bordi quando ci sono altre chip fuori schermo
+   + la chip attiva viene centrata automaticamente nella barra */
+function enhanceChipBar(bar){
+  if(!bar) return;
+  function upd(){
+    var can = bar.scrollWidth - bar.clientWidth > 6;
+    bar.classList.toggle('fadeL', can && bar.scrollLeft > 6);
+    bar.classList.toggle('fadeR', can && bar.scrollLeft < bar.scrollWidth - bar.clientWidth - 6);
+  }
+  function centerOn(){
+    var on = bar.querySelector('.on');
+    if(on && on.scrollIntoView) on.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+  }
+  bar.addEventListener('scroll', upd, {passive:true});
+  if(window.ResizeObserver) new ResizeObserver(upd).observe(bar);
+  if(window.MutationObserver) new MutationObserver(function(){ upd(); centerOn(); }).observe(bar, {childList:true});
+  bar.addEventListener('click', function(e){
+    var b = e.target.closest && e.target.closest('button');
+    if(b && document.contains(b) && b.scrollIntoView) b.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+  });
+  upd();
+}
+enhanceChipBar(document.getElementById('catbar'));
+enhanceChipBar(document.getElementById('cuibar'));
+</script>
 </body>
 </html>

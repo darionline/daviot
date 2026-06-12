@@ -47,10 +47,19 @@ svg.ico{width:1em;height:1em;display:inline-block;vertical-align:-.14em;fill:non
 .filters{position:sticky; top:54px; z-index:20; display:flex; justify-content:center; padding:.55rem 0 .7rem; background:linear-gradient(var(--paper) 72%, rgba(238,242,250,0))}
 .fwrap{display:inline-flex; gap:.35rem; max-width:100%; min-width:0; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding:.1rem}
 .fwrap::-webkit-scrollbar{display:none}
-.fchip{flex:0 0 auto; font-family:inherit; font-size:.82rem; font-weight:600; color:#33454e; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.42rem .85rem; white-space:nowrap; cursor:pointer; transition:.15s; display:inline-flex; align-items:center; gap:.35rem}
-.fchip:hover{border-color:var(--azure); color:var(--azure)}
-.fchip.on{background:var(--loch); color:#fff; border-color:var(--loch); box-shadow:0 3px 10px rgba(18,59,79,.2)}
-.fchip .n{font-size:.72rem; opacity:.7}
+.fwrap{--fL:0px; --fR:0px; -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 var(--fL),#000 calc(100% - var(--fR)),transparent 100%); mask-image:linear-gradient(90deg,transparent 0,#000 var(--fL),#000 calc(100% - var(--fR)),transparent 100%)}
+.fwrap.fadeL{--fL:30px}
+.fwrap.fadeR{--fR:30px}
+.fchip{flex:0 0 auto; min-height:36px; font-family:inherit; font-size:.82rem; font-weight:600; color:#33454e; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.42rem .85rem; white-space:nowrap; cursor:pointer; display:inline-flex; align-items:center; gap:.4rem; -webkit-tap-highlight-color:transparent; transition:background .16s,border-color .16s,color .16s,box-shadow .16s,transform .12s}
+.fchip:hover{border-color:var(--azure); color:var(--loch); background:#f3f8fd; box-shadow:0 2px 8px rgba(43,124,196,.14)}
+.fchip:active{transform:scale(.96)}
+.fchip:focus-visible{outline:2px solid var(--azure); outline-offset:2px}
+.fchip::after{content:"\2713"; width:0; margin-left:-.4rem; overflow:hidden; font-size:.74rem; transition:width .18s cubic-bezier(.2,.8,.2,1), margin-left .18s cubic-bezier(.2,.8,.2,1)}
+.fchip.on{background:linear-gradient(180deg,#1c567a,var(--loch)); color:#fff; border-color:var(--loch); box-shadow:0 4px 12px rgba(18,59,79,.26)}
+.fchip.on::after{width:.95em; margin-left:0}
+.fchip .n{font-size:.7rem; font-weight:600; color:#5b6b75; font-variant-numeric:tabular-nums; background:rgba(18,59,79,.07); border-radius:99px; padding:.12rem .4rem}
+.fchip.on .n{color:#eaf4fa; background:rgba(255,255,255,.18)}
+@media (prefers-reduced-motion:reduce){.fchip,.fchip::after{transition:none}}
 
 .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:.5rem}
 @media(min-width:640px){ .grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:.6rem} }
@@ -325,6 +334,30 @@ start();
 <script>/*fwrap-arrows*/(function(){var w=document.getElementById("filters");if(!w)return;var shell=document.createElement("div");shell.className="gnshell";w.parentNode.insertBefore(shell,w);shell.appendChild(w);var L=document.createElement("button");L.type="button";L.className="gnar gnar-l";L.setAttribute("aria-label","Scroll left");L.innerHTML="\u2039";var R=document.createElement("button");R.type="button";R.className="gnar gnar-r";R.setAttribute("aria-label","Scroll right");R.innerHTML="\u203a";shell.appendChild(L);shell.appendChild(R);function upd(){var sc=w.scrollLeft,max=w.scrollWidth-w.clientWidth,ov=max>4;L.classList.toggle("show",ov&&sc>4);R.classList.toggle("show",ov&&sc<max-4);}L.onclick=function(){w.scrollBy({left:-w.clientWidth*0.7,behavior:"smooth"});};R.onclick=function(){w.scrollBy({left:w.clientWidth*0.7,behavior:"smooth"});};w.addEventListener("scroll",upd,{passive:true});window.addEventListener("resize",upd);new MutationObserver(upd).observe(w,{childList:true});upd();setTimeout(upd,400);})();</script>
 <script>/*moremenu*/(function(){var b=document.getElementById("moreBtn"),d=document.getElementById("moreDrop");if(!b||!d)return;b.addEventListener("click",function(e){e.stopPropagation();var o=d.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});document.addEventListener("click",function(e){if(d.classList.contains("open")&&!d.contains(e.target)&&e.target!==b){d.classList.remove("open");b.setAttribute("aria-expanded","false");}});document.addEventListener("keydown",function(e){if(e.key==="Escape"){d.classList.remove("open");b.setAttribute("aria-expanded","false");}});})();</script>
 <script>/* pin nav menu under the sticky brand bar (desktop only) */
-(function(){function pin(){var hb=document.querySelector('.hostbar'),nav=document.querySelector('.guidenav');if(!hb||!nav)return;if(window.matchMedia('(min-width:881px)').matches){nav.style.position='sticky';nav.style.top=hb.offsetHeight+'px';nav.style.zIndex='20';}else{nav.style.position='';nav.style.top='';nav.style.zIndex='';}}window.addEventListener('load',pin);window.addEventListener('resize',pin);if(document.readyState!=='loading')pin();else document.addEventListener('DOMContentLoaded',pin);})();</script>
+(function(){function pin(){var hb=document.querySelector('.hostbar'),nav=document.querySelector('.guidenav');if(!hb||!nav)return;if(window.matchMedia('(min-width:881px)').matches){nav.style.position='sticky';nav.style.top=hb.offsetHeight+'px';nav.style.zIndex='20';}else{nav.style.position='';nav.style.top='';nav.style.zIndex='';}}window.addEventListener('load',pin);window.addEventListener('resize',pin);if(document.readyState!=='loading')pin();else document.addEventListener('DOMContentLoaded',pin);})();
+/* Chip bar: dissolvenza ai bordi quando ci sono altre chip fuori schermo
+   + la chip attiva viene centrata automaticamente nella barra */
+function enhanceChipBar(bar){
+  if(!bar) return;
+  function upd(){
+    var can = bar.scrollWidth - bar.clientWidth > 6;
+    bar.classList.toggle('fadeL', can && bar.scrollLeft > 6);
+    bar.classList.toggle('fadeR', can && bar.scrollLeft < bar.scrollWidth - bar.clientWidth - 6);
+  }
+  function centerOn(){
+    var on = bar.querySelector('.on');
+    if(on && on.scrollIntoView) on.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+  }
+  bar.addEventListener('scroll', upd, {passive:true});
+  if(window.ResizeObserver) new ResizeObserver(upd).observe(bar);
+  if(window.MutationObserver) new MutationObserver(function(){ upd(); centerOn(); }).observe(bar, {childList:true});
+  bar.addEventListener('click', function(e){
+    var b = e.target.closest && e.target.closest('button');
+    if(b && document.contains(b) && b.scrollIntoView) b.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+  });
+  upd();
+}
+enhanceChipBar(document.getElementById('filters'));
+</script>
 </body>
 </html>
