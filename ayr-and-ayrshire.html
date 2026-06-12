@@ -301,7 +301,7 @@ body.mapx .toTop{opacity:0!important; visibility:hidden!important}
 .zrail button{position:relative; width:12px; height:12px; border-radius:50%; border:none; padding:0; cursor:pointer; background:var(--zc,#5f7f96); opacity:.45; transform:scale(.8); transition:transform .18s, opacity .18s; -webkit-tap-highlight-color:transparent}
 .zrail button.on{opacity:1; transform:scale(1.12); box-shadow:0 0 0 3px #fff, 0 0 0 4.5px var(--zc,#5f7f96)}
 .zrail button:focus-visible{outline:2px solid var(--azure); outline-offset:3px}
-.zrail .lbl{position:absolute; right:calc(100% + 12px); top:50%; transform:translateY(-50%) translateX(5px); white-space:nowrap; font:600 .72rem "Jost",system-ui,sans-serif; color:#fff; background:var(--loch); padding:.24rem .6rem; border-radius:999px; opacity:0; pointer-events:none; transition:opacity .16s, transform .16s; box-shadow:0 3px 10px rgba(18,59,79,.25)}
+.zrail .lbl{position:absolute; right:calc(100% + 12px); top:50%; transform:translateY(-50%) translateX(5px); white-space:nowrap; font:600 .72rem "Jost",system-ui,sans-serif; color:var(--zc,#123b4f); background:#fff; border:1px solid var(--line); padding:.24rem .6rem; border-radius:999px; opacity:0; pointer-events:none; transition:opacity .16s, transform .16s; box-shadow:0 3px 10px rgba(18,59,79,.15)}
 .zrail button.on .lbl{opacity:1; transform:translateY(-50%)}
 @media(hover:hover) and (pointer:fine){
   .zrail button:hover{opacity:1; transform:scale(1.12)}
@@ -314,12 +314,13 @@ body.mapx .zrail{opacity:0!important; visibility:hidden!important}
 /* Mobile: striscia zone fissa in alto — solo indicativa, non intercetta tocchi */
 .ztop{position:fixed; left:0; right:0; z-index:75; pointer-events:none; display:none}
 @media(max-width:880px){.ztop.show{display:block}}
-.ztop .seg{display:flex; height:4px}
-.ztop .seg i{flex:1; height:4px; background:var(--zc,#5f7f96); opacity:.22; transition:opacity .25s, height .25s}
-.ztop .seg i.on{opacity:1; height:6px; border-radius:0 0 3px 3px; box-shadow:0 1px 6px rgba(18,59,79,.3)}
-.ztop .zlbl{position:absolute; top:4px; left:0; display:inline-flex; align-items:center; font:600 .66rem "Jost",system-ui,sans-serif; color:#fff; padding:.15rem .5rem .18rem; border-radius:0 0 7px 7px; box-shadow:0 2px 6px rgba(18,59,79,.16); opacity:0; transform:translateY(-3px); transition:opacity .18s, transform .18s, left .25s ease, background-color .25s; white-space:nowrap}
+.ztop .seg{display:flex; gap:3px; height:5px; padding:0 6px}
+.ztop .seg i{flex:1; position:relative; border-radius:99px; overflow:hidden}
+.ztop .seg i::before{content:""; position:absolute; inset:0; background:var(--zc,#5f7f96); opacity:.18}
+.ztop .seg i u{position:absolute; left:0; top:0; bottom:0; width:0; background:var(--zc,#5f7f96); border-radius:99px; display:block; transition:width .12s linear}
+.ztop .zlbl{position:absolute; top:9px; left:50%; display:inline-flex; align-items:center; font:600 .66rem "Jost",system-ui,sans-serif; background:#fff; border:1px solid var(--line); padding:.14rem .55rem; border-radius:999px; box-shadow:0 2px 6px rgba(18,59,79,.12); opacity:0; transform:translateX(-50%) translateY(-3px); transition:opacity .18s, transform .18s, color .25s; white-space:nowrap}
 .ztop .zlbl b{font-weight:600}
-.ztop.wake .zlbl{opacity:1; transform:translateY(0)}
+.ztop.wake .zlbl{opacity:1; transform:translateX(-50%) translateY(0)}
 body.mapx .ztop{display:none!important}
 @media (prefers-reduced-motion:reduce){.ztop .seg i,.ztop .zlbl{transition:none}}
 @media (prefers-reduced-motion:reduce){.zrail,.zrail button,.zrail .lbl{transition:none}}
@@ -988,7 +989,7 @@ enhanceChipBar(document.getElementById('zonebar'));
   ztop.innerHTML='<div class="seg"></div><span class="zlbl"><b></b></span>';
   document.body.appendChild(ztop);
   var zseg=ztop.querySelector('.seg'), zlb=ztop.querySelector('.zlbl'), zlt=ztop.querySelector('.zlbl b');
-  var segs=[], zmeta=[];
+  var segs=[], fills=[], zmeta=[];
   function placeTop(){ var hb=document.querySelector('.hostbar'); ztop.style.top=(hb?hb.offsetHeight:0)+'px'; }
   var isMob=window.matchMedia('(max-width:880px)'), idleT=null;
   function initMin(){ placeTop(); }
@@ -998,9 +999,9 @@ enhanceChipBar(document.getElementById('zonebar'));
   function build(){
     heads=Array.prototype.slice.call(list.querySelectorAll('[data-zone]'));
     rail.innerHTML=''; btns=[];
-    zseg.innerHTML=''; segs=[]; zmeta=[];
+    zseg.innerHTML=''; segs=[]; fills=[]; zmeta=[];
     if(heads.length<2){ rail.classList.remove('show'); ztop.classList.remove('show'); return; }
-    heads.forEach(function(h){
+    heads.forEach(function(h,hi){
       var z=h.getAttribute('data-zone');
       var col=(typeof ZONE_COLORS!=='undefined'&&ZONE_COLORS[z])||'#5f7f96';
       var b=document.createElement('button'); b.type='button'; b.setAttribute('aria-label',z);
@@ -1008,21 +1009,20 @@ enhanceChipBar(document.getElementById('zonebar'));
       b.innerHTML='<i class="lbl">'+escH(z)+'</i>';
       b.addEventListener('click',function(){
         wake(2200);
+        pinUntil=Date.now()+1600;
+        setActive(hi);
         h.scrollIntoView({behavior:'smooth', block:(isMob.matches?'center':'start')});
       });
       rail.appendChild(b); btns.push(b);
-      var sg=document.createElement('i'); sg.style.setProperty('--zc',col); zseg.appendChild(sg); segs.push(sg); zmeta.push({z:z,c:col});
+      var sg=document.createElement('i'); sg.style.setProperty('--zc',col); sg.innerHTML='<u></u>'; zseg.appendChild(sg); segs.push(sg); fills.push(sg.firstChild); zmeta.push({z:z,c:col});
     });
     rail.classList.add('show'); ztop.classList.add('show'); initMin(); spy();
   }
-  function setActive(cur){
+  function setActive(cur,p){
     btns.forEach(function(b,i){ b.classList.toggle('on',i===cur); if(i===cur) b.setAttribute('aria-current','true'); else b.removeAttribute('aria-current'); });
-    segs.forEach(function(sg,i){ sg.classList.toggle('on',i===cur); });
-    if(zmeta[cur]){
-      zlb.style.background=zmeta[cur].c; zlt.textContent=zmeta[cur].z;
-      var n=segs.length||1, cx=window.innerWidth*((cur+0.5)/n), w=zlb.offsetWidth||60;
-      zlb.style.left=Math.max(6, Math.min(window.innerWidth-w-6, cx-w/2))+'px';
-    }
+    var pct=Math.round(Math.max(0,Math.min(1,(p==null?0.12:p)))*100);
+    fills.forEach(function(f,i){ f.style.width=(i<cur?100:(i===cur?pct:0))+'%'; });
+    if(zmeta[cur]){ zlb.style.color=zmeta[cur].c; zlt.textContent=zmeta[cur].z; }
   }
   var pinUntil=0;
   function spy(){
@@ -1030,7 +1030,9 @@ enhanceChipBar(document.getElementById('zonebar'));
     if(Date.now()<pinUntil) return;
     var aY=window.innerHeight*0.4, cur=0;
     for(var i=0;i<heads.length;i++){ if(heads[i].getBoundingClientRect().top<=aY) cur=i; }
-    setActive(cur);
+    var a=heads[cur].getBoundingClientRect().top;
+    var bEnd=(cur+1<heads.length)?heads[cur+1].getBoundingClientRect().top:list.getBoundingClientRect().bottom;
+    setActive(cur, (aY-a)/Math.max(1,(bEnd-a)));
   }
   document.addEventListener('zonespy',function(e){
     var z=e.detail&&e.detail.zone; if(!z||!heads.length) return;
