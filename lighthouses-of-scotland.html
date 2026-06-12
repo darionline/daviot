@@ -289,10 +289,9 @@ body.mapx .zrail{opacity:0!important; visibility:hidden!important}
 .ztop .seg{display:flex; height:4px}
 .ztop .seg i{flex:1; height:4px; background:var(--zc,#5f7f96); opacity:.22; transition:opacity .25s, height .25s}
 .ztop .seg i.on{opacity:1; height:6px; border-radius:0 0 3px 3px; box-shadow:0 1px 6px rgba(18,59,79,.3)}
-.ztop .zlbl{position:absolute; top:11px; left:50%; transform:translateX(-50%) translateY(-4px); display:inline-flex; align-items:center; gap:.4rem; font:600 .72rem "Jost",system-ui,sans-serif; color:#fff; background:var(--loch); padding:.26rem .7rem; border-radius:999px; box-shadow:0 4px 12px rgba(18,59,79,.28); opacity:0; transition:opacity .18s, transform .18s; white-space:nowrap}
-.ztop .zlbl i{width:8px; height:8px; border-radius:50%; display:inline-block}
+.ztop .zlbl{position:absolute; top:4px; left:0; display:inline-flex; align-items:center; font:600 .66rem "Jost",system-ui,sans-serif; color:#fff; padding:.15rem .5rem .18rem; border-radius:0 0 7px 7px; box-shadow:0 2px 6px rgba(18,59,79,.16); opacity:0; transform:translateY(-3px); transition:opacity .18s, transform .18s, left .25s ease, background-color .25s; white-space:nowrap}
 .ztop .zlbl b{font-weight:600}
-.ztop.wake .zlbl{opacity:1; transform:translateX(-50%) translateY(0)}
+.ztop.wake .zlbl{opacity:1; transform:translateY(0)}
 body.mapx .ztop{display:none!important}
 @media (prefers-reduced-motion:reduce){.ztop .seg i,.ztop .zlbl{transition:none}}
 @media (prefers-reduced-motion:reduce){.zrail,.zrail button,.zrail .lbl{transition:none}}
@@ -926,9 +925,9 @@ enhanceChipBar(document.getElementById('zonebar'));
   var rail=document.createElement('nav'); rail.className='zrail'; rail.setAttribute('aria-label','Zones in this list');
   document.body.appendChild(rail);
   var ztop=document.createElement('nav'); ztop.className='ztop'; ztop.setAttribute('aria-hidden','true');
-  ztop.innerHTML='<div class="seg"></div><span class="zlbl"><i></i><b></b></span>';
+  ztop.innerHTML='<div class="seg"></div><span class="zlbl"><b></b></span>';
   document.body.appendChild(ztop);
-  var zseg=ztop.querySelector('.seg'), zld=ztop.querySelector('.zlbl i'), zlt=ztop.querySelector('.zlbl b');
+  var zseg=ztop.querySelector('.seg'), zlb=ztop.querySelector('.zlbl'), zlt=ztop.querySelector('.zlbl b');
   var segs=[], zmeta=[];
   function placeTop(){ var hb=document.querySelector('.hostbar'); ztop.style.top=(hb?hb.offsetHeight:0)+'px'; }
   var isMob=window.matchMedia('(max-width:880px)'), idleT=null;
@@ -959,7 +958,11 @@ enhanceChipBar(document.getElementById('zonebar'));
   function setActive(cur){
     btns.forEach(function(b,i){ b.classList.toggle('on',i===cur); if(i===cur) b.setAttribute('aria-current','true'); else b.removeAttribute('aria-current'); });
     segs.forEach(function(sg,i){ sg.classList.toggle('on',i===cur); });
-    if(zmeta[cur]){ zld.style.background=zmeta[cur].c; zlt.textContent=zmeta[cur].z; }
+    if(zmeta[cur]){
+      zlb.style.background=zmeta[cur].c; zlt.textContent=zmeta[cur].z;
+      var n=segs.length||1, cx=window.innerWidth*((cur+0.5)/n), w=zlb.offsetWidth||60;
+      zlb.style.left=Math.max(6, Math.min(window.innerWidth-w-6, cx-w/2))+'px';
+    }
   }
   var pinUntil=0;
   function spy(){
