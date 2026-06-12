@@ -304,7 +304,14 @@ body.mapx .toTop{opacity:0!important; visibility:hidden!important}
 .zrail .lbl{position:absolute; right:calc(100% + 12px); top:50%; transform:translateY(-50%) translateX(5px); white-space:nowrap; font:600 .72rem "Jost",system-ui,sans-serif; color:#fff; background:var(--loch); padding:.24rem .6rem; border-radius:999px; opacity:0; pointer-events:none; transition:opacity .16s, transform .16s; box-shadow:0 3px 10px rgba(18,59,79,.25)}
 .zrail button.on .lbl{opacity:1; transform:translateY(-50%)}
 body.mapx .zrail{opacity:0!important; visibility:hidden!important}
-@media(max-width:880px){.zrail{right:6px; gap:9px; padding:9px 6px}}
+@media(max-width:880px){
+  .zrail{right:6px; gap:9px; padding:9px 6px; transition:opacity .2s, visibility .2s, padding .25s, background .25s, border-color .25s, box-shadow .25s}
+  .zrail button{transition:transform .18s, opacity .18s, width .25s, height .25s, border-radius .25s}
+  .zrail.min{background:transparent; border-color:transparent; box-shadow:none; padding:6px 3px; gap:7px}
+  .zrail.min button{width:4px; height:16px; border-radius:99px; opacity:.35; transform:none; box-shadow:none}
+  .zrail.min button.on{opacity:.9}
+  .zrail.min .lbl{display:none}
+}
 @media (prefers-reduced-motion:reduce){.zrail,.zrail button,.zrail .lbl{transition:none}}
 </style>
 <style id="gnmenu-css">
@@ -967,6 +974,9 @@ enhanceChipBar(document.getElementById('zonebar'));
   var list=document.getElementById('list'); if(!list) return;
   var rail=document.createElement('nav'); rail.className='zrail'; rail.setAttribute('aria-label','Zones in this list');
   document.body.appendChild(rail);
+  var isMob=window.matchMedia('(max-width:880px)'), idleT=null;
+  function initMin(){ if(isMob.matches) rail.classList.add('min'); else rail.classList.remove('min'); }
+  function wake(ms){ if(!isMob.matches) return; rail.classList.remove('min'); clearTimeout(idleT); idleT=setTimeout(function(){ rail.classList.add('min'); }, ms||1400); }
   var heads=[], btns=[];
   function escH(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
   function build(){
@@ -980,11 +990,13 @@ enhanceChipBar(document.getElementById('zonebar'));
       b.style.setProperty('--zc',col);
       b.innerHTML='<i class="lbl">'+escH(z)+'</i>';
       b.addEventListener('click',function(){
-        h.scrollIntoView({behavior:'smooth', block:(window.matchMedia('(max-width:880px)').matches?'center':'start')});
+        if(rail.classList.contains('min')){ wake(2600); return; }
+        wake(2200);
+        h.scrollIntoView({behavior:'smooth', block:(isMob.matches?'center':'start')});
       });
       rail.appendChild(b); btns.push(b);
     });
-    rail.classList.add('show'); spy();
+    rail.classList.add('show'); initMin(); spy();
   }
   function setActive(cur){
     btns.forEach(function(b,i){ b.classList.toggle('on',i===cur); if(i===cur) b.setAttribute('aria-current','true'); else b.removeAttribute('aria-current'); });
@@ -1004,10 +1016,12 @@ enhanceChipBar(document.getElementById('zonebar'));
     if(idx<0) return;
     pinUntil=Date.now()+1400;
     setActive(idx);
+    wake(2200);
   });
-  window.addEventListener('scroll',spy,{passive:true});
-  list.addEventListener('scroll',spy,{passive:true});
-  window.addEventListener('resize',spy);
+  function onScroll(){ wake(); spy(); }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  list.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',function(){ initMin(); spy(); });
   if(window.MutationObserver) new MutationObserver(build).observe(list,{childList:true});
   build();
 })();
