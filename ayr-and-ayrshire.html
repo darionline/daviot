@@ -120,10 +120,8 @@ aside .head .sort:hover{border-color:var(--loch); color:var(--loch)}
 .zchip.on::after{width:.95em; margin-left:0}
 .zchip.on .c{color:#eaf4fa; background:rgba(255,255,255,.18)}
 @media (prefers-reduced-motion:reduce){.zchip,.zchip::after{transition:none}}
-.zone-h{font-family:"Jost",system-ui,sans-serif; color:var(--loch); font-size:1.02rem; font-weight:600; padding:.85rem .55rem .45rem; display:flex; align-items:center; gap:.5rem; position:sticky; top:0; background:var(--paper); z-index:2}
-.zone-h .zdot{width:11px; height:11px; border-radius:50%; flex:0 0 auto; box-shadow:0 0 0 3px rgba(255,255,255,.9), 0 1px 4px rgba(18,59,79,.25)}
-.zone-h .zrule{flex:1; height:2px; border-radius:99px; min-width:24px}
-.zone-h span{flex:0 0 auto; font-family:"Jost"; font-size:.72rem; color:#5b6b75; font-weight:700; font-variant-numeric:tabular-nums; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.16rem .55rem; box-shadow:0 1px 4px rgba(18,59,79,.08)}
+/* Le zone non hanno più intestazioni in lista: la colonnina a destra e le chip fanno da guida */
+.zanchor{height:8px}
 /* place card — horizontal compact, consistent with the "near us" page */
 .card{display:flex; gap:.8rem; align-items:flex-start; background:var(--card); border:1px solid var(--line); position:relative; isolation:isolate;
   border-radius:14px; padding:.75rem; margin:.45rem 0; box-shadow:0 4px 16px rgba(18,59,79,.06); cursor:pointer; -webkit-tap-highlight-color:transparent;
@@ -267,7 +265,6 @@ path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
   aside{border-left:none; border-top:1px solid var(--line)}
   .list{overflow:visible; flex:none; padding:.4rem 1rem 1.3rem; transform:translateZ(0); -webkit-transform:translateZ(0); backface-visibility:hidden; -webkit-backface-visibility:hidden}
   .media{width:88px;height:88px}
-  .zone-h{position:static}
   #map{height:46vh; border-radius:0; position:sticky; z-index:1; box-shadow:0 8px 16px rgba(18,59,79,.14)}
   .leaflet-control-zoom{display:none!important}
   .leaflet-popup-content{margin:.55rem .7rem}
@@ -466,6 +463,7 @@ function selectMarker(id){
     var _card=_lst.querySelector('.card[data-id="'+id+'"]');
     if(_card){ _card.classList.add('sel'); if(_card.scrollIntoView) _card.scrollIntoView({behavior:'smooth', block:'nearest'}); }
   }
+  try{ var _it=lighthouses.find(function(x){return x.id===id;}); if(_it&&_it.zone) document.dispatchEvent(new CustomEvent('zonespy',{detail:{zone:_it.zone}})); }catch(_){}
 }
 
 let lighthouses = [], markers = {}, sortAZ = true;
@@ -766,7 +764,7 @@ function draw(){
   ZONE_ORDER.forEach(z=>{
     if(!groups[z]) return;
     const arr=groups[z].sort(cmp);
-    if(activeZone==='All'){ var _zc=ZONE_COLORS[z]||'#5f7f96'; html+='<div class="zone-h" data-zone="'+esc(z)+'"><i class="zdot" style="background:'+_zc+'"></i>'+esc(z)+'<i class="zrule" style="background:linear-gradient(90deg,'+_zc+'59,transparent)"></i><span>'+arr.length+'</span></div>'; }
+    if(activeZone==='All'){ html+='<div class="zanchor" data-zone="'+esc(z)+'" aria-hidden="true"></div>'; }
     html+=arr.map(itemHtml).join('');
   });
   list.innerHTML=html;
@@ -972,7 +970,7 @@ enhanceChipBar(document.getElementById('zonebar'));
   var heads=[], btns=[];
   function escH(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
   function build(){
-    heads=Array.prototype.slice.call(list.querySelectorAll('.zone-h[data-zone]'));
+    heads=Array.prototype.slice.call(list.querySelectorAll('[data-zone]'));
     rail.innerHTML=''; btns=[];
     if(heads.length<2){ rail.classList.remove('show'); return; }
     heads.forEach(function(h){
@@ -988,12 +986,25 @@ enhanceChipBar(document.getElementById('zonebar'));
     });
     rail.classList.add('show'); spy();
   }
-  function spy(){
-    if(!heads.length) return;
-    var aY=window.innerHeight*0.4, cur=0;
-    for(var i=0;i<heads.length;i++){ if(heads[i].getBoundingClientRect().top<=aY) cur=i; }
+  function setActive(cur){
     btns.forEach(function(b,i){ b.classList.toggle('on',i===cur); if(i===cur) b.setAttribute('aria-current','true'); else b.removeAttribute('aria-current'); });
   }
+  var pinUntil=0;
+  function spy(){
+    if(!heads.length) return;
+    if(Date.now()<pinUntil) return;
+    var aY=window.innerHeight*0.4, cur=0;
+    for(var i=0;i<heads.length;i++){ if(heads[i].getBoundingClientRect().top<=aY) cur=i; }
+    setActive(cur);
+  }
+  document.addEventListener('zonespy',function(e){
+    var z=e.detail&&e.detail.zone; if(!z||!heads.length) return;
+    var idx=-1;
+    heads.forEach(function(h,i){ if(h.getAttribute('data-zone')===z) idx=i; });
+    if(idx<0) return;
+    pinUntil=Date.now()+1400;
+    setActive(idx);
+  });
   window.addEventListener('scroll',spy,{passive:true});
   list.addEventListener('scroll',spy,{passive:true});
   window.addEventListener('resize',spy);
