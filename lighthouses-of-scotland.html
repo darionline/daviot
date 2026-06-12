@@ -612,11 +612,11 @@ async function enrichImages(){
   lighthouses.forEach(l=>{ l.checked=true; });
   refreshPopups();
 }
-function refreshPopups(){ if(openPopupId){ const l=lighthouses.find(x=>x.id===openPopupId); if(l) quietSetContent(popupHtml(l)); } }
+function refreshPopups(){ if(openPopupId){ const l=lighthouses.find(x=>x.id===openPopupId); if(l) placePopup.setContent(popupHtml(l)); } }
 function updateThumb(id,url){
   const m0=document.querySelector('.media[data-id="'+id+'"]');
   if(m0){ m0.classList.remove('noimg'); m0.innerHTML='<img loading="lazy" src="'+esc(url)+'" alt="" onerror="phFail(this)">'; }
-  if(openPopupId===id){ const l=lighthouses.find(x=>x.id===id); if(l) quietSetContent(popupHtml(l)); }
+  if(openPopupId===id){ const l=lighthouses.find(x=>x.id===id); if(l) placePopup.setContent(popupHtml(l)); }
 }
 
 const ZONE_ORDER=['Shetland','Orkney','North Highlands & Coast','Outer Hebrides','West Coast & Inner Hebrides','North-East & Moray Firth','East Coast & Forth','Clyde & South-West'];
@@ -718,8 +718,7 @@ map.on('dragstart', ()=>{ userInteracted=true; });
 
 /* Robust place popups: live on the MAP, never on clusterable markers, so re-rendering/panning can't close them. */
 let openPopupId=null;
-const placePopup=L.popup({maxWidth:300, autoPanPadding:[26,26], offset:[0,-49]});
-function quietSetContent(c){ var _ap=placePopup.options.autoPan; placePopup.options.autoPan=false; try{ placePopup.setContent(c); }finally{ placePopup.options.autoPan=_ap; } }
+const placePopup=L.popup({maxWidth:300, autoPanPadding:[26,26], keepInView:true, offset:[0,-49]});
 placePopup.on('remove',()=>{ openPopupId=null; });
 function showPopup(l, content){ if(!l) return; openPopupId=l.id; try{ selectMarker(l.id); }catch(e){} placePopup.setLatLng([l.lat,l.lng]).setContent(content||popupHtml(l)).openOn(map); }
 function draw(){
