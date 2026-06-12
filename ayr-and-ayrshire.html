@@ -271,6 +271,7 @@ path.leaflet-interactive:hover{fill-opacity:.22!important; cursor:pointer}
   .pop b{font-size:1.02rem}
   .pop img{max-height:96px; object-fit:cover; margin:.4rem 0}
   .pop .meta{font-size:.78rem}
+  .leaflet-popup-content{max-height:34vh; overflow-y:auto}
 }
 .guidenav{display:flex; justify-content:center; padding:.6rem .7rem; background:var(--paper); border-bottom:1px solid var(--line)}
 .gnwrap{display:inline-flex; gap:.2rem; max-width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; scroll-behavior:smooth;/*gnwrap-momentum*/ scrollbar-width:none; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.24rem; box-shadow:0 4px 14px rgba(40,70,120,.10)}
@@ -760,7 +761,7 @@ function fitInitial(){ if(initialFitDone) return; initialFitDone=true; fitAyr();
 map.on('dragstart', ()=>{ userInteracted=true; });
 
 /* Robust place popups: live on the MAP, never on clusterable markers, so re-rendering/panning can't close them. */
-const placePopup=L.popup({maxWidth:300, autoPanPadding:[26,26], keepInView:true, offset:[0,-54]});
+const placePopup=L.popup({maxWidth:300, autoPanPadding:[26,26], offset:[0,-54]});
 placePopup.on('remove',()=>{ openPopupId=null; });
 function showPopup(l, content){ if(!l) return; openPopupId=l.id; try{ selectMarker(l.id); }catch(e){} placePopup.setLatLng([l.lat,l.lng]).setContent(content||popupHtml(l)).openOn(map); }
 function draw(){
