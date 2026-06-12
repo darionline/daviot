@@ -298,9 +298,9 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
 var cluster=L.markerClusterGroup({maxClusterRadius:50, showCoverageOnHover:false, spiderfyOnMaxZoom:true});
 map.addLayer(cluster);
 
-function pin(color){ return L.divIcon({className:'', iconSize:[22,28], iconAnchor:[11,26], popupAnchor:[0,-24],
+function pin(color){ return L.divIcon({className:'', iconSize:[22,28], iconAnchor:[11,26], popupAnchor:[0,-32],
   html:'<svg width="22" height="28" viewBox="0 0 26 34" xmlns="http://www.w3.org/2000/svg"><path d="M13 1C6.4 1 1 6 1 12c0 8 12 21 12 21s12-13 12-21C25 6 19.6 1 13 1z" fill="'+color+'" stroke="#fff" stroke-width="1.5"/><circle cx="13" cy="12" r="4" fill="#fff"/></svg>'}); }
-function selPin(){ return L.divIcon({className:'', iconSize:[30,38], iconAnchor:[15,36], popupAnchor:[0,-32],
+function selPin(){ return L.divIcon({className:'', iconSize:[30,38], iconAnchor:[15,36], popupAnchor:[0,-42],
   html:'<svg width="30" height="38" viewBox="0 0 26 34" xmlns="http://www.w3.org/2000/svg"><path d="M13 1C6.4 1 1 6 1 12c0 8 12 21 12 21s12-13 12-21C25 6 19.6 1 13 1z" fill="#123b4f" stroke="#fff" stroke-width="1.5"/><circle cx="13" cy="12" r="4.4" fill="#fff"/></svg>'}); }
 function selectMarker(id){
   if(selectedId===id) return;
@@ -314,7 +314,7 @@ function selectMarker(id){
     if(_card){ _card.classList.add('sel'); if(_card.scrollIntoView) _card.scrollIntoView({behavior:'smooth', block:'nearest'}); }
   }
 }
-var housePin=L.divIcon({className:'', iconSize:[34,42], iconAnchor:[17,40], popupAnchor:[0,-36],
+var housePin=L.divIcon({className:'', iconSize:[34,42], iconAnchor:[17,40], popupAnchor:[0,-46],
   html:'<svg width="34" height="42" viewBox="0 0 34 42" xmlns="http://www.w3.org/2000/svg"><path d="M17 1C9 1 2.5 7.2 2.5 15 2.5 24.5 17 41 17 41S31.5 24.5 31.5 15C31.5 7.2 25 1 17 1z" fill="#7189ed" stroke="#fff" stroke-width="1.6"/><g stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(17,15.5) scale(0.62) translate(-12,-12)"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></g></svg>'});
 L.marker([HOST.lat,HOST.lng],{icon:housePin,zIndexOffset:1200}).addTo(map)
   .bindPopup('<div class="pop"><b>'+esc(HOST.name)+'</b><div class="pm">Your base.</div></div>')

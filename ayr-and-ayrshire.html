@@ -417,7 +417,7 @@ function renderHostBar(){
 function addHostMarker(){
   if(HOST.lat==null) return;
   const pin='<svg width="34" height="42" viewBox="0 0 34 42" xmlns="http://www.w3.org/2000/svg"><path d="M17 1C9 1 2.5 7.2 2.5 15 2.5 24.5 17 41 17 41S31.5 24.5 31.5 15C31.5 7.2 25 1 17 1z" fill="#7189ed" stroke="#fff" stroke-width="1.6"/><g stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(17,15.5) scale(0.62) translate(-12,-12)"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></g></svg>';
-  const icon=L.divIcon({className:'',html:pin,iconSize:[34,42],iconAnchor:[17,40],popupAnchor:[0,-36]});
+  const icon=L.divIcon({className:'',html:pin,iconSize:[34,42],iconAnchor:[17,40],popupAnchor:[0,-46]});
   const gm='https://www.google.com/maps/search/?api=1&query='+HOST.lat+','+HOST.lng;
   const m=L.marker([HOST.lat,HOST.lng],{icon:icon,zIndexOffset:1000}).addTo(map);
   m.bindPopup('<div class="pop"><b>'+esc(HOST.name)+'</b><div class="meta">'+esc(HOST.address)+'</div>'
@@ -459,8 +459,8 @@ const cluster = L.markerClusterGroup({maxClusterRadius:1, disableClusteringAtZoo
 map.addLayer(cluster);
 
 function pinHtml(fill,w,hh){ return '<svg width="'+w+'" height="'+hh+'" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg"><path d="M16 1C8.3 1 2 7 2 14.3 2 23.5 16 39 16 39s14-15.5 14-24.7C30 7 23.7 1 16 1z" fill="'+fill+'" stroke="#fff" stroke-width="1.6"/><circle cx="16" cy="15" r="5.2" fill="#fff"/></svg>'; }
-function iconFor(cat){ return L.divIcon({className:'', html:pinHtml(ZONE_COLORS[cat]||'#2b7cc4',30,38), iconSize:[30,38], iconAnchor:[15,36], popupAnchor:[0,-32]}); }
-const lhIconSel = L.divIcon({className:'lhsel', html:pinHtml('#123b4f',40,50), iconSize:[40,50], iconAnchor:[20,48], popupAnchor:[0,-44]});
+function iconFor(cat){ return L.divIcon({className:'', html:pinHtml(ZONE_COLORS[cat]||'#2b7cc4',30,38), iconSize:[30,38], iconAnchor:[15,36], popupAnchor:[0,-42]}); }
+const lhIconSel = L.divIcon({className:'lhsel', html:pinHtml('#123b4f',40,50), iconSize:[40,50], iconAnchor:[20,48], popupAnchor:[0,-54]});
 let selectedId=null, openPopupId=null;
 
 /* Favourites */
@@ -760,7 +760,7 @@ function fitInitial(){ if(initialFitDone) return; initialFitDone=true; fitAyr();
 map.on('dragstart', ()=>{ userInteracted=true; });
 
 /* Robust place popups: live on the MAP, never on clusterable markers, so re-rendering/panning can't close them. */
-const placePopup=L.popup({maxWidth:300, autoPanPadding:[26,26], keepInView:true});
+const placePopup=L.popup({maxWidth:300, autoPanPadding:[26,26], keepInView:true, offset:[0,-54]});
 placePopup.on('remove',()=>{ openPopupId=null; });
 function showPopup(l, content){ if(!l) return; openPopupId=l.id; try{ selectMarker(l.id); }catch(e){} placePopup.setLatLng([l.lat,l.lng]).setContent(content||popupHtml(l)).openOn(map); }
 function draw(){
