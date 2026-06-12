@@ -281,6 +281,12 @@ body.mapx .toTop{opacity:0!important; visibility:hidden!important}
 .zrail button:focus-visible{outline:2px solid var(--azure); outline-offset:3px}
 .zrail .lbl{position:absolute; right:calc(100% + 12px); top:50%; transform:translateY(-50%) translateX(5px); white-space:nowrap; font:600 .72rem "Jost",system-ui,sans-serif; color:#fff; background:var(--loch); padding:.24rem .6rem; border-radius:999px; opacity:0; pointer-events:none; transition:opacity .16s, transform .16s; box-shadow:0 3px 10px rgba(18,59,79,.25)}
 .zrail button.on .lbl{opacity:1; transform:translateY(-50%)}
+@media(hover:hover) and (pointer:fine){
+  .zrail button:hover{opacity:1; transform:scale(1.12)}
+  .zrail button:hover .lbl{opacity:1; transform:translateY(-50%)}
+}
+.zrail button:focus-visible{opacity:1; transform:scale(1.12)}
+.zrail button:focus-visible .lbl{opacity:1; transform:translateY(-50%)}
 body.mapx .zrail{opacity:0!important; visibility:hidden!important}
 @media(max-width:880px){.zrail{display:none!important}}
 /* Mobile: striscia zone fissa in alto — solo indicativa, non intercetta tocchi */
