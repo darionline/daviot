@@ -307,7 +307,39 @@ var OWN=[
   {file:"gla-08.jpg", capt:"The Princes Square facade", cat:"glasgow"},
   {file:"gla-09.jpg", capt:"A clock on a sandstone building", cat:"glasgow"},
   {file:"gla-10.jpg", capt:"George Square and the City Chambers", cat:"glasgow"},
-  {file:"gla-11.jpg", capt:"City tenements", cat:"glasgow"}
+  {file:"gla-11.jpg", capt:"City tenements", cat:"glasgow"},
+  {file:"edi-01.jpg", capt:"A statue on the Royal Mile", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-02.jpg", capt:"An old town street", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-03.jpg", capt:"A street performer", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-04.jpg", capt:"A busy street corner", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-05.jpg", capt:"A carved doorway", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-06.jpg", capt:"Edinburgh Castle from the gardens", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-07.jpg", capt:"A double-decker in town", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-08.jpg", capt:"A Gothic archway", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-09.jpg", capt:"Steps in the old town", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-10.jpg", capt:"A tall tenement", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-11.jpg", capt:"Shops on the Royal Mile", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-12.jpg", capt:"Old town rooftops", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-13.jpg", capt:"A bustling street", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-14.jpg", capt:"A curved facade", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-15.jpg", capt:"On the high street", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-16.jpg", capt:"A round tower", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-17.jpg", capt:"Old town pavement", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-18.jpg", capt:"Flags over the old town", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-19.jpg", capt:"A street in the old town", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-20.jpg", capt:"A glass roof", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-21.jpg", capt:"A colourful street", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-22.jpg", capt:"By a grand building", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-23.jpg", capt:"A narrow close", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-24.jpg", capt:"Carved figures on a facade", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-25.jpg", capt:"An old town corner", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-26.jpg", capt:"A red telephone box", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-27.jpg", capt:"A corner with a turret", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-28.jpg", capt:"Grand stone buildings", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-29.jpg", capt:"Sandstone windows", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-30.jpg", capt:"A path through the gardens", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-31.jpg", capt:"A lively street", cat:"edinburgh", dir:"edi-photos"},
+  {file:"edi-32.jpg", capt:"Old town tenements", cat:"edinburgh", dir:"edi-photos"}
 ];
 
 var CACHE_KEY='gal_pexels_v1';
@@ -336,7 +368,12 @@ function noSource(){
 }
 
 function tLoaded(img){ var t=img.closest('.tile'); if(t){ t.classList.remove('sk'); t.classList.add('on'); } }
-function tFail(img){ var t=img.closest('.tile'); if(t){ t.classList.add('dead'); t.style.display='none'; var i=+t.dataset.i; if(items[i]) items[i].dead=true; } }
+function tFail(img){ var t=img.closest('.tile'); if(t){ t.classList.add('dead'); t.style.display='none'; var i=+t.dataset.i; if(items[i]){ items[i].dead=true; refreshCount(items[i].cat); } } }
+function refreshCount(cat){
+  function setN(key, val){ var el=filtersEl.querySelector('.fchip[data-c="'+key+'"] .n'); if(el) el.textContent=val; }
+  setN(cat, items.filter(function(x){return x.cat===cat && !x.dead;}).length);
+  setN('all', items.filter(function(x){return !x.dead;}).length);
+}
 
 var PAGE=14, view=[], shown=0, sentinel=document.getElementById('sentinel');
 function tileHTML(i){ var it=items[i];
@@ -362,7 +399,7 @@ function renderFilters(){
   var all=[['all','All']].concat(THEMES.map(function(t){return [t[0],t[1]];}));
   filtersEl.innerHTML=all.map(function(c){
     var key=c[0];
-    var n = key==='all' ? items.length : items.filter(function(x){return x.cat===key;}).length;
+    var n = key==='all' ? items.filter(function(x){return !x.dead;}).length : items.filter(function(x){return x.cat===key && !x.dead;}).length;
     if(key!=='all' && n===0) return '';
     return '<button class="fchip'+(activeC===key?' on':'')+'" data-c="'+key+'">'+esc(c[1])+(n?' <span class="n">'+n+'</span>':'')+'</button>';
   }).join('');
@@ -419,9 +456,10 @@ function ingest(themeKey, label, data){
 
 function buildCurated(){
   OWN.forEach(function(p){
+    var dir=p.dir||"ayr-photos";
     items.push({
-      grid:"ayr-photos/thumb/"+p.file,
-      big:"ayr-photos/img/"+p.file,
+      grid:dir+"/thumb/"+p.file,
+      big:dir+"/img/"+p.file,
       ph:"", purl:"", own:true,
       alt:p.capt||"", capt:p.capt||"", cat:(p.cat||"ayrshire")
     });
