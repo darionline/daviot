@@ -64,12 +64,12 @@ svg.ico{width:1em;height:1em;display:inline-block;vertical-align:-.14em;fill:non
 .grid{columns:165px; column-gap:.6rem}
 @media(min-width:640px){ .grid{columns:235px; column-gap:.7rem} }
 .tile{position:relative; margin:0 0 .6rem; padding:0; border:none; border-radius:14px; overflow:hidden; background:#dde6f1; cursor:zoom-in; display:block; width:100%; break-inside:avoid; box-shadow:0 4px 14px rgba(18,59,79,.08)}
-.tile.sk{height:240px}
+.tile.sk{min-height:60px}
 .tile.sk{background:linear-gradient(100deg,#e6ecf4 30%,#dde6f1 50%,#e6ecf4 70%); background-size:200% 100%; animation:sh 1.3s infinite}
 @keyframes sh{to{background-position:-200% 0}}
 .tile.sk::after{content:""; position:absolute; top:50%; left:50%; width:26px; height:26px; margin:-13px 0 0 -13px; border-radius:50%; border:3px solid rgba(18,59,79,.16); border-top-color:var(--azure); animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.tile img{width:100%; height:auto; display:block; opacity:0; transition:opacity .5s, transform .4s}
+.tile img{width:100%; height:auto; display:block; opacity:0; transition:opacity .45s; background:#dde6f1}
 .tile.on img{opacity:1}
 .tile:hover img{transform:scale(1.06)}
 .tile .cap{position:absolute; left:0; right:0; bottom:0; padding:1.5rem .6rem .55rem; color:#fff; font-size:.8rem; font-weight:600; line-height:1.25; text-align:left; background:linear-gradient(transparent, rgba(8,28,38,.55) 45%, rgba(8,28,38,.82)); opacity:0; transform:translateY(6px); transition:.2s; pointer-events:none}
@@ -255,91 +255,91 @@ var CURATED=[
 
 /* Le tue foto reali di Ayr e dintorni (ospitate nel progetto, cartella ayr-photos/). */
 var OWN=[
-  {file:"ayr-01.jpg", capt:"On the seafront"},
-  {file:"ayr-02.jpg", capt:"Harbourside street"},
-  {file:"ayr-03.jpg", capt:"Boats in the harbour"},
-  {file:"ayr-04.jpg", capt:"Sandstone detail in town"},
-  {file:"ayr-05.jpg", capt:"Fishing boats at low tide"},
-  {file:"ayr-06.jpg", capt:"Seafront sculpture"},
-  {file:"ayr-07.jpg", capt:"Town church"},
-  {file:"ayr-08.jpg", capt:"Houses by the shore"},
-  {file:"ayr-09.jpg", capt:"Grand sandstone building"},
-  {file:"ayr-10.jpg", capt:"The beach and the hills beyond"},
-  {file:"ayr-11.jpg", capt:"Church spire against the sky"},
-  {file:"ayr-12.jpg", capt:"Old churchyard"},
-  {file:"ayr-13.jpg", capt:"Green fields by the coast"},
-  {file:"ayr-14.jpg", capt:"Church on the street"},
-  {file:"ayr-15.jpg", capt:"Gorse by the harbour"},
-  {file:"ayr-16.jpg", capt:"The lighthouse"},
-  {file:"ayr-17.jpg", capt:"Lighthouse against the clouds"},
-  {file:"ayr-18.jpg", capt:"A country house"},
-  {file:"ayr-19.jpg", capt:"Wide open sands"},
-  {file:"ayr-20.jpg", capt:"Along the riverfront"},
-  {file:"ayr-21.jpg", capt:"The Lang Scots Mile"},
-  {file:"ayr-22.jpg", capt:"A walk along the beach"},
-  {file:"ayr-23.jpg", capt:"Dune grass and the sea"},
-  {file:"ayr-24.jpg", capt:"Old cannon by the ruins"},
-  {file:"ayr-25.jpg", capt:"Sunset over the sands"},
-  {file:"ayr-26.jpg", capt:"Evening by the shore"},
-  {file:"ayr-27.jpg", capt:"A pub doorway"},
-  {file:"ayr-28.jpg", capt:"A stone archway"},
-  {file:"ayr-29.jpg", capt:"A street down to the sea"},
-  {file:"ayr-30.jpg", capt:"Flowers and a red postbox"},
-  {file:"ayr-31.jpg", capt:"A seafront building"},
-  {file:"ayr-32.jpg", capt:"Boats on the beach"},
-  {file:"ayr-33.jpg", capt:"Sandstone windows"},
-  {file:"ayr-34.jpg", capt:"The harbour front"},
-  {file:"ayr-35.jpg", capt:"The rocky shore"},
-  {file:"ayr-36.jpg", capt:"Along the shore"},
-  {file:"ayr-37.jpg", capt:"The town and its church"},
-  {file:"ayr-38.jpg", capt:"Shops in town"},
-  {file:"ayr-39.jpg", capt:"A seafront terrace"},
-  {file:"ayr-40.jpg", capt:"On the ferry"},
-  {file:"ayr-41.jpg", capt:"Looking across to the island"},
-  {file:"ayr-42.jpg", capt:"A street with cafe tables"},
-  {file:"gla-01.jpg", capt:"A city-centre street", cat:"glasgow"},
-  {file:"gla-02.jpg", capt:"A street lamp and grand facade", cat:"glasgow"},
-  {file:"gla-03.jpg", capt:"An ornate street lamp", cat:"glasgow"},
-  {file:"gla-04.jpg", capt:"A black cab in the city", cat:"glasgow"},
-  {file:"gla-05.jpg", capt:"Old and new in the city", cat:"glasgow"},
-  {file:"gla-06.jpg", capt:"The Gallery of Modern Art", cat:"glasgow"},
-  {file:"gla-07.jpg", capt:"A taxi on the high street", cat:"glasgow"},
-  {file:"gla-08.jpg", capt:"The Princes Square facade", cat:"glasgow"},
-  {file:"gla-09.jpg", capt:"A clock on a sandstone building", cat:"glasgow"},
-  {file:"gla-10.jpg", capt:"George Square and the City Chambers", cat:"glasgow"},
-  {file:"gla-11.jpg", capt:"City tenements", cat:"glasgow"},
-  {file:"edi-01.jpg", capt:"A statue on the Royal Mile", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-02.jpg", capt:"An old town street", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-03.jpg", capt:"A street performer", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-04.jpg", capt:"A busy street corner", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-05.jpg", capt:"A carved doorway", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-06.jpg", capt:"Edinburgh Castle from the gardens", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-07.jpg", capt:"A double-decker in town", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-08.jpg", capt:"A Gothic archway", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-09.jpg", capt:"Steps in the old town", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-10.jpg", capt:"A tall tenement", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-11.jpg", capt:"Shops on the Royal Mile", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-12.jpg", capt:"Old town rooftops", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-13.jpg", capt:"A bustling street", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-14.jpg", capt:"A curved facade", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-15.jpg", capt:"On the high street", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-16.jpg", capt:"A round tower", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-17.jpg", capt:"Old town pavement", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-18.jpg", capt:"Flags over the old town", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-19.jpg", capt:"A street in the old town", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-20.jpg", capt:"A glass roof", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-21.jpg", capt:"A colourful street", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-22.jpg", capt:"By a grand building", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-23.jpg", capt:"A narrow close", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-24.jpg", capt:"Carved figures on a facade", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-25.jpg", capt:"An old town corner", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-26.jpg", capt:"A red telephone box", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-27.jpg", capt:"A corner with a turret", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-28.jpg", capt:"Grand stone buildings", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-29.jpg", capt:"Sandstone windows", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-30.jpg", capt:"A path through the gardens", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-31.jpg", capt:"A lively street", cat:"edinburgh", dir:"edi-photos"},
-  {file:"edi-32.jpg", capt:"Old town tenements", cat:"edinburgh", dir:"edi-photos"}
+  {file:"ayr-01.jpg", capt:"On the seafront", w:700, h:323},
+  {file:"ayr-02.jpg", capt:"Harbourside street", w:700, h:323},
+  {file:"ayr-03.jpg", capt:"Boats in the harbour", w:700, h:323},
+  {file:"ayr-04.jpg", capt:"Sandstone detail in town", w:700, h:323},
+  {file:"ayr-05.jpg", capt:"Fishing boats at low tide", w:700, h:323},
+  {file:"ayr-06.jpg", capt:"Seafront sculpture", w:700, h:323},
+  {file:"ayr-07.jpg", capt:"Town church", w:700, h:323},
+  {file:"ayr-08.jpg", capt:"Houses by the shore", w:700, h:323},
+  {file:"ayr-09.jpg", capt:"Grand sandstone building", w:700, h:323},
+  {file:"ayr-10.jpg", capt:"The beach and the hills beyond", w:700, h:323},
+  {file:"ayr-11.jpg", capt:"Church spire against the sky", w:700, h:323},
+  {file:"ayr-12.jpg", capt:"Old churchyard", w:700, h:323},
+  {file:"ayr-13.jpg", capt:"Green fields by the coast", w:700, h:323},
+  {file:"ayr-14.jpg", capt:"Church on the street", w:323, h:700},
+  {file:"ayr-15.jpg", capt:"Gorse by the harbour", w:700, h:323},
+  {file:"ayr-16.jpg", capt:"The lighthouse", w:700, h:323},
+  {file:"ayr-17.jpg", capt:"Lighthouse against the clouds", w:700, h:323},
+  {file:"ayr-18.jpg", capt:"A country house", w:700, h:323},
+  {file:"ayr-19.jpg", capt:"Wide open sands", w:700, h:323},
+  {file:"ayr-20.jpg", capt:"Along the riverfront", w:700, h:323},
+  {file:"ayr-21.jpg", capt:"The Lang Scots Mile", w:323, h:700},
+  {file:"ayr-22.jpg", capt:"A walk along the beach", w:700, h:323},
+  {file:"ayr-23.jpg", capt:"Dune grass and the sea", w:700, h:323},
+  {file:"ayr-24.jpg", capt:"Old cannon by the ruins", w:323, h:700},
+  {file:"ayr-25.jpg", capt:"Sunset over the sands", w:700, h:323},
+  {file:"ayr-26.jpg", capt:"Evening by the shore", w:700, h:323},
+  {file:"ayr-27.jpg", capt:"A pub doorway", w:323, h:700},
+  {file:"ayr-28.jpg", capt:"A stone archway", w:700, h:323},
+  {file:"ayr-29.jpg", capt:"A street down to the sea", w:700, h:323},
+  {file:"ayr-30.jpg", capt:"Flowers and a red postbox", w:700, h:323},
+  {file:"ayr-31.jpg", capt:"A seafront building", w:700, h:323},
+  {file:"ayr-32.jpg", capt:"Boats on the beach", w:700, h:323},
+  {file:"ayr-33.jpg", capt:"Sandstone windows", w:700, h:323},
+  {file:"ayr-34.jpg", capt:"The harbour front", w:700, h:323},
+  {file:"ayr-35.jpg", capt:"The rocky shore", w:700, h:323},
+  {file:"ayr-36.jpg", capt:"Along the shore", w:700, h:323},
+  {file:"ayr-37.jpg", capt:"The town and its church", w:700, h:323},
+  {file:"ayr-38.jpg", capt:"Shops in town", w:700, h:323},
+  {file:"ayr-39.jpg", capt:"A seafront terrace", w:700, h:323},
+  {file:"ayr-40.jpg", capt:"On the ferry", w:700, h:323},
+  {file:"ayr-41.jpg", capt:"Looking across to the island", w:700, h:323},
+  {file:"ayr-42.jpg", capt:"A street with cafe tables", w:700, h:323},
+  {file:"gla-01.jpg", capt:"A city-centre street", cat:"glasgow", w:700, h:323},
+  {file:"gla-02.jpg", capt:"A street lamp and grand facade", cat:"glasgow", w:700, h:323},
+  {file:"gla-03.jpg", capt:"An ornate street lamp", cat:"glasgow", w:700, h:323},
+  {file:"gla-04.jpg", capt:"A black cab in the city", cat:"glasgow", w:700, h:323},
+  {file:"gla-05.jpg", capt:"Old and new in the city", cat:"glasgow", w:700, h:323},
+  {file:"gla-06.jpg", capt:"The Gallery of Modern Art", cat:"glasgow", w:700, h:323},
+  {file:"gla-07.jpg", capt:"A taxi on the high street", cat:"glasgow", w:700, h:323},
+  {file:"gla-08.jpg", capt:"The Princes Square facade", cat:"glasgow", w:700, h:323},
+  {file:"gla-09.jpg", capt:"A clock on a sandstone building", cat:"glasgow", w:700, h:323},
+  {file:"gla-10.jpg", capt:"George Square and the City Chambers", cat:"glasgow", w:700, h:323},
+  {file:"gla-11.jpg", capt:"City tenements", cat:"glasgow", w:700, h:323},
+  {file:"edi-01.jpg", capt:"A statue on the Royal Mile", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-02.jpg", capt:"An old town street", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-03.jpg", capt:"A street performer", cat:"edinburgh", dir:"edi-photos", w:700, h:444},
+  {file:"edi-04.jpg", capt:"A busy street corner", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-05.jpg", capt:"A carved doorway", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-06.jpg", capt:"Edinburgh Castle from the gardens", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-07.jpg", capt:"A double-decker in town", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-08.jpg", capt:"A Gothic archway", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-09.jpg", capt:"Steps in the old town", cat:"edinburgh", dir:"edi-photos", w:323, h:700},
+  {file:"edi-10.jpg", capt:"A tall tenement", cat:"edinburgh", dir:"edi-photos", w:323, h:700},
+  {file:"edi-11.jpg", capt:"Shops on the Royal Mile", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-12.jpg", capt:"Old town rooftops", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-13.jpg", capt:"A bustling street", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-14.jpg", capt:"A curved facade", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-15.jpg", capt:"On the high street", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-16.jpg", capt:"A round tower", cat:"edinburgh", dir:"edi-photos", w:323, h:700},
+  {file:"edi-17.jpg", capt:"Old town pavement", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-18.jpg", capt:"Flags over the old town", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-19.jpg", capt:"A street in the old town", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-20.jpg", capt:"A glass roof", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-21.jpg", capt:"A colourful street", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-22.jpg", capt:"By a grand building", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-23.jpg", capt:"A narrow close", cat:"edinburgh", dir:"edi-photos", w:323, h:700},
+  {file:"edi-24.jpg", capt:"Carved figures on a facade", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-25.jpg", capt:"An old town corner", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-26.jpg", capt:"A red telephone box", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-27.jpg", capt:"A corner with a turret", cat:"edinburgh", dir:"edi-photos", w:323, h:700},
+  {file:"edi-28.jpg", capt:"Grand stone buildings", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-29.jpg", capt:"Sandstone windows", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-30.jpg", capt:"A path through the gardens", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-31.jpg", capt:"A lively street", cat:"edinburgh", dir:"edi-photos", w:700, h:323},
+  {file:"edi-32.jpg", capt:"Old town tenements", cat:"edinburgh", dir:"edi-photos", w:700, h:323}
 ];
 
 var CACHE_KEY='gal_pexels_v1';
@@ -378,7 +378,7 @@ function refreshCount(cat){
 var PAGE=14, view=[], shown=0, sentinel=document.getElementById('sentinel');
 function tileHTML(i){ var it=items[i];
   return '<button class="tile sk" data-i="'+i+'" data-c="'+it.cat+'" type="button">'
-    +'<img alt="'+esc(it.alt)+'" loading="lazy" decoding="async" src="'+esc(it.grid)+'" onload="tLoaded(this)" onerror="tFail(this)">'
+    +'<img alt="'+esc(it.alt)+'"'+(it.w?(' width="'+it.w+'" height="'+it.h+'"'):'')+' loading="lazy" decoding="async" src="'+esc(it.grid)+'" onload="tLoaded(this)" onerror="tFail(this)">'
     +'<span class="zoom"><svg viewBox="0 0 24 24"><path d="M21 21l-4.3-4.3M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM11 8v6M8 11h6"/></svg></span>'
     +'<span class="cap">'+esc(it.capt)+'</span>'
     +'</button>';
@@ -460,17 +460,17 @@ function buildCurated(){
     items.push({
       grid:dir+"/thumb/"+p.file,
       big:dir+"/img/"+p.file,
-      ph:"", purl:"", own:true,
+      ph:"", purl:"", own:true, w:p.w, h:p.h,
       alt:p.capt||"", capt:p.capt||"", cat:(p.cat||"ayrshire")
     });
   });
   CURATED.forEach(function(p){
     var orig=CDN+p.id+'/pexels-photo-'+p.id+'.jpeg';
     items.push({
-      grid: withParams(orig,'auto=compress&cs=tinysrgb&w=600'),
+      grid: withParams(orig,'auto=compress&cs=tinysrgb&fit=crop&w=600&h=400'),
       big:  withParams(orig,'auto=compress&cs=tinysrgb&w=1400'),
       ph: p.ph||'', purl: p.slug?('https://www.pexels.com/photo/'+p.slug+'/'):'https://www.pexels.com/',
-      alt: p.capt||'', capt: p.capt||'', cat: p.cat
+      alt: p.capt||'', capt: p.capt||'', cat: p.cat, w:600, h:400
     });
   });
 }
