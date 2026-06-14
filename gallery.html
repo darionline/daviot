@@ -209,8 +209,7 @@ var THEMES=[
   ['lighthouses','Lighthouses',''],
   ['castles','Castles',''],
   ['edinburgh','Edinburgh',''],
-  ['glasgow','Glasgow',''],
-  ['landmarks','Landmarks','']
+  ['glasgow','Glasgow','']
 ];
 var PER=8;
 
@@ -247,10 +246,10 @@ var CURATED=[
   {id:28851815, cat:'edinburgh', capt:'Edinburgh skyline under a dramatic sky', ph:'Gavin Young', slug:'edinburgh-skyline-with-historic-architecture-28851815'},
   {id:30118131, cat:'edinburgh', capt:'Aerial view of historic Edinburgh', ph:'ekrulila', slug:'aerial-view-of-historic-edinburgh-cityscape-30118131'},
   {id:6013001,  cat:'edinburgh', capt:'Edinburgh rooftops from above', ph:'Oriel Frankie Ashcroft', slug:'aerial-view-of-city-buildings-6013001'},
-  {id:31895685, cat:'glasgow', capt:'A black taxi on a Glasgow street', ph:'', slug:'city-street-with-black-taxi-in-glasgow-scotland-31895685'},
-  {id:28957581, cat:'glasgow', capt:'Urban street scene in Glasgow', ph:'', slug:'white-truck-on-urban-street-in-glasgow-28957581'},
-  {id:34744563, cat:'landmarks', capt:'Gothic cathedral spires, Scotland', ph:'Leon Hellegers', slug:'gothic-cathedral-in-scotland-with-dramatic-spires-34744563'},
-  {id:27879553, cat:'landmarks', capt:'A city view with a castle beyond', ph:'Serinus', slug:'a-view-of-a-city-with-a-castle-in-the-background-27879553'}
+  {id:13657294, cat:'glasgow', capt:'The University of Glasgow', ph:'Zahid', slug:'brown-concrete-building-of-a-university-13657294'},
+  {id:5013578,  cat:'glasgow', capt:'Victorian and modern architecture', ph:'Sini Leunen', slug:'buildings-on-regent-street-in-glasgow-scotland-5013578'},
+  {id:5870360,  cat:'glasgow', capt:'The Duke of Wellington statue', ph:'Sini Leunen', slug:'equestrian-statue-of-duke-of-wellington-near-city-buildings-5870360'},
+  {id:12319483, cat:'glasgow', capt:'A blue police box in the city', ph:'elgolovchenko', slug:'photo-of-a-street-and-a-blue-police-box-against-the-background-of-a-beige-facade-of-a-building-12319483'}
 ];
 
 
@@ -282,7 +281,33 @@ var OWN=[
   {file:"ayr-24.jpg", capt:"Old cannon by the ruins"},
   {file:"ayr-25.jpg", capt:"Sunset over the sands"},
   {file:"ayr-26.jpg", capt:"Evening by the shore"},
-  {file:"ayr-27.jpg", capt:"A pub doorway"}
+  {file:"ayr-27.jpg", capt:"A pub doorway"},
+  {file:"ayr-28.jpg", capt:"A stone archway"},
+  {file:"ayr-29.jpg", capt:"A street down to the sea"},
+  {file:"ayr-30.jpg", capt:"Flowers and a red postbox"},
+  {file:"ayr-31.jpg", capt:"A seafront building"},
+  {file:"ayr-32.jpg", capt:"Boats on the beach"},
+  {file:"ayr-33.jpg", capt:"Sandstone windows"},
+  {file:"ayr-34.jpg", capt:"The harbour front"},
+  {file:"ayr-35.jpg", capt:"The rocky shore"},
+  {file:"ayr-36.jpg", capt:"Along the shore"},
+  {file:"ayr-37.jpg", capt:"The town and its church"},
+  {file:"ayr-38.jpg", capt:"Shops in town"},
+  {file:"ayr-39.jpg", capt:"A seafront terrace"},
+  {file:"ayr-40.jpg", capt:"On the ferry"},
+  {file:"ayr-41.jpg", capt:"Looking across to the island"},
+  {file:"ayr-42.jpg", capt:"A street with cafe tables"},
+  {file:"gla-01.jpg", capt:"A city-centre street", cat:"glasgow"},
+  {file:"gla-02.jpg", capt:"A street lamp and grand facade", cat:"glasgow"},
+  {file:"gla-03.jpg", capt:"An ornate street lamp", cat:"glasgow"},
+  {file:"gla-04.jpg", capt:"A black cab in the city", cat:"glasgow"},
+  {file:"gla-05.jpg", capt:"Old and new in the city", cat:"glasgow"},
+  {file:"gla-06.jpg", capt:"The Gallery of Modern Art", cat:"glasgow"},
+  {file:"gla-07.jpg", capt:"A taxi on the high street", cat:"glasgow"},
+  {file:"gla-08.jpg", capt:"The Princes Square facade", cat:"glasgow"},
+  {file:"gla-09.jpg", capt:"A clock on a sandstone building", cat:"glasgow"},
+  {file:"gla-10.jpg", capt:"George Square and the City Chambers", cat:"glasgow"},
+  {file:"gla-11.jpg", capt:"City tenements", cat:"glasgow"}
 ];
 
 var CACHE_KEY='gal_pexels_v1';
@@ -398,7 +423,7 @@ function buildCurated(){
       grid:"ayr-photos/thumb/"+p.file,
       big:"ayr-photos/img/"+p.file,
       ph:"", purl:"", own:true,
-      alt:p.capt||"", capt:p.capt||"", cat:"ayrshire"
+      alt:p.capt||"", capt:p.capt||"", cat:(p.cat||"ayrshire")
     });
   });
   CURATED.forEach(function(p){
