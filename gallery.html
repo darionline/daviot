@@ -61,14 +61,15 @@ svg.ico{width:1em;height:1em;display:inline-block;vertical-align:-.14em;fill:non
 .fchip.on .n{color:#eaf4fa; background:rgba(255,255,255,.18)}
 @media (prefers-reduced-motion:reduce){.fchip,.fchip::after{transition:none}}
 
-.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:.5rem}
-@media(min-width:640px){ .grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:.6rem} }
-.tile{position:relative; margin:0; padding:0; border:none; border-radius:14px; overflow:hidden; aspect-ratio:1/1; background:#dde6f1; cursor:zoom-in; display:block; box-shadow:0 4px 14px rgba(18,59,79,.08)}
+.grid{columns:165px; column-gap:.6rem}
+@media(min-width:640px){ .grid{columns:235px; column-gap:.7rem} }
+.tile{position:relative; margin:0 0 .6rem; padding:0; border:none; border-radius:14px; overflow:hidden; background:#dde6f1; cursor:zoom-in; display:block; width:100%; break-inside:avoid; box-shadow:0 4px 14px rgba(18,59,79,.08)}
+.tile.sk{height:240px}
 .tile.sk{background:linear-gradient(100deg,#e6ecf4 30%,#dde6f1 50%,#e6ecf4 70%); background-size:200% 100%; animation:sh 1.3s infinite}
 @keyframes sh{to{background-position:-200% 0}}
 .tile.sk::after{content:""; position:absolute; top:50%; left:50%; width:26px; height:26px; margin:-13px 0 0 -13px; border-radius:50%; border:3px solid rgba(18,59,79,.16); border-top-color:var(--azure); animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.tile img{width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .5s, transform .4s}
+.tile img{width:100%; height:auto; display:block; opacity:0; transition:opacity .5s, transform .4s}
 .tile.on img{opacity:1}
 .tile:hover img{transform:scale(1.06)}
 .tile .cap{position:absolute; left:0; right:0; bottom:0; padding:1.5rem .6rem .55rem; color:#fff; font-size:.8rem; font-weight:600; line-height:1.25; text-align:left; background:linear-gradient(transparent, rgba(8,28,38,.55) 45%, rgba(8,28,38,.82)); opacity:0; transform:translateY(6px); transition:.2s; pointer-events:none}
@@ -200,19 +201,35 @@ var HOST={ name:"Daviot Guest House", tagline:"Photo gallery \u00b7 a sample pre
     +'</div>';
 })();
 
-/* Themes -> Pexels search query */
+/* Categories for the filter chips */
 var THEMES=[
-  ['coast','Ayr & Coast','Ayrshire Scotland coast'],
-  ['ayr','Ayr','Ayr Scotland'],
-  ['glasgow','Glasgow','Glasgow Scotland city'],
-  ['edinburgh','Edinburgh','Edinburgh Scotland city'],
-  ['castles','Castles','Scotland castle'],
-  ['lighthouses','Lighthouses','Scotland lighthouse'],
-  ['burns','Countryside','Scotland countryside village'],
-  ['islands','Islands','Isle of Arran Scotland'],
-  ['scotland','Scotland','Scotland highlands landscape']
+  ['highlands','Highlands & Glens',''],
+  ['castles','Castles',''],
+  ['edinburgh','Edinburgh',''],
+  ['landmarks','Landmarks','']
 ];
 var PER=8;
+
+/* Hand-picked Pexels photos (free to use under the Pexels License; credit kept to each photographer).
+   These are fixed, so quality is controlled and the page needs no API key. */
+var CDN='https://images.pexels.com/photos/';
+var CURATED=[
+  {id:34624719, cat:'highlands', capt:'Glencoe Highlands at sunset', ph:'Clement Proust', slug:'scenic-view-of-glencoe-highlands-at-sunset-34624719'},
+  {id:31693783, cat:'highlands', capt:'The Quiraing, Isle of Skye', ph:'Clement Proust', slug:'scenic-view-of-the-quiraing-in-scotland-31693783'},
+  {id:31300999, cat:'highlands', capt:'Glencoe valley in early spring', ph:'Lee Finvrede', slug:'serene-glencoe-valley-in-early-spring-31300999'},
+  {id:34975351, cat:'highlands', capt:'Highland landscape with a lone sheep', ph:'Rino Adamo', slug:'stunning-highland-landscape-with-lone-sheep-34975351'},
+  {id:10610174, cat:'castles', capt:'Eilean Donan Castle by Loch Duich', ph:'Alleksana', slug:'clear-sky-over-castle-and-bridge-10610174'},
+  {id:18843716, cat:'castles', capt:'Stone bridge to Eilean Donan Castle', ph:'Paul Denbow', slug:'stone-bridge-leading-to-eilean-donan-castle-18843716'},
+  {id:18661467, cat:'castles', capt:'Ardvreck Castle reflected on the loch', ph:'Clement Proust', slug:'peninsula-on-a-lake-18661467'},
+  {id:6726816,  cat:'castles', capt:'Eilean Donan in a rugged landscape', ph:'Magic K', slug:'an-ancient-concrete-castle-6726816'},
+  {id:22204003, cat:'edinburgh', capt:'Edinburgh old town streets', ph:'Lee Finvrede', slug:'buildings-around-street-in-edinburgh-in-scotland-22204003'},
+  {id:11276637, cat:'edinburgh', capt:'Edinburgh Castle under a blue sky', ph:'Anna Kozlova', slug:'old-historic-brick-buildings-against-blue-sky-11276637'},
+  {id:28851815, cat:'edinburgh', capt:'Edinburgh skyline under a dramatic sky', ph:'Gavin Young', slug:'edinburgh-skyline-with-historic-architecture-28851815'},
+  {id:30118131, cat:'edinburgh', capt:'Aerial view of historic Edinburgh', ph:'ekrulila', slug:'aerial-view-of-historic-edinburgh-cityscape-30118131'},
+  {id:6013001,  cat:'edinburgh', capt:'Edinburgh rooftops from above', ph:'Oriel Frankie Ashcroft', slug:'aerial-view-of-city-buildings-6013001'},
+  {id:34744563, cat:'landmarks', capt:'Gothic cathedral spires, Scotland', ph:'Leon Hellegers', slug:'gothic-cathedral-in-scotland-with-dramatic-spires-34744563'},
+  {id:27879553, cat:'landmarks', capt:'A city view with a castle beyond', ph:'Serinus', slug:'a-view-of-a-city-with-a-castle-in-the-background-27879553'}
+];
 
 var CACHE_KEY='gal_pexels_v1';
 var cache={}; try{ cache=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}'); }catch(e){ cache={}; }
@@ -319,19 +336,22 @@ function ingest(themeKey, label, data){
   });
 }
 
+function buildCurated(){
+  CURATED.forEach(function(p){
+    var orig=CDN+p.id+'/pexels-photo-'+p.id+'.jpeg';
+    items.push({
+      grid: withParams(orig,'auto=compress&cs=tinysrgb&w=600'),
+      big:  withParams(orig,'auto=compress&cs=tinysrgb&w=1400'),
+      ph: p.ph||'', purl: p.slug?('https://www.pexels.com/photo/'+p.slug+'/'):'https://www.pexels.com/',
+      alt: p.capt||'', capt: p.capt||'', cat: p.cat
+    });
+  });
+}
+
 function start(){
-  if(!PEXELS_KEY && !PHOTO_WORKER){ noSource(); renderFilters(); return; }
-  grid.innerHTML=skeletons(12);
+  buildCurated();
   renderFilters();
-  var jobs=THEMES.map(function(t){
-    var key=t[0], label=t[1], q=t[2];
-    if(cache[q]){ ingest(key,label,cache[q]); return Promise.resolve(); }
-    return apiSearch(q).then(function(d){ cache[q]=d; ingest(key,label,d); }).catch(function(){});
-  });
-  Promise.all(jobs).then(function(){
-    saveCache();
-    renderFilters(); renderGrid();
-  });
+  renderGrid();
 }
 start();
 </script>
